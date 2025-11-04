@@ -1,0 +1,178 @@
+<resources>
+    <string name="app_name">Chimera</string>
+    
+    <!-- Embedded Picker Strings -->
+    <string name="pick_multiple_media">Pick</string>
+    <string name="pick_single_media">Pick</string>
+    <string name="close">Close</string>
+    <string name="no_permissions">No permissions</string>
+    <string name="request">Request</string>
+    <string name="all">All</string>
+    <string name="grant_camera_permission_to_capture_image">Grant camera permission to capture image</string>
+    <string name="pick_image">Pick image</string>
+    <string name="file_provider">com.t8rin.embeddedpicker.fileprovider</string>
+    <string name="embedded_picker">Embedded Picker</string>
+    <string name="embedded_picker_sub">Uses Image Toolbox\'s elegant image picker</string>
+    
+    <!-- Image Reorder Carousel Strings -->
+    <string name="images_order">Images Order</string>
+    <string name="add">Add</string>
+    <string name="remove">Remove</string>
+    
+    <!-- Open Source Licenses -->
+    <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="gpl_license_header">License</string>
+    <string name="gpl_license_description">This project is licensed under the GNU General Public License v3.0.\nBy using this software, you agree to the terms of the license which\nIncludes conditions for copying, distribution, and modification.</string>
+
+    <!-- Privacy Policy and Disclaimer -->
+    <string name="privacy_policy_and_disclaimer">Privacy Policy and Disclaimer</string>
+    <string name="privacy_policy_header">Privacy Policy</string>
+    <string name="disclaimer_header">Disclaimer</string>
+    <string name="full_documents_info">For complete privacy policy, disclaimer, and license information, please visit our project page: \nhttps://github.com/ReRokutosei/Chimera</string>
+    
+    <!-- Welcome Dialog -->
+    <string name="welcome_title">Welcome to Chimera</string>
+    <string name="welcome_description">Please read and agree to our terms before using the app</string>
+    <string name="agree">Agree</string>
+    <string name="disagree_and_exit">Disagree and Exit</string>
+    
+    <!-- UI Strings -->
+    <string name="clear_images">Clear Images</string>
+    <string name="start_stitching">Stitching</string>
+    <string name="vertical">Vertical</string>
+    <string name="horizontal">Horizontal</string>
+    <string name="min">Min</string>
+    <string name="original">Original</string>
+    <string name="max">Max</string>
+    <string name="delete">Delete</string>
+    <string name="unknown_image">Unknown Image</string>
+    <string name="unknown_type">Unknown Type</string>
+    <string name="move_up">Move Up</string>
+    <string name="move_down">Move Down</string>
+    <string name="storage_permission_required">Storage permission required to access images</string>
+    <string name="error">Error</string>
+    <string name="ok">OK</string>
+    <string name="select_images">Select Images</string>
+    <string name="please_select_images">Please select images to stitch</string>
+    <string name="stitch_direction">Stitch Direction:</string>
+    <string name="image_overlay">Image Overlay:</string>
+    <string name="overlay_disabled">Disable</string>
+    <string name="overlay_enabled">Enable</string>
+    <string name="width_scaling">Width Scale:</string>
+    <string name="height_scaling">Height Scale:</string>
+    <string name="overlay_ratio">Overlay Area Ratio:</string>
+    <string name="image_spacing">Image Space:</string>
+    <string name="switch_theme">Switch Theme</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="version">Version</string>
+    <string name="about">About</string>
+    <string name="developer_info">Application Developed\nby ReRokutosei</string>
+    <string name="icon_designer">Application Icon Designed\nby Freepik</string>
+    <string name="developer_avatar">Developer Avatar</string>
+    <string name="developer_information">Developer Information</string>
+    <string name="display_settings">Display Settings</string>
+    <string name="dynamic_colors">Dynamic Colors</string>
+    <string name="dark_mode_follow_system">Dark Mode Follow System</string>
+    <string name="slider_handle_icon">Slider Handle Icon</string>
+    <string name="material_star_shape">Star</string>
+    <string name="small_material_star_shape">Small Star</string>
+    <string name="droplet_shape">Droplet</string>
+    <string name="egg_shape">Egg</string>
+    <string name="oval_shape">Oval</string>
+    <string name="pill_shape">Pill</string>
+    <string name="squircle_shape">Squircle</string>
+    <string name="file_picker_settings">File Picker Settings</string>
+    <string name="auto_clear_selected">Auto Clear Selected Images</string>
+    <string name="clear_after_stitching">Delete Selected Images from Main Page After Stitching</string>
+    <string name="use_saf_picker">Use Storage Access Framework Picker</string>
+    <string name="use_saf_without_permission">Use SAF to Select Images Without Permissions</string>
+    <string name="default_picker_info">Your device uses this picker by default</string>
+    <string name="image_output_settings">Image Output Settings</string>
+    <string name="output_format">Output Image Format</string>
+    <string name="output_quality">Output Image Quality</string>
+    <string name="back">Back</string>
+    <string name="other_settings">Other</string>
+    <string name="log_level">Log Level</string>
+    <string name="select_log_level">Select Log Level</string>
+    <string name="performance_settings">Performance Settings</string>
+    <string name="engine_selection">Engine Selection</string>
+    <string name="select_stitching_engine">Select Image Stitching Engine</string>
+    <string name="multithreading">Multithreading Acceleration</string>
+    <string name="multithreading_desc">Use multithreading to process images in parallel and improve stitching speed</string>
+    <string name="high_memory_threshold">Increase Memory Threshold</string>
+    <string name="high_memory_threshold_desc">Raise memory threshold to 80% of device\'s total RAM</string>
+    <string name="stitching_result">Stitching Result</string>
+    <string name="no_valid_result">No valid image result generated</string>
+    <string name="stitching_failed">Stitching Failed</string>
+    <string name="log_content">Log Content:\n</string>
+    <string name="copy_log">Copy Log</string>
+    <string name="view_log">View Log</string>
+    <string name="save_result">Save Result</string>
+    <string name="share">Share</string>
+    <string name="saving">Saving</string>
+    <string name="save">Save</string>
+    <string name="share_stitched_image">Share Stitched Image</string>
+    <string name="image_saved_to_album">Image saved to album</string>
+    <string name="save_failed">Save failed</string>
+    <string name="failed_to_read_log_file">Failed to read log file: %1$s</string>
+    <string name="log_file_not_exist">Log file does not exist</string>
+    <string name="images_selected">%1$d new images selected</string>
+    <string name="select_two_or_more_images">Please select two or more images</string>
+    <string name="estimated_resolution">Estimated Resolution: %1$d × %2$d</string>
+    <string name="resolution_limit_exceeded">Resolution exceeds limit!\nPlease select PNG format in settings</string>
+    
+    <!-- ImageSharer -->
+
+    <!-- Log Levels -->
+    <string name="settings">Settings</string>
+    <string name="disclaimer_summary">This app is provided \"as is\" without any express or implied warranties, including but not limited to warranties of merchantability, fitness for a particular purpose, and non-infringement.
+        \n\nUse at Your Own Risk:
+        \nAll risks arising from the use of this app are borne by you. We do not warrant the accuracy or completeness of the app\'s functions.
+        \n\nLimitation of Liability:
+        \nIn no event shall we be liable for any damages (including indirect or consequential damages) resulting from the use or inability to use this app.
+        \n\nService Availability:
+        \nWe do not guarantee that the app will be uninterrupted or error-free. The app may experience service interruptions due to technical updates, maintenance, or other force majeure events.</string>
+    <string name="privacy_policy_summary">We do not collect personal information.
+        \nYou can use this app without providing any personal data.
+        \nWe do not share your personal data.
+        \nAny revisions to this Privacy Policy will be published on the project’s GitHub repository and shall become effective with the corresponding app update, without prior or separate notification.</string>
+    <string name="light_mode">Light</string>
+    <string name="dark_mode">Dark</string>
+    <string name="auto_mode">System</string>
+    <string name="theme_mode">Theme Mode</string>
+    <string name="theme_color">Theme Color</string>
+    <string name="custom_color">Custom Color</string>
+    <string name="preview">Preview</string>
+    <string name="help">Help</string>
+
+    <!-- Help Content -->
+    <string name="help_card_title_mode_direct">✨ Normal Stitching</string>
+    <string name="help_card_content_mode_direct"> (Image Overlay Disabled)
+        \nStitch images directly according to the set direction (horizontal or vertical).
+        \nSupports adjusting the image spacing (0–50px) and the overall scaling mode (uniform width for vertical stitching, uniform height for horizontal stitching).
+        \n\nMin: Find the smallest alignment dimension (i.e., the minimum width or minimum height) among all images and scale all images proportionally to that size.
+        \n\nOriginal: Maintain the original dimensions of each individual image.
+        \n\nMax: Find the largest alignment dimension (i.e., the maximum width or maximum height) among all images and scale all images proportionally to that size.</string>
+    <string name="help_card_title_mode_overlay">✨ Overlay Stitching</string>
+    <string name="help_card_content_mode_overlay" formatted="false">Uses the first image as the base and overlaps the next image onto it. Useful for creating common video subtitle screenshots.
+    \nYou can adjust the percentage (0–100%) of the next image\`s area to be overlaid.</string>
+    <string name="help_card_title_format_limit">🔒 Image Format Limitations</string>
+    <string name="help_card_content_format_limit">Image stitching is subject to both the technical specifications of file formats and device memory limits.
+        \nPlease note:
+        \n\nJPEG: The theoretical maximum size is 65,535 × 65,535 pixels (16-bit limit).The app outputs JPEG format by default.
+        \n\nWebP: Whether lossless or lossy, its maximum size is typically limited to around 16,384 × 16,384 pixels.
+        \n\nPNG: The theoretical maximum size is as high as 4,294,967,295 × 4,294,967,295 pixels (32-bit unsigned integer limit), theoretically the highest.
+        \n\n❗If you have many images or large images, it is recommended to go to Settings and switch to PNG format, and enable the Increased Memory Threshold option.
+        \n\n❗❗❗ Regardless of the format, the ultimate limitations in practice are the device\`s memory (RAM) and the Android Virtual Machine mechanism.The memory required to decode a very large image (width * height * 4 bytes/pixel) can easily cause the app to crash (OOM Crash).</string>
+    <string name="help_card_title_setting_output">⚙️ Image Output Settings</string>
+    <string name="help_card_content_setting_output" formatted="false">Output Image Format: Supports PNG, JPEG, and WEBP.
+        \n\nOutput Image Quality: The slider (1%-100%) only takes effect when the output format is JPEG or WEBP, and higher values produce higher quality images with larger file sizes.</string>
+    <string name="help_card_title_setting_performance">🚀 Performance Settings</string>
+    <string name="help_card_content_setting_performance" formatted="false">Multithreading Acceleration: When enabled, image loading and stitching processes will be executed in parallel using Kotlin coroutines, which can significantly improve stitching speed.
+        \n\nIncrease Memory Threshold: Raises the memory allocation upper limit for the stitching canvas from the default 50% to 80%, allowing for processing larger images, but increases the risk of OOM (Out Of Memory).</string>
+    <string name="help_card_title_setting_picker">🖼️ File Picker Settings</string>
+    <string name="help_card_content_setting_picker">Auto Clear Selected Images: After stitching is complete, clear the selected images on the main page.
+        \n\nUse Storage Access Framework Picker (SAF): Access files using the system file picker without requiring storage permissions. Suitable for privacy-conscious users.
+        \n\nEmbedded Picker: A powerful embedded picker extracted from the excellent ImageToolbox project. Solves issues like the system Photo Picker not showing all albums or having incorrect URI order. However, it requires storage permissions, and the initial load of album data might take a few seconds.</string>
+</resources>

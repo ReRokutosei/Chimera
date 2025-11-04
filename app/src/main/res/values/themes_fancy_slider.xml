@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base theme for FancySlider -->
+    <style name="Theme.FancySlider" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="sliderActiveTrackColor">@color/slider_active_track</item>
+        <item name="sliderInactiveTrackColor">@color/slider_inactive_track</item>
+        <item name="sliderThumbColor">@color/slider_thumb</item>
+        <item name="sliderDisabledActiveTrackColor">@color/slider_disabled_active_track</item>
+        <item name="sliderDisabledInactiveTrackColor">@color/slider_disabled_inactive_track</item>
+        <item name="sliderDisabledThumbColor">@color/slider_disabled_thumb</item>
+    </style>
+
+    <!-- Material 3 based theme -->
+    <style name="Theme.FancySlider.Material3" parent="Theme.FancySlider">
+        <!-- Material 3 will override these colors dynamically -->
+    </style>
+</resources>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Chimera</string>
+    
+    <!-- Embedded Picker Strings -->
+    <string name="pick_multiple_media">Seleccionar</string>
+    <string name="pick_single_media">Seleccionar</string>
+    <string name="close">Cerrar</string>
+    <string name="no_permissions">Sin permisos</string>
+    <string name="request">Solicitar</string>
+    <string name="all">Todo</string>
+    <string name="grant_camera_permission_to_capture_image">Otorgar permiso de cámara para capturar imagen</string>
+    <string name="pick_image">Seleccionar imagen</string>
+    <string name="file_provider">com.t8rin.embeddedpicker.fileprovider</string>
+    <string name="embedded_picker">Selector integrado</string>
+    <string name="embedded_picker_sub">Utiliza el selector de imágenes de alta gama de Image Toolbox</string>
+    
+    <!-- Image Reorder Carousel Strings -->
+    <string name="images_order">Orden de imágenes</string>
+    <string name="add">Agregar</string>
+    <string name="remove">Eliminar</string>
+    
+    <!-- Open Source Licenses -->
+    <string name="open_source_licenses">Licencias de Código Abierto</string>
+    
+    <!-- UI Strings -->
+    <string name="disagree_and_exit">Rechazar y salir</string>
+    <string name="clear_images">Limpiar imágenes</string>
+    <string name="start_stitching">Iniciar cosido</string>
+    <string name="vertical">Vertical</string>
+    <string name="horizontal">Horizontal</string>
+    <string name="min">Mínimo</string>
+    <string name="original">Original</string>
+    <string name="max">Máximo</string>
+    <string name="delete">Eliminar</string>
+    <string name="unknown_image">Imagen desconocida</string>
+    <string name="unknown_type">Tipo desconocido</string>
+    <string name="move_up">Mover hacia arriba</string>
+    <string name="move_down">Mover hacia abajo</string>
+    <string name="storage_permission_required">Se requiere permiso de almacenamiento para acceder a las imágenes</string>
+    <string name="error">Error</string>
+    <string name="ok">OK</string>
+    <string name="select_images">Seleccionar imágenes</string>
+    <string name="please_select_images">Por favor seleccione las imágenes para coser</string>
+    <string name="stitch_direction">Dirección de cosido:</string>
+    <string name="image_overlay">Superposición de imágenes:</string>
+    <string name="overlay_disabled">Deshabilitar</string>
+    <string name="overlay_enabled">Habilitar</string>
+    <string name="width_scaling">Escalado de ancho:</string>
+    <string name="height_scaling">Escalado de altura:</string>
+    <string name="overlay_ratio">Proporción de área superpuesta:</string>
+    <string name="image_spacing">Espaciado de imágenes:</string>
+    <string name="switch_theme">Cambiar tema</string>
+    <string name="confirm">Confirmar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="version">Versión</string>
+    <string name="about">Acerca de</string>
+    <string name="developer_info">Desarrollado por\nReRokutosei</string>
+    <string name="icon_designer">Diseñado por\nFreepik</string>
+    <string name="developer_avatar">Avatar del desarrollador</string>
+    <string name="developer_information">Información del Desarrollador</string>
+    <string name="display_settings">Configuración de pantalla</string>
+    <string name="dynamic_colors">Colores dinámicos</string>
+    <string name="dark_mode_follow_system">Modo oscuro sigue al sistema</string>
+    <string name="slider_handle_icon">Icono del control deslizante</string>
+    <string name="material_star_shape">Estrella</string>
+    <string name="small_material_star_shape">Estrella pequeña</string>
+    <string name="droplet_shape">Gota</string>
+    <string name="egg_shape">Huevo</string>
+    <string name="oval_shape">Óvalo</string>
+    <string name="pill_shape">Píldora</string>
+    <string name="squircle_shape">Cuadrado redondeado</string>
+    <string name="file_picker_settings">Configuración del selector de archivos</string>
+    <string name="auto_clear_selected">Limpiar automáticamente las imágenes seleccionadas</string>
+    <string name="clear_after_stitching">Eliminar las imágenes seleccionadas de la página principal después de coser</string>
+    <string name="use_saf_picker">Usar selector de marco de acceso de almacenamiento</string>
+    <string name="use_saf_without_permission">Usar SAF para seleccionar imágenes sin permisos</string>
+    <string name="default_picker_info">Su dispositivo usa este selector por defecto</string>
+    <string name="image_output_settings">Configuración de salida de imagen</string>
+    <string name="output_format">Formato de imagen de salida</string>
+    <string name="output_quality">Calidad de imagen de salida</string>
+    <string name="back">Atrás</string>
+    <string name="other_settings">Otros</string>
+    <string name="log_level">Nivel de registro</string>
+    <string name="select_log_level">Seleccionar nivel de registro</string>
+    <string name="performance_settings">Configuración de rendimiento</string>
+    <string name="engine_selection">Selección de motor</string>
+    <string name="select_stitching_engine">Seleccionar motor de cosido de imágenes</string>
+    <string name="multithreading">Aceleración de cálculo multihilo</string>
+    <string name="multithreading_desc">Usar procesamiento paralelo multihilo para mejorar la velocidad de cosido</string>
+    <string name="high_memory_threshold">Aumentar umbral de memoria</string>
+    <string name="high_memory_threshold_desc">Elevar el umbral de memoria al 80% de la RAM total del dispositivo</string>
+    <string name="stitching_result">Resultado del cosido</string>
+    <string name="no_valid_result">No se generó un resultado de imagen válido</string>
+    <string name="stitching_failed">Cosido fallido</string>
+    <string name="log_content">Contenido del registro:\n</string>
+    <string name="copy_log">Copiar registro</string>
+    <string name="view_log">Ver registro</string>
+    <string name="save_result">Guardar resultado</string>
+    <string name="share">Compartir</string>
+    <string name="saving">Guardando</string>
+    <string name="save">Guardar</string>
+    <string name="share_stitched_image">Compartir imagen cosida</string>
+    <string name="image_saved_to_album">Imagen guardada en el álbum</string>
+    <string name="save_failed">Guardado fallido</string>
+    <string name="failed_to_read_log_file">Error al leer el archivo de registro: %1$s</string>
+    <string name="log_file_not_exist">El archivo de registro no existe</string>
+    <string name="images_selected">%1$d nuevas imágenes seleccionadas</string>
+    <string name="select_two_or_more_images">Por favor seleccione dos o más imágenes</string>
+    <string name="resolution_limit_exceeded">¡La resolución excede el límite!\nPor favor seleccione el formato PNG en la configuración</string>
+    
+    <!-- ImageSharer -->
+
+    <!-- Log Levels -->
+    <string name="estimated_resolution">Resolución estimada: %1$d × %2$d</string>
+    <string name="settings">Configuración</string>
+    <string name="privacy_policy_and_disclaimer">Política de privacidad y descargo de responsabilidad</string>
+    <string name="full_documents_info">Para obtener la política de privacidad completa, el descargo de responsabilidad y la información de licencia, visite nuestra página del proyecto:\nhttps://github.com/ReRokutosei/Chimera</string>
+    <string name="welcome_title">Bienvenido/a a Chimera</string>
+    <string name="welcome_description">Por favor, lea y acepte nuestros términos antes de usar la aplicación</string>
+    <string name="gpl_license_header">Licencia</string>
+    <string name="gpl_license_description">Este proyecto está licenciado bajo la Licencia Pública General de GNU v3.0. Al usar este software, usted acepta los términos de la licencia, que incluyen condiciones para la copia, distribución y modificación.</string>
+    <string name="agree">Aceptar</string>
+    <string name="privacy_policy_header">Política de Privacidad</string>
+    <string name="privacy_policy_summary">Nos comprometemos a proteger su privacidad.Esta aplicación sigue estrictamente los principios de "Privacidad por Diseño" y "Minimización de Datos", y no recopila información personal alguna.
+        \n\nRecopilación de información:
+        \nPuede utilizar todas las funciones de esta aplicación sin proporcionar datos personales. No recopilamos, almacenamos ni procesamos su información de identificación personal.
+        \n\nUso de datos:
+        \nDado que no recopilamos información personal, no utilizaremos sus datos para ningún propósito, incluidos análisis, seguimiento publicitario o intercambio con terceros.
+        \n\nActualizaciones de la política:
+        \nCualquier revisión de esta política de privacidad se publicará en la página de GitHub del proyecto y entrará en vigor con las actualizaciones de la aplicación. No se proporcionará aviso adicional.</string>
+    <string name="disclaimer_header">Descargo de Responsabilidad</string>
+    <string name="disclaimer_summary">Esta aplicación se proporciona tal cual sin garantías expresas o implícitas de ningún tipo, incluyendo pero no limitado a garantías de comercialización, idoneidad para un propósito particular y no infracción.
+        \n\nUso bajo su propio riesgo:
+        \nUsted asume todos los riesgos derivados del uso de esta aplicación. No garantizamos la exactitud o integridad de las funciones de la aplicación.
+        \n\nLimitación de responsabilidad:
+        \nEn ningún caso seremos responsables por daños (incluyendo daños indirectos o consecuentes) resultantes del uso o la imposibilidad de usar esta aplicación.
+        \n\nDisponibilidad del servicio:
+        \nNo garantizamos que la aplicación esté libre de interrupciones o errores. La aplicación puede experimentar interrupciones debido a actualizaciones técnicas, mantenimiento u otros eventos de fuerza mayor.</string>
+    <string name="light_mode">Modo Claro</string>
+    <string name="dark_mode">Modo Oscuro</string>
+    <string name="auto_mode">Automático</string>
+    <string name="theme_mode">Theme Mode</string>
+    <string name="theme_color">Theme Color</string>
+    <string name="custom_color">Custom Color</string>
+    <string name="preview">Vista previa</string>
+    <string name="help">Help</string>
+</resources>

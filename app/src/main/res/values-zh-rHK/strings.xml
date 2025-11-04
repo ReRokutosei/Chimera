@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">奇美拉</string>
+    
+    <!-- Embedded Picker Strings -->
+    <string name="pick_multiple_media">選擇</string>
+    <string name="pick_single_media">選擇</string>
+    <string name="close">關閉</string>
+    <string name="no_permissions">無權限</string>
+    <string name="request">請求</string>
+    <string name="all">全部</string>
+    <string name="grant_camera_permission_to_capture_image">授予相機權限以拍照</string>
+    <string name="pick_image">選擇圖片</string>
+    <string name="file_provider">com.t8rin.embeddedpicker.fileprovider</string>
+    <string name="embedded_picker">嵌入式選擇器</string>
+    <string name="embedded_picker_sub">使用 Image Toolbox 的高級圖片選擇器</string>
+    
+    <!-- Image Reorder Carousel Strings -->
+    <string name="images_order">圖片順序</string>
+    <string name="add">添加</string>
+    <string name="remove">移除</string>
+    
+    <!-- Open Source Licenses -->
+    <string name="open_source_licenses">開源許可證</string>
+    
+    <!-- UI Strings -->
+    <string name="disagree_and_exit">拒絕並退出</string>
+    <string name="clear_images">清空圖片</string>
+    <string name="start_stitching">開始拼接</string>
+    <string name="vertical">縱向</string>
+    <string name="horizontal">橫向</string>
+    <string name="min">最小</string>
+    <string name="original">原始</string>
+    <string name="max">最大</string>
+    <string name="delete">刪除</string>
+    <string name="unknown_image">未知圖片</string>
+    <string name="unknown_type">未知類型</string>
+    <string name="move_up">向上移動</string>
+    <string name="move_down">向下移動</string>
+    <string name="storage_permission_required">需要存儲權限才能訪問圖片</string>
+    <string name="error">錯誤</string>
+    <string name="ok">確定</string>
+    <string name="select_images">選擇圖片</string>
+    <string name="please_select_images">請選擇要拼接的圖片</string>
+    <string name="stitch_direction">拼接方向:</string>
+    <string name="image_overlay">圖片疊加:</string>
+    <string name="overlay_disabled">禁用</string>
+    <string name="overlay_enabled">啓用</string>
+    <string name="width_scaling">寬度縮放:</string>
+    <string name="height_scaling">高度縮放:</string>
+    <string name="overlay_ratio">被疊加區域佔比:</string>
+    <string name="image_spacing">圖片間隔:</string>
+    <string name="switch_theme">切換主題</string>
+    <string name="confirm">確認</string>
+    <string name="cancel">取消</string>
+    <string name="version">版本</string>
+    <string name="about">關於</string>
+    <string name="developer_info">應用程式開發者\nReRokutosei</string>
+    <string name="icon_designer">應用圖示設計\nFreepik</string>
+    <string name="developer_avatar">開發者頭像</string>
+    <string name="developer_information">開發者資訊</string>
+    <string name="display_settings">顯示設置</string>
+    <string name="dynamic_colors">動態色彩</string>
+    <string name="dark_mode_follow_system">深色模式跟隨系統</string>
+    <string name="slider_handle_icon">滑塊手柄圖標</string>
+    <string name="material_star_shape">星形</string>
+    <string name="small_material_star_shape">小星形</string>
+    <string name="droplet_shape">水滴</string>
+    <string name="egg_shape">雞蛋</string>
+    <string name="oval_shape">橢圓</string>
+    <string name="pill_shape">藥丸</string>
+    <string name="squircle_shape">方圓</string>
+    <string name="file_picker_settings">文件選擇設置</string>
+    <string name="auto_clear_selected">自動清理已選圖片</string>
+    <string name="clear_after_stitching">完成拼接後刪除主頁面已選的圖片</string>
+    <string name="use_saf_picker">使用存儲訪問框架選擇器</string>
+    <string name="use_saf_without_permission">使用無需權限的SAF選擇圖片</string>
+    <string name="default_picker_info">您的設備默認使用此選擇器</string>
+    <string name="image_output_settings">圖片輸出設置</string>
+    <string name="output_format">輸出圖片格式</string>
+    <string name="output_quality">輸出圖片質量</string>
+    <string name="back">返回</string>
+    <string name="other_settings">其他</string>
+    <string name="log_level">日誌等級</string>
+    <string name="select_log_level">選擇日誌等級</string>
+    <string name="performance_settings">性能設置</string>
+    <string name="engine_selection">引擎選擇</string>
+    <string name="select_stitching_engine">選擇圖片拼接引擎</string>
+    <string name="multithreading">多線程加速計算</string>
+    <string name="multithreading_desc">使用多線程並行處理圖片，提高拼接速度</string>
+    <string name="high_memory_threshold">提高內存閾值</string>
+    <string name="high_memory_threshold_desc">將內存閾值提升到設備總RAM的80%</string>
+    <string name="stitching_result">拼接結果</string>
+    <string name="no_valid_result">未生成有效的圖片結果</string>
+    <string name="stitching_failed">拼接失敗</string>
+    <string name="log_content">日誌內容:\n</string>
+    <string name="copy_log">複製日誌</string>
+    <string name="view_log">查看日誌</string>
+    <string name="save_result">保存結果</string>
+    <string name="share">分享</string>
+    <string name="saving">保存中</string>
+    <string name="save">保存</string>
+    <string name="share_stitched_image">分享拼接圖片</string>
+    <string name="image_saved_to_album">圖片已保存到相冊</string>
+    <string name="save_failed">保存失敗</string>
+    <string name="failed_to_read_log_file">無法讀取日誌文件: %1$s</string>
+    <string name="log_file_not_exist">日誌文件不存在</string>
+    <string name="images_selected">已選擇%1$d張新圖片</string>
+    <string name="select_two_or_more_images">請選擇兩張及其以上的圖片</string>
+    <string name="estimated_resolution">預計解像度: %1$d × %2$d</string>
+    <string name="resolution_limit_exceeded">解像度超出限制！\n請在設定中選擇PNG格式</string>
+    
+    <!-- ImageSharer -->
+
+    <!-- Log Levels -->
+    <string name="settings">設定</string>
+    <string name="privacy_policy_and_disclaimer">私隱條款及免責聲明</string>
+    <string name="full_documents_info">獲取完整的私隱政策、免責聲明和許可證資訊，請訪問我們的項目頁面：\nhttps://github.com/ReRokutosei/Chimera</string>
+    <string name="welcome_title">歡迎使用 Chimera</string>
+    <string name="welcome_description">使用本應用程式前，請閱讀並同意我們的條款</string>
+    <string name="gpl_license_header">許可證</string>
+    <string name="gpl_license_description">本項目採用 GNU 通用公共許可證第3.0版授權。使用本軟件即表示您同意該許可證的條款，包括複製、分發及修改的條件。</string>
+    <string name="agree">同意</string>
+    <string name="privacy_policy_header">私隱政策</string>
+    <string name="privacy_policy_summary">我們致力於保護您的隱私。本應用嚴格遵循「私隱設計」與「數據最小化」原則，不收集任何個人資訊。
+        \n\n資訊收集：\n您無需提供任何個人資料即可使用本應用的全部功能。我們不會收集、儲存或處理您的個人身份資訊。
+        \n\n數據使用：\n因我們不收集個人資訊，故不會將您的數據用於任何目的，包括分析、廣告追蹤或與第三方共享。
+        \n\n政策更新：\n本私隱政策的任何修訂將在項目的GitHub頁面發布，並隨應用更新生效，恕不另行通知。</string>
+    <string name="disclaimer_header">免責聲明</string>
+    <string name="disclaimer_summary">本應用按「現狀」提供，不提供任何形式的明示或暗示的擔保，包括但不限於對適用性、特定目的的適用性及不侵權的擔保。
+        \n\n風險自擔：\n使用本應用所產生的所有風險由您自行承擔。應用功能的準確性和完整性不做擔保。
+        \n\n責任限制：\n在任何情況下，我們均不對因使用或無法使用本應用而導致的任何損害賠償（包括間接損失、附帶損失）承擔責任。
+        \n\n功能保障：\n我們不擔保應用不會中斷，或操作不會出錯。應用可能因技術更新、維護或其他不可抗力因素而中斷服務。</string>
+    <string name="light_mode">光亮模式</string>
+    <string name="dark_mode">黑暗模式</string>
+    <string name="auto_mode">跟隨系統</string>
+    <string name="theme_mode">Theme Mode</string>
+    <string name="theme_color">Theme Color</string>
+    <string name="custom_color">Custom Color</string>
+    <string name="preview">預覽</string>
+    <string name="help">Help</string>
+</resources>

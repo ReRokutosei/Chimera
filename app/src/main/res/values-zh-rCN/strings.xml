@@ -1,0 +1,179 @@
+<resources>
+    <string name="app_name">奇美拉</string>
+    
+    <!-- Embedded Picker Strings -->
+    <string name="pick_multiple_media">选择</string>
+    <string name="pick_single_media">选择</string>
+    <string name="close">关闭</string>
+    <string name="no_permissions">无权限</string>
+    <string name="request">请求</string>
+    <string name="all">全部</string>
+    <string name="grant_camera_permission_to_capture_image">授予相机权限以拍照</string>
+    <string name="pick_image">选择图片</string>
+    <string name="file_provider">com.t8rin.embeddedpicker.fileprovider</string>
+    <string name="embedded_picker">嵌入式选择器</string>
+    <string name="embedded_picker_sub">使用 Image Toolbox 的高级图片选择器</string>
+    
+    <!-- Image Reorder Carousel Strings -->
+    <string name="images_order">图片顺序</string>
+    <string name="add">添加</string>
+    <string name="remove">移除</string>
+    
+    <!-- Open Source Licenses -->
+    <string name="open_source_licenses">开源许可证</string>
+    
+    <!-- UI Strings -->
+    <string name="disagree_and_exit">拒绝并退出</string>
+    <string name="clear_images">清空图片</string>
+    <string name="start_stitching">开始拼接</string>
+    <string name="vertical">纵向</string>
+    <string name="horizontal">横向</string>
+    <string name="min">最小</string>
+    <string name="original">原始</string>
+    <string name="max">最大</string>
+    <string name="delete">删除</string>
+    <string name="unknown_image">未知图片</string>
+    <string name="unknown_type">未知类型</string>
+    <string name="move_up">向上移动</string>
+    <string name="move_down">向下移动</string>
+    <string name="storage_permission_required">需要存储权限才能访问图片</string>
+    <string name="error">错误</string>
+    <string name="ok">确定</string>
+    <string name="select_images">选择图片</string>
+    <string name="please_select_images">请选择要拼接的图片</string>
+    <string name="stitch_direction">拼接方向:</string>
+    <string name="image_overlay">图片叠加:</string>
+    <string name="overlay_disabled">禁用</string>
+    <string name="overlay_enabled">启用</string>
+    <string name="width_scaling">宽度缩放:</string>
+    <string name="height_scaling">高度缩放:</string>
+    <string name="overlay_ratio">被叠加区域占比:</string>
+    <string name="image_spacing">图片间隔:</string>
+    <string name="switch_theme">切换主题</string>
+    <string name="confirm">确认</string>
+    <string name="cancel">取消</string>
+    <string name="version">版本</string>
+    <string name="about">关于</string>
+    <string name="developer_info">应用程序开发\nReRokutosei</string>
+    <string name="icon_designer">应用程序图标设计\nFreepik</string>
+    <string name="developer_avatar">开发者头像</string>
+    <string name="developer_information">开发者信息</string>
+    <string name="display_settings">显示设置</string>
+    <string name="dynamic_colors">动态色彩</string>
+    <string name="dark_mode_follow_system">深色模式跟随系统</string>
+    <string name="slider_handle_icon">滑块手柄图标</string>
+    <string name="material_star_shape">星形</string>
+    <string name="small_material_star_shape">小星形</string>
+    <string name="droplet_shape">水滴</string>
+    <string name="egg_shape">鸡蛋</string>
+    <string name="oval_shape">椭圆</string>
+    <string name="pill_shape">药丸</string>
+    <string name="squircle_shape">方圆</string>
+    <string name="file_picker_settings">文件选择设置</string>
+    <string name="auto_clear_selected">自动清理已选图片</string>
+    <string name="clear_after_stitching">完成拼接后删除主页面已选的图片</string>
+    <string name="use_saf_picker">使用存储访问框架选择器</string>
+    <string name="use_saf_without_permission">使用无需权限的SAF选择图片</string>
+    <string name="default_picker_info">您的设备默认使用此选择器</string>
+    <string name="image_output_settings">图片输出设置</string>
+    <string name="output_format">输出图片格式</string>
+    <string name="output_quality">输出图片质量</string>
+    <string name="back">返回</string>
+    <string name="other_settings">其他</string>
+    <string name="log_level">日志等级</string>
+    <string name="select_log_level">选择日志等级</string>
+    <string name="performance_settings">性能设置</string>
+    <string name="engine_selection">引擎选择</string>
+    <string name="select_stitching_engine">选择图片拼接引擎</string>
+    <string name="multithreading">多线程加速计算</string>
+    <string name="multithreading_desc">使用多线程并行处理图片，提高拼接速度</string>
+    <string name="high_memory_threshold">提高内存阈值</string>
+    <string name="high_memory_threshold_desc">将内存阈值提升到设备总RAM的80%</string>
+    <string name="stitching_result">拼接结果</string>
+    <string name="no_valid_result">未生成有效的图片结果</string>
+    <string name="stitching_failed">拼接失败</string>
+    <string name="log_content">日志内容:\n</string>
+    <string name="copy_log">复制日志</string>
+    <string name="view_log">查看日志</string>
+    <string name="save_result">保存结果</string>
+    <string name="share">分享</string>
+    <string name="saving">保存中</string>
+    <string name="save">保存</string>
+    <string name="share_stitched_image">分享拼接图片</string>
+    <string name="image_saved_to_album">图片已保存到相册</string>
+    <string name="save_failed">保存失败</string>
+    <string name="failed_to_read_log_file">无法读取日志文件: %1$s</string>
+    <string name="log_file_not_exist">日志文件不存在</string>
+    <string name="images_selected">已选择%1$d张新图片</string>
+    <string name="select_two_or_more_images">请选择两张及其以上的图片</string>
+    <string name="estimated_resolution">预计分辨率: %1$d × %2$d</string>
+    <string name="resolution_limit_exceeded">分辨率超出限制！\n请在设置中选择PNG格式</string>
+    
+    <!-- ImageSharer -->
+
+    <!-- Log Levels -->
+    <string name="settings">设置</string>
+    <string name="privacy_policy_and_disclaimer">隐私政策和免责声明</string>
+    <string name="privacy_policy_header">隐私政策</string>
+    <string name="privacy_policy_summary">我们致力于保护您的隐私。本应用严格遵循隐私设计与数据最小化原则，不收集任何个人信息。
+        \n\n信息收集：
+        \n您无需提供任何个人数据即可使用本应用的全部功能。我们不会收集、存储或处理您的个人身份信息。
+        \n\n数据使用：
+        \n因我们不收集个人信息，故不会将您的数据用于任何目的，包括分析、广告追踪或与第三方共享。
+        \n\n政策更新：
+        \n本隐私政策的任何修订将在项目的GitHub页面发布，并随应用更新生效，恕不另行通知。</string>
+    <string name="disclaimer_header">免责声明</string>
+    <string name="disclaimer_summary">本应用按现状提供，不提供任何形式的明示或暗示的担保，包括但不限于对适用性、特定目的的适用性及不侵权的担保。
+        \n\n风险自担：
+        \n使用本应用所产生的所有风险由您自行承担。应用功能的准确性和完整性不做担保。
+        \n\n责任限制：
+        \n在任何情况下，我们均不对因使用或无法使用本应用而导致的任何损害赔偿（包括间接损失、附带损失）承担责任。
+        \n\n功能保障：
+        \n我们不担保应用不会中断，或操作不会出错。应用可能因技术更新、维护或其他不可抗力因素而中断服务。</string>
+    <string name="full_documents_info">获取完整的隐私政策、免责声明和许可证信息，请访问我们的项目页面：\nhttps://github.com/ReRokutosei/Chimera</string>
+    <string name="welcome_title">欢迎使用 Chimera</string>
+    <string name="welcome_description">使用本应用前，请阅读并同意我们的条款</string>
+    <string name="gpl_license_header">许可证</string>
+    <string name="gpl_license_description">本项目采用 GNU 通用公共许可证第3.0版授权。\n使用本软件即表示您同意该许可证的条款\n包括复制、分发和修改的条件。</string>
+    <string name="agree">同意</string>
+    <string name="light_mode">浅色模式</string>
+    <string name="dark_mode">深色模式</string>
+    <string name="auto_mode">跟随系统</string>
+    <string name="theme_mode">主题方案</string>
+    <string name="theme_color">主题配色</string>
+    <string name="custom_color">自定义色彩</string>
+    <string name="preview">预览</string>
+    <string name="help">帮助</string>
+    
+    <!-- Help Content -->
+    <string name="help_card_title_mode_direct">✨ 普通拼接</string>
+    <string name="help_card_content_mode_direct">(即不启用图片叠加)
+        \n按照设定的方向（横向或纵向）直接拼接图片。
+        \n支持调节图片间隔（0–50px）和整体缩放模式（垂直拼接统一宽度，水平拼接统一高度）。
+        \n\n最小：查找所有图片中的最小对齐尺寸（即最小宽度或最小高度），将所有图片都等比例缩放。
+        \n\n原始：保持所有图片各自的原始尺寸。
+        \n\n最大：查找所有图片中的最大对齐尺寸（即最大宽度或最大高度），将所有图片都等比例缩放。
+        \n\n选择图片之后，可以长按拖动已选图片改变顺序</string>
+    <string name="help_card_title_mode_overlay">✨ 叠加拼接</string>
+    <string name="help_card_content_mode_overlay" formatted="false">以第一张图片为基准，与下一张图片进行重叠绘制，可以用来制作常见的视频字幕截图。
+        \n您可以调节下一张图的被叠加区域占比（0–100%）</string>
+    <string name="help_card_title_format_limit">🔒 图片格式的限制</string>
+    <string name="help_card_content_format_limit">拼接图片受文件格式的技术规范和设备内存的双重限制。
+        \n请注意：
+        \nJPEG：技术理论最大尺寸为 65,535 × 65,535 像素（16 位限制），App默认输出 JPEG 格式。
+        \n\nWebP：无论是无损还是有损，其最大尺寸通常被限制在 16,384 × 16,384 像素左右。
+        \n\nPNG：技术理论最大尺寸高达 4,294,967,295 × 4,294,967,295 像素（32 位无符号整数限制），理论上是最高的。
+        \n\n❗ 如果图片较多或图片较大，建议前往设置调整为 PNG 格式，并开启提高内存阈值。
+        \n\n❗❗❗ 无论格式如何，实际操作中最大的限制是设备内存(RAM)和安卓虚拟机机制限制。超大图解码所需的内存（宽 * 高 * 4 字节/像素）很容易导致应用崩溃（OOM Crash）。</string>
+    <string name="help_card_title_setting_output">⚙️ 图片输出设置</string>
+    <string name="help_card_content_setting_output" formatted="false">输出图片格式：支持 PNG、JPEG 和 WEBP。
+        \n\n输出图片质量：滑块（1%-100%）仅在输出格式为 JPEG 或 WEBP 时生效，值越大生成的图片体积越大。</string>
+    <string name="help_card_title_setting_performance">🚀 性能设置</string>
+    <string name="help_card_content_setting_performance" formatted="false">多线程加速计算：开启后，图片加载和拼接等处理将使用 Kotlin 协程并行执行，可显著提高拼接速度。
+        \n\n提高内存阈值：将用于拼接画布分配的内存上限从默认的 50% 提高到 80%，允许处理更大的图片，但增加了 OOM（内存溢出）的风险。</string>
+    <string name="help_card_title_setting_picker">🖼️ 文件选择设置</string>
+    <string name="help_card_content_setting_picker">自动清理已选图片：完成拼接后，删除主页面已选的图片。
+        \n\n使用存储访问框架选择器（SAF）：无需请求存储权限，通过系统文件选择器访问文件，适合注重隐私的用户。
+        \n\n嵌入式选择器：从优秀强大的ImageToolbox项目抽取的高级嵌入式选择器。解决了系统 Photo Picker 无法查看全部相册或 URI 顺序错乱等问题。但需要存储权限，且初次加载相册数据可能需要几秒钟时间。</string>
+
+</resources>

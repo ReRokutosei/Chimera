@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- FancySlider custom attributes -->
+    <declare-styleable name="FancySlider">
+        <attr name="sliderValue" format="float" />
+        <attr name="sliderValueRange" format="string" />
+        <attr name="sliderEnabled" format="boolean" />
+        <attr name="sliderSteps" format="integer" />
+        <attr name="sliderDrawContainer" format="boolean" />
+        <!-- Colors -->
+        <attr name="sliderActiveTrackColor" format="color|reference" />
+        <attr name="sliderInactiveTrackColor" format="color|reference" />
+        <attr name="sliderThumbColor" format="color|reference" />
+        <attr name="sliderDisabledThumbColor" format="color|reference" />
+        <attr name="sliderDisabledActiveTrackColor" format="color|reference" />
+        <attr name="sliderDisabledInactiveTrackColor" format="color|reference" />
+    </declare-styleable>
+
+    <!-- FancyRangeSlider custom attributes -->
+    <declare-styleable name="FancyRangeSlider">
+        <attr name="rangeSliderStartValue" format="float" />
+        <attr name="rangeSliderEndValue" format="float" />
+        <attr name="rangeSliderValueRange" format="string" />
+        <attr name="rangeSliderEnabled" format="boolean" />
+        <attr name="rangeSliderSteps" format="integer" />
+        <attr name="rangeSliderDrawContainer" format="boolean" />
+        <!-- Colors -->
+        <attr name="rangeSliderActiveTrackColor" format="color|reference" />
+        <attr name="rangeSliderInactiveTrackColor" format="color|reference" />
+        <attr name="rangeSliderThumbColor" format="color|reference" />
+        <attr name="rangeSliderDisabledThumbColor" format="color|reference" />
+        <attr name="rangeSliderDisabledActiveTrackColor" format="color|reference" />
+        <attr name="rangeSliderDisabledInactiveTrackColor" format="color|reference" />
+    </declare-styleable>
+</resources>

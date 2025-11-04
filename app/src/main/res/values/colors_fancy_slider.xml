@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Default slider colors -->
+    <color name="slider_active_track">#FF6200EE</color>
+    <color name="slider_inactive_track">#806200EE</color>
+    <color name="slider_thumb">#FF6200EE</color>
+    <color name="slider_disabled_active_track">#1F000000</color>
+    <color name="slider_disabled_inactive_track">#1F000000</color>
+    <color name="slider_disabled_thumb">#FF000000</color>
+    
+    <!-- Container colors -->
+    <color name="container_background">#FFFFFF</color>
+    <color name="container_shadow">#14000000</color>
+    <color name="container_border">#1F000000</color>
+    
+    <!-- Animation colors -->
+    <color name="ripple_color">#336200EE</color>
+    <color name="hover_color">#0D6200EE</color>
+</resources>

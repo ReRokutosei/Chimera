@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pick_multiple_media">選択</string>
+    <string name="pick_single_media">選択</string>
+    <string name="close">閉じる</string>
+    <string name="no_permissions">権限がありません</string>
+    <string name="request">リクエスト</string>
+    <string name="all">すべて</string>
+    <string name="grant_camera_permission_to_capture_image">画像をキャプチャするためのカメラ権限を付与</string>
+    <string name="pick_image">画像を選択</string>
+    <string name="file_provider">com.t8rin.embeddedpicker.fileprovider</string>
+    <string name="embedded_picker">埋め込みピッカー</string>
+    <string name="embedded_picker_sub">Image Toolboxの高機能な画像ピッカーを使用</string>
+    <string name="search_here">ここで検索</string>
+    <string name="exit">終了</string>
+    <string name="nothing_found_by_search">検索結果はありません</string>
+    
+    <!-- Date section labels -->
+    <string name="date_section_today">今日</string>
+    <string name="date_section_yesterday">昨日</string>
+    <string name="date_section_this_week">今週</string>
+    <string name="date_section_this_month">今月</string>
+    <string name="date_section_this_year">今年</string>
+</resources>

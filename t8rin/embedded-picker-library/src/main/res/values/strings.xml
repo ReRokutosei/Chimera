@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pick_multiple_media">Pick</string>
+    <string name="pick_single_media">Pick</string>
+    <string name="close">Close</string>
+    <string name="no_permissions">No permissions</string>
+    <string name="request">Request</string>
+    <string name="all">All</string>
+    <string name="grant_camera_permission_to_capture_image">Grant camera permission to capture image</string>
+    <string name="pick_image">Pick image</string>
+    <string name="file_provider">com.t8rin.embeddedpicker.fileprovider</string>
+    <string name="embedded_picker">Embedded picker</string>
+    <string name="embedded_picker_sub">Uses Image Toolbox\'s elegant image picker</string>
+    <string name="search_here">Search here</string>
+    <string name="exit">Exit</string>
+    <string name="nothing_found_by_search">Nothing found by search</string>
+    
+    <!-- Date section labels -->
+    <string name="date_section_today">Today</string>
+    <string name="date_section_yesterday">Yesterday</string>
+    <string name="date_section_this_week">This week</string>
+    <string name="date_section_this_month">This month</string>
+    <string name="date_section_this_year">This year</string>
+</resources>

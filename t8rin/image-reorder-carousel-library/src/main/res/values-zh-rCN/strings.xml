@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="images_order">Images Order</string>
+    <string name="add">添加</string>
+    <string name="remove">删除</string>
+</resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pick_multiple_media">Seleccionar</string>
+    <string name="pick_single_media">Seleccionar</string>
+    <string name="close">Cerrar</string>
+    <string name="no_permissions">Sin permisos</string>
+    <string name="request">Solicitar</string>
+    <string name="all">Todo</string>
+    <string name="grant_camera_permission_to_capture_image">Otorgar permiso de cámara para capturar imagen</string>
+    <string name="pick_image">Seleccionar imagen</string>
+    <string name="file_provider">com.t8rin.embeddedpicker.fileprovider</string>
+    <string name="embedded_picker">Selector integrado</string>
+    <string name="embedded_picker_sub">Utiliza el selector de imágenes de alta gama de Image Toolbox</string>
+    <string name="search_here">Buscar aquí</string>
+    <string name="exit">Salir</string>
+    <string name="nothing_found_by_search">No se encontró nada en la búsqueda</string>
+    
+    <!-- Date section labels -->
+    <string name="date_section_today">Hoy</string>
+    <string name="date_section_yesterday">Ayer</string>
+    <string name="date_section_this_week">Esta semana</string>
+    <string name="date_section_this_month">Este mes</string>
+    <string name="date_section_this_year">Este año</string>
+</resources>
