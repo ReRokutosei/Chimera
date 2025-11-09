@@ -147,7 +147,7 @@ dependencies {
     implementation("androidx.compose.animation:animation-core:1.9.3")
 
     // 添加Material3支持
-    implementation("com.google.android.material:material:1.10.0")
+    implementation("com.google.android.material:material:1.13.0")
     implementation(libs.androidx.material3)
     // 添加SubsamplingScaleImageView库用于大图显示
     implementation("com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0")
