@@ -440,10 +440,10 @@
         },
         {
             "uniqueId": "androidx.compose.material:material",
-            "artifactVersion": "1.9.3",
+            "artifactVersion": "1.9.4",
             "name": "Compose Material Components",
             "description": "Compose Material Design Components library",
-            "website": "https://developer.android.com/jetpack/androidx/releases/compose-material#1.9.3",
+            "website": "https://developer.android.com/jetpack/androidx/releases/compose-material#1.9.4",
             "developers": [
                 {
                     "name": "The Android Open Source Project"
@@ -515,10 +515,10 @@
         },
         {
             "uniqueId": "androidx.compose.material:material-ripple",
-            "artifactVersion": "1.9.3",
+            "artifactVersion": "1.9.4",
             "name": "Compose Material Ripple",
             "description": "Material ripple used to build interactive components",
-            "website": "https://developer.android.com/jetpack/androidx/releases/compose-material#1.9.3",
+            "website": "https://developer.android.com/jetpack/androidx/releases/compose-material#1.9.4",
             "developers": [
                 {
                     "name": "The Android Open Source Project"
@@ -865,7 +865,7 @@
         },
         {
             "uniqueId": "androidx.compose:compose-bom",
-            "artifactVersion": "2025.10.00",
+            "artifactVersion": "2025.11.00",
             "name": "Jetpack Compose Libraries BOM",
             "description": "A compatible set of Jetpack Compose libraries.",
             "website": "https://developer.android.com/jetpack",
@@ -903,7 +903,7 @@
         },
         {
             "uniqueId": "androidx.constraintlayout:constraintlayout",
-            "artifactVersion": "2.0.1",
+            "artifactVersion": "2.1.0",
             "name": "Android ConstraintLayout",
             "description": "ConstraintLayout for Android",
             "website": "http://tools.android.com",
@@ -913,8 +913,8 @@
                 }
             ],
             "scm": {
-                "connection": "git://android.googlesource.com/platform/tools/sherpa.git",
-                "url": "https://android.googlesource.com/platform/tools/sherpa"
+                "connection": "git@github.com:androidx/constraintlayout.git",
+                "url": "https://github.com/androidx/constraintlayout"
             },
             "licenses": [
                 "Apache-2.0"
@@ -924,10 +924,10 @@
             ]
         },
         {
-            "uniqueId": "androidx.constraintlayout:constraintlayout-solver",
-            "artifactVersion": "2.0.1",
-            "name": "Android ConstraintLayout Solver",
-            "description": "Solver for ConstraintLayout",
+            "uniqueId": "androidx.constraintlayout:constraintlayout-core",
+            "artifactVersion": "1.0.0",
+            "name": "Android ConstraintLayout Core",
+            "description": "ConstraintLayout core",
             "website": "http://tools.android.com",
             "developers": [
                 {
@@ -935,8 +935,8 @@
                 }
             ],
             "scm": {
-                "connection": "git://android.googlesource.com/platform/tools/sherpa.git",
-                "url": "https://android.googlesource.com/platform/tools/sherpa"
+                "connection": "git@github.com:androidx/constraintlayout.git",
+                "url": "https://github.com/androidx/constraintlayout"
             },
             "licenses": [
                 "Apache-2.0"
@@ -1284,28 +1284,6 @@
             ]
         },
         {
-            "uniqueId": "androidx.documentfile:documentfile",
-            "artifactVersion": "1.0.0",
-            "name": "Support Document File",
-            "description": "The Support Library is a static library that you can add to your Android application in order to use APIs that are either not available for older platform versions or utility APIs that aren't a part of the framework APIs. Compatible on devices running API 14 or later.",
-            "website": "http://developer.android.com/tools/extras/support-library.html",
-            "developers": [
-                {
-                    "name": "The Android Open Source Project"
-                }
-            ],
-            "scm": {
-                "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
-                "url": "http://source.android.com"
-            },
-            "licenses": [
-                "Apache-2.0"
-            ],
-            "funding": [
-                
-            ]
-        },
-        {
             "uniqueId": "androidx.drawerlayout:drawerlayout",
             "artifactVersion": "1.1.1",
             "name": "Support Drawer Layout",
@@ -1329,18 +1307,21 @@
         },
         {
             "uniqueId": "androidx.dynamicanimation:dynamicanimation",
-            "artifactVersion": "1.0.0",
-            "name": "Support DynamicAnimation",
+            "artifactVersion": "1.1.0",
+            "name": "DynamicAnimation",
             "description": "Physics-based animation in support library, where the animations are driven by physics force. You can use this Animation library to create smooth and realistic animations.",
-            "website": "http://developer.android.com/tools/extras/support-library.html",
+            "website": "https://developer.android.com/jetpack/androidx/releases/dynamicanimation#1.1.0",
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
+            "organization": {
+                "name": "The Android Open Source Project"
+            },
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
-                "url": "http://source.android.com"
+                "url": "https://cs.android.com/androidx/platform/frameworks/support"
             },
             "licenses": [
                 "Apache-2.0"
@@ -1491,28 +1472,6 @@
             "uniqueId": "androidx.interpolator:interpolator",
             "artifactVersion": "1.0.0",
             "name": "Support Interpolators",
-            "description": "The Support Library is a static library that you can add to your Android application in order to use APIs that are either not available for older platform versions or utility APIs that aren't a part of the framework APIs. Compatible on devices running API 14 or later.",
-            "website": "http://developer.android.com/tools/extras/support-library.html",
-            "developers": [
-                {
-                    "name": "The Android Open Source Project"
-                }
-            ],
-            "scm": {
-                "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
-                "url": "http://source.android.com"
-            },
-            "licenses": [
-                "Apache-2.0"
-            ],
-            "funding": [
-                
-            ]
-        },
-        {
-            "uniqueId": "androidx.legacy:legacy-support-core-utils",
-            "artifactVersion": "1.0.0",
-            "name": "Support core utils",
             "description": "The Support Library is a static library that you can add to your Android application in order to use APIs that are either not available for older platform versions or utility APIs that aren't a part of the framework APIs. Compatible on devices running API 14 or later.",
             "website": "http://developer.android.com/tools/extras/support-library.html",
             "developers": [
@@ -1879,33 +1838,11 @@
             ]
         },
         {
-            "uniqueId": "androidx.localbroadcastmanager:localbroadcastmanager",
-            "artifactVersion": "1.0.0",
-            "name": "Support Local Broadcast Manager",
-            "description": "The Support Library is a static library that you can add to your Android application in order to use APIs that are either not available for older platform versions or utility APIs that aren't a part of the framework APIs. Compatible on devices running API 14 or later.",
-            "website": "http://developer.android.com/tools/extras/support-library.html",
-            "developers": [
-                {
-                    "name": "The Android Open Source Project"
-                }
-            ],
-            "scm": {
-                "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
-                "url": "http://source.android.com"
-            },
-            "licenses": [
-                "Apache-2.0"
-            ],
-            "funding": [
-                
-            ]
-        },
-        {
             "uniqueId": "androidx.navigation:navigation-common",
-            "artifactVersion": "2.9.5",
+            "artifactVersion": "2.9.6",
             "name": "Navigation Common",
             "description": "Android Navigation-Common",
-            "website": "https://developer.android.com/jetpack/androidx/releases/navigation#2.9.5",
+            "website": "https://developer.android.com/jetpack/androidx/releases/navigation#2.9.6",
             "developers": [
                 {
                     "name": "The Android Open Source Project"
@@ -1927,10 +1864,10 @@
         },
         {
             "uniqueId": "androidx.navigation:navigation-compose",
-            "artifactVersion": "2.9.5",
+            "artifactVersion": "2.9.6",
             "name": "Compose Navigation",
             "description": "Compose integration with Navigation",
-            "website": "https://developer.android.com/jetpack/androidx/releases/navigation#2.9.5",
+            "website": "https://developer.android.com/jetpack/androidx/releases/navigation#2.9.6",
             "developers": [
                 {
                     "name": "The Android Open Source Project"
@@ -1952,10 +1889,10 @@
         },
         {
             "uniqueId": "androidx.navigation:navigation-runtime",
-            "artifactVersion": "2.9.5",
+            "artifactVersion": "2.9.6",
             "name": "Navigation Runtime",
             "description": "Android Navigation-Runtime",
-            "website": "https://developer.android.com/jetpack/androidx/releases/navigation#2.9.5",
+            "website": "https://developer.android.com/jetpack/androidx/releases/navigation#2.9.6",
             "developers": [
                 {
                     "name": "The Android Open Source Project"
@@ -1967,28 +1904,6 @@
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
                 "url": "https://cs.android.com/androidx/platform/frameworks/support"
-            },
-            "licenses": [
-                "Apache-2.0"
-            ],
-            "funding": [
-                
-            ]
-        },
-        {
-            "uniqueId": "androidx.print:print",
-            "artifactVersion": "1.0.0",
-            "name": "Support Print",
-            "description": "The Support Library is a static library that you can add to your Android application in order to use APIs that are either not available for older platform versions or utility APIs that aren't a part of the framework APIs. Compatible on devices running API 14 or later.",
-            "website": "http://developer.android.com/tools/extras/support-library.html",
-            "developers": [
-                {
-                    "name": "The Android Open Source Project"
-                }
-            ],
-            "scm": {
-                "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
-                "url": "http://source.android.com"
             },
             "licenses": [
                 "Apache-2.0"
@@ -2190,18 +2105,21 @@
         },
         {
             "uniqueId": "androidx.transition:transition",
-            "artifactVersion": "1.2.0",
-            "name": "Android Transition Support Library",
+            "artifactVersion": "1.5.0",
+            "name": "Transition",
             "description": "Android Transition Support Library",
-            "website": "https://developer.android.com/jetpack/androidx",
+            "website": "https://developer.android.com/jetpack/androidx/releases/transition#1.5.0",
             "developers": [
                 {
                     "name": "The Android Open Source Project"
                 }
             ],
+            "organization": {
+                "name": "The Android Open Source Project"
+            },
             "scm": {
                 "connection": "scm:git:https://android.googlesource.com/platform/frameworks/support",
-                "url": "http://source.android.com"
+                "url": "https://cs.android.com/androidx/platform/frameworks/support"
             },
             "licenses": [
                 "Apache-2.0"
@@ -2391,9 +2309,9 @@
         },
         {
             "uniqueId": "com.google.android.material:material",
-            "artifactVersion": "1.10.0",
+            "artifactVersion": "1.13.0",
             "name": "Material Components for Android",
-            "description": "Material Components for Android is a static library that you can add to your Android application in order to use APIs that provide implementations of the Material Design specification. Compatible on devices running API 14 or later.",
+            "description": "Material Components for Android is a static library that you can add to your Android application in order to use APIs that provide implementations of the Material Design specification. Compatible on devices running API 21 or later.",
             "website": "https://github.com/material-components/material-components-android",
             "developers": [
                 {
@@ -3081,7 +2999,7 @@
         },
         {
             "uniqueId": "org.jetbrains.kotlin:kotlin-parcelize-runtime",
-            "artifactVersion": "2.2.20",
+            "artifactVersion": "2.2.21",
             "name": "Parcelize Runtime",
             "description": "Runtime library for the Parcelize compiler plugin",
             "website": "https://kotlinlang.org/",
@@ -3105,7 +3023,7 @@
         },
         {
             "uniqueId": "org.jetbrains.kotlin:kotlin-stdlib",
-            "artifactVersion": "2.2.20",
+            "artifactVersion": "2.2.21",
             "name": "Kotlin Stdlib",
             "description": "Kotlin Standard Library",
             "website": "https://kotlinlang.org/",
@@ -3129,7 +3047,7 @@
         },
         {
             "uniqueId": "org.jetbrains.kotlin:kotlin-stdlib-common",
-            "artifactVersion": "2.2.20",
+            "artifactVersion": "2.2.21",
             "name": "Kotlin Stdlib Common",
             "description": "Kotlin Common Standard Library (legacy, use kotlin-stdlib instead)",
             "website": "https://kotlinlang.org/",

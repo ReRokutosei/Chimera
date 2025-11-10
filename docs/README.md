@@ -252,12 +252,11 @@ The background of the app Settings page, and README Screenshots are from the ani
 - [Android App Startup Runtime](https://developer.android.com/jetpack/androidx/releases/startup#1.1.1) 1.1.1 | Under Apache License 2.0
 - [Android Arch-Common](https://developer.android.com/jetpack/androidx/releases/arch-core#2.2.0) 2.2.0 | Under Apache License 2.0
 - [Android Arch-Runtime](https://developer.android.com/jetpack/androidx/releases/arch-core#2.2.0) 2.2.0 | Under Apache License 2.0
-- [Android ConstraintLayout](http://tools.android.com) 2.0.1 | Under Apache License 2.0
-- [Android ConstraintLayout Solver](http://tools.android.com) 2.0.1 | Under Apache License 2.0
+- [Android ConstraintLayout](http://tools.android.com) 2.1.0 | Under Apache License 2.0
+- [Android ConstraintLayout Core](http://tools.android.com) 1.0.0 | Under Apache License 2.0
 - [Android Graphics Path](https://developer.android.com/jetpack/androidx/releases/graphics#1.0.1) 1.0.1 | Under Apache License 2.0
 - [Android Resource Inspection - Annotations](https://developer.android.com/jetpack/androidx/releases/resourceinspection#1.0.1) 1.0.1 | Under Apache License 2.0
 - [Android Tracing](https://developer.android.com/jetpack/androidx/releases/tracing#1.2.0) 1.2.0 | Under Apache License 2.0
-- [Android Transition Support Library](https://developer.android.com/jetpack/androidx) 1.2.0 | Under Apache License 2.0
 - [AndroidX Autofill](https://developer.android.com/jetpack/androidx) 1.0.0 | Under Apache License 2.0
 - [AndroidX Futures](https://developer.android.com/topic/libraries/architecture/index.html) 1.1.0 | Under Apache License 2.0
 - [androidx.core:core-viewtree](https://developer.android.com/jetpack/androidx/releases/core#1.0.0) 1.0.0 | Under Apache License 2.0
@@ -287,12 +286,12 @@ The background of the app Settings page, and README Screenshots are from the ani
 - [Compose Graphics](https://github.com/JetBrains/compose-jb) 1.7.0 | Under Apache License 2.0
 - [Compose Layouts](https://developer.android.com/jetpack/androidx/releases/compose-foundation#1.9.4) 1.9.4 | Under Apache License 2.0
 - [Compose Layouts](https://github.com/JetBrains/compose-jb) 1.7.0 | Under Apache License 2.0
-- [Compose Material Components](https://developer.android.com/jetpack/androidx/releases/compose-material#1.9.3) 1.9.3 | Under Apache License 2.0
+- [Compose Material Components](https://developer.android.com/jetpack/androidx/releases/compose-material#1.9.4) 1.9.4 | Under Apache License 2.0
 - [Compose Material Icons Core](https://developer.android.com/jetpack/androidx/releases/compose-material#1.7.8) 1.7.8 | Under Apache License 2.0
 - [Compose Material Icons Extended](https://developer.android.com/jetpack/androidx/releases/compose-material#1.7.8) 1.7.8 | Under Apache License 2.0
-- [Compose Material Ripple](https://developer.android.com/jetpack/androidx/releases/compose-material#1.9.3) 1.9.3 | Under Apache License 2.0
+- [Compose Material Ripple](https://developer.android.com/jetpack/androidx/releases/compose-material#1.9.4) 1.9.4 | Under Apache License 2.0
 - [Compose Material3 Components](https://developer.android.com/jetpack/androidx/releases/compose-material3#1.5.0-alpha04) 1.5.0-alpha04 | Under Apache License 2.0
-- [Compose Navigation](https://developer.android.com/jetpack/androidx/releases/navigation#2.9.5) 2.9.5 | Under Apache License 2.0
+- [Compose Navigation](https://developer.android.com/jetpack/androidx/releases/navigation#2.9.6) 2.9.6 | Under Apache License 2.0
 - [Compose Runtime](https://developer.android.com/jetpack/androidx/releases/compose-runtime#1.9.4) 1.9.4 | Under Apache License 2.0
 - [Compose Runtime](https://github.com/JetBrains/compose-jb) 1.7.0 | Under Apache License 2.0
 - [Compose Runtime Annotation](https://developer.android.com/jetpack/androidx/releases/compose-runtime#1.9.4) 1.9.4 | Under Apache License 2.0
@@ -315,6 +314,7 @@ The background of the app Settings page, and README Screenshots are from the ani
 - [DataStore](https://developer.android.com/jetpack/androidx/releases/datastore#1.1.7) 1.1.7 | Under Apache License 2.0
 - [DataStore Core](https://developer.android.com/jetpack/androidx/releases/datastore#1.1.7) 1.1.7 | Under Apache License 2.0
 - [DataStore Core Okio](https://developer.android.com/jetpack/androidx/releases/datastore#1.1.7) 1.1.7 | Under Apache License 2.0
+- [DynamicAnimation](https://developer.android.com/jetpack/androidx/releases/dynamicanimation#1.1.0) 1.1.0 | Under Apache License 2.0
 - [Emoji2](https://developer.android.com/jetpack/androidx/releases/emoji2#1.4.0) 1.4.0 | Under Apache License 2.0
 - [Emoji2 Views Helper](https://developer.android.com/jetpack/androidx/releases/emoji2#1.4.0) 1.4.0 | Under Apache License 2.0
 - [error-prone annotations](https://errorprone.info/error_prone_annotations) 2.15.0 | Under Apache License 2.0
@@ -322,11 +322,11 @@ The background of the app Settings page, and README Screenshots are from the ani
 - [Graphics Shapes](https://developer.android.com/jetpack/androidx/releases/graphics#1.0.1) 1.0.1 | Under Apache License 2.0
 - [Guava ListenableFuture only](https://github.com/google/guava/listenablefuture) 1.0 | Under Apache License 2.0
 - [JetBrains Java Annotations](https://github.com/JetBrains/java-annotations) 23.0.0 | Under Apache License 2.0
-- [Jetpack Compose Libraries BOM](https://developer.android.com/jetpack) 2025.10.00 | Under Apache License 2.0
+- [Jetpack Compose Libraries BOM](https://developer.android.com/jetpack) 2025.11.00 | Under Apache License 2.0
 - [JSpecify annotations](http://jspecify.org/) 1.0.0 | Under Apache License 2.0
 - [Kotlin Libraries bill-of-materials](https://kotlinlang.org/) 1.8.22 | Under Apache License 2.0
-- [Kotlin Stdlib](https://kotlinlang.org/) 2.2.20 | Under Apache License 2.0
-- [Kotlin Stdlib Common](https://kotlinlang.org/) 2.2.20 | Under Apache License 2.0
+- [Kotlin Stdlib](https://kotlinlang.org/) 2.2.21 | Under Apache License 2.0
+- [Kotlin Stdlib Common](https://kotlinlang.org/) 2.2.21 | Under Apache License 2.0
 - [Kotlin Stdlib Jdk7](https://kotlinlang.org/) 1.9.0 | Under Apache License 2.0
 - [Kotlin Stdlib Jdk8](https://kotlinlang.org/) 1.9.0 | Under Apache License 2.0
 - [kotlinx-collections-immutable](https://github.com/Kotlin/kotlinx.collections.immutable) 0.4.0 | Under Apache License 2.0
@@ -353,12 +353,12 @@ The background of the app Settings page, and README Screenshots are from the ani
 - [Lifecycle-Common](https://github.com/JetBrains/compose-jb) 2.8.3 | Under Apache License 2.0
 - [Lifecycle-Common for Java 8](https://developer.android.com/jetpack/androidx/releases/lifecycle#2.9.4) 2.9.4 | Under Apache License 2.0
 - [LiveData Core Kotlin Extensions](https://developer.android.com/jetpack/androidx/releases/lifecycle#2.9.4) 2.9.4 | Under Apache License 2.0
-- [Material Components for Android](https://github.com/material-components/material-components-android) 1.10.0 | Under Apache License 2.0
-- [Navigation Common](https://developer.android.com/jetpack/androidx/releases/navigation#2.9.5) 2.9.5 | Under Apache License 2.0
-- [Navigation Runtime](https://developer.android.com/jetpack/androidx/releases/navigation#2.9.5) 2.9.5 | Under Apache License 2.0
+- [Material Components for Android](https://github.com/material-components/material-components-android) 1.13.0 | Under Apache License 2.0
+- [Navigation Common](https://developer.android.com/jetpack/androidx/releases/navigation#2.9.6) 2.9.6 | Under Apache License 2.0
+- [Navigation Runtime](https://developer.android.com/jetpack/androidx/releases/navigation#2.9.6) 2.9.6 | Under Apache License 2.0
 - [okhttp](https://square.github.io/okhttp/) 4.12.0 | Under Apache License 2.0
 - [okio](https://github.com/square/okio/) 3.9.0 | Under Apache License 2.0
-- [Parcelize Runtime](https://kotlinlang.org/) 2.2.20 | Under Apache License 2.0
+- [Parcelize Runtime](https://kotlinlang.org/) 2.2.21 | Under Apache License 2.0
 - [Preferences DataStore](https://developer.android.com/jetpack/androidx/releases/datastore#1.1.7) 1.1.7 | Under Apache License 2.0
 - [Preferences DataStore Core](https://developer.android.com/jetpack/androidx/releases/datastore#1.1.7) 1.1.7 | Under Apache License 2.0
 - [Preferences DataStore Proto](https://developer.android.com/jetpack/androidx/releases/datastore#1.1.7) 1.1.7 | Under Apache License 2.0
@@ -373,20 +373,16 @@ The background of the app Settings page, and README Screenshots are from the ani
 - [Support AnimatedVectorDrawable](https://developer.android.com/jetpack/androidx) 1.1.0 | Under Apache License 2.0
 - [Support CardView v7](http://developer.android.com/tools/extras/support-library.html) 1.0.0 | Under Apache License 2.0
 - [Support Coordinator Layout](https://developer.android.com/jetpack/androidx) 1.1.0 | Under Apache License 2.0
-- [Support core utils](http://developer.android.com/tools/extras/support-library.html) 1.0.0 | Under Apache License 2.0
 - [Support Cursor Adapter](http://developer.android.com/tools/extras/support-library.html) 1.0.0 | Under Apache License 2.0
 - [Support Custom View](https://developer.android.com/jetpack/androidx) 1.1.0 | Under Apache License 2.0
-- [Support Document File](http://developer.android.com/tools/extras/support-library.html) 1.0.0 | Under Apache License 2.0
 - [Support Drawer Layout](https://developer.android.com/jetpack/androidx) 1.1.1 | Under Apache License 2.0
-- [Support DynamicAnimation](http://developer.android.com/tools/extras/support-library.html) 1.0.0 | Under Apache License 2.0
 - [Support ExifInterface](https://developer.android.com/jetpack/androidx/releases/exifinterface#1.3.7) 1.3.7 | Under Apache License 2.0
 - [Support fragment](https://developer.android.com/jetpack/androidx/releases/fragment#1.5.4) 1.5.4 | Under Apache License 2.0
 - [Support Interpolators](http://developer.android.com/tools/extras/support-library.html) 1.0.0 | Under Apache License 2.0
 - [Support loader](http://developer.android.com/tools/extras/support-library.html) 1.0.0 | Under Apache License 2.0
-- [Support Local Broadcast Manager](http://developer.android.com/tools/extras/support-library.html) 1.0.0 | Under Apache License 2.0
-- [Support Print](http://developer.android.com/tools/extras/support-library.html) 1.0.0 | Under Apache License 2.0
 - [Support VectorDrawable](https://developer.android.com/jetpack/androidx) 1.1.0 | Under Apache License 2.0
 - [Support View Pager](http://developer.android.com/tools/extras/support-library.html) 1.0.0 | Under Apache License 2.0
+- [Transition](https://developer.android.com/jetpack/androidx/releases/transition#1.5.0) 1.5.0 | Under Apache License 2.0
 - [VersionedParcelable](http://developer.android.com/tools/extras/support-library.html) 1.1.1 | Under Apache License 2.0
 - [ViewPager2](https://developer.android.com/jetpack/androidx/releases/viewpager2#1.1.0-beta02) 1.1.0-beta02 | Under Apache License 2.0
 
