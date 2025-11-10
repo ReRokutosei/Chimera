@@ -25,6 +25,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import androidx.core.graphics.createBitmap
 import com.rerokutosei.chimera.ui.main.WidthScale
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * 直接拼接策略实现（垂直和水平拼接）
@@ -63,11 +65,13 @@ class DirectStitchingStrategy(
                 bitmaps // WidthScale.NONE，不进行缩放
             }
         }
-        
-        return if (isVertical) {
-            stitchVertically(processedBitmaps, options.spacing)
-        } else {
-            stitchHorizontally(processedBitmaps, options.spacing)
+
+        return withContext(Dispatchers.Default) {
+            if (isVertical) {
+                stitchVertically(processedBitmaps, options.spacing)
+            } else {
+                stitchHorizontally(processedBitmaps, options.spacing)
+            }
         }
     }
     
@@ -157,7 +161,7 @@ class DirectStitchingStrategy(
      */
     private fun stitchHorizontally(bitmaps: List<Bitmap>, spacing: Int): Bitmap? {
         logManager.debug(TAG, "开始水平拼接，图片数量: ${bitmaps.size}，间隔: $spacing")
-        
+
         val totalWidth = bitmaps.sumOf { it.width } + (bitmaps.size - 1) * spacing
         val maxHeight = bitmaps.maxOf { it.height }
 
@@ -166,7 +170,7 @@ class DirectStitchingStrategy(
         // 检查内存限制
         val estimatedSize = totalWidth.toLong() * maxHeight.toLong() * 4 // ARGB_8888
         val maxImageSize = memoryLimitCalculator.calculateMaxImageSize()
-        
+
         if (estimatedSize > maxImageSize) {
             logManager.error(TAG, "拼接结果图片过大: ${estimatedSize / (1024 * 1024)}MB，超过限制: ${maxImageSize / (1024 * 1024)}MB")
             return null
@@ -183,7 +187,7 @@ class DirectStitchingStrategy(
                 (outputFormat == 0 || outputFormat == 2) && hasAlpha -> Bitmap.Config.ARGB_8888 // PNG或WEBP且有透明度
                 else -> Bitmap.Config.RGB_565 // JPEG或无透明度需求
             }
-            
+
             val result = createBitmap(totalWidth, maxHeight, config)
             logManager.debug(TAG, "结果位图创建成功：${result.width}x${result.height}，格式：$config")
 
@@ -205,7 +209,7 @@ class DirectStitchingStrategy(
                 val y = (maxHeight - bitmap.height) / 2
                 logManager.debug(TAG, "绘制图片 $index：位置($currentX, $y), 尺寸(${bitmap.width}x${bitmap.height})")
                 canvas.drawBitmap(bitmap, currentX.toFloat(), y.toFloat(), paint)
-                
+
                 // 如果不是最后一张图片且有间隔，则绘制黑色间隔
                 if (index < bitmaps.size - 1 && spacing > 0) {
                     currentX += bitmap.width
