@@ -65,7 +65,7 @@ class DirectStitchingStrategy(
                 bitmaps // WidthScale.NONE，不进行缩放
             }
         }
-
+        
         return withContext(Dispatchers.Default) {
             if (isVertical) {
                 stitchVertically(processedBitmaps, options.spacing)
@@ -92,7 +92,7 @@ class DirectStitchingStrategy(
     private fun stitchHorizontally(bitmaps: List<Bitmap>, spacing: Int): Bitmap? {
         return stitchImages(bitmaps, spacing, false)
     }
-
+    
     /**
      * 通用拼接方法
      * @param bitmaps 要拼接的位图列表
@@ -101,7 +101,7 @@ class DirectStitchingStrategy(
      */
     private fun stitchImages(bitmaps: List<Bitmap>, spacing: Int, isVertical: Boolean): Bitmap? {
         logManager.debug(TAG, "开始${if (isVertical) "垂直" else "水平"}拼接，图片数量: ${bitmaps.size}，间隔: $spacing")
-
+        
         val (totalMajor, totalMinor) = if (isVertical) {
             bitmaps.sumOf { it.height } + (bitmaps.size - 1) * spacing to bitmaps.maxOf { it.width }
         } else {
@@ -113,7 +113,7 @@ class DirectStitchingStrategy(
         // 检查内存限制
         val estimatedSize = totalMajor.toLong() * totalMinor.toLong() * 4 // ARGB_8888
         val maxImageSize = memoryLimitCalculator.calculateMaxImageSize()
-
+        
         if (estimatedSize > maxImageSize) {
             logManager.error(TAG, "拼接结果图片过大: ${estimatedSize / (1024 * 1024)}MB，超过限制: ${maxImageSize / (1024 * 1024)}MB")
             return null
@@ -130,7 +130,7 @@ class DirectStitchingStrategy(
                 (outputFormat == 0 || outputFormat == 2) && hasAlpha -> Bitmap.Config.ARGB_8888 // PNG或WEBP且有透明度
                 else -> Bitmap.Config.RGB_565 // JPEG或无透明度需求
             }
-
+            
             val result = if (isVertical) {
                 createBitmap(totalMinor, totalMajor, config)
             } else {
@@ -151,35 +151,41 @@ class DirectStitchingStrategy(
                 style = Paint.Style.FILL
             }
 
-            var currentMajor = 0
-            for ((index, bitmap) in bitmaps.withIndex()) {
-                val (x, y) = if (isVertical) {
-                    val xPos = (totalMinor - bitmap.width) / 2
-                    xPos to currentMajor
-                } else {
-                    val yPos = (totalMinor - bitmap.height) / 2
-                    currentMajor to yPos
-                }
-
-                logManager.debug(TAG, "绘制图片 $index：位置($x, $y), 尺寸(${bitmap.width}x${bitmap.height})")
-                canvas.drawBitmap(bitmap, x.toFloat(), y.toFloat(), paint)
-
-                // 如果不是最后一张图片且有间隔，则绘制黑色间隔
-                if (index < bitmaps.size - 1 && spacing > 0) {
-                    if (isVertical) {
-                        currentMajor += bitmap.height
-                        logManager.debug(TAG, "绘制间隔：位置(0, $currentMajor), 尺寸(${totalMinor}x${spacing})")
-                        canvas.drawRect(0f, currentMajor.toFloat(), totalMinor.toFloat(), (currentMajor + spacing).toFloat(), blackPaint)
-                        currentMajor += spacing
+            try {
+                var currentMajor = 0
+                for ((index, bitmap) in bitmaps.withIndex()) {
+                    val (x, y) = if (isVertical) {
+                        val xPos = (totalMinor - bitmap.width) / 2
+                        xPos to currentMajor
                     } else {
-                        currentMajor += bitmap.width
-                        logManager.debug(TAG, "绘制间隔：位置($currentMajor, 0), 尺寸(${spacing}x${totalMinor})")
-                        canvas.drawRect(currentMajor.toFloat(), 0f, (currentMajor + spacing).toFloat(), totalMinor.toFloat(), blackPaint)
-                        currentMajor += spacing
+                        val yPos = (totalMinor - bitmap.height) / 2
+                        currentMajor to yPos
                     }
-                } else {
-                    currentMajor += if (isVertical) bitmap.height else bitmap.width
+                    
+                    logManager.debug(TAG, "绘制图片 $index：位置($x, $y), 尺寸(${bitmap.width}x${bitmap.height})")
+                    canvas.drawBitmap(bitmap, x.toFloat(), y.toFloat(), paint)
+                    
+                    // 如果不是最后一张图片且有间隔，则绘制黑色间隔
+                    if (index < bitmaps.size - 1 && spacing > 0) {
+                        if (isVertical) {
+                            currentMajor += bitmap.height
+                            logManager.debug(TAG, "绘制间隔：位置(0, $currentMajor), 尺寸(${totalMinor}x${spacing})")
+                            canvas.drawRect(0f, currentMajor.toFloat(), totalMinor.toFloat(), (currentMajor + spacing).toFloat(), blackPaint)
+                            currentMajor += spacing
+                        } else {
+                            currentMajor += bitmap.width
+                            logManager.debug(TAG, "绘制间隔：位置($currentMajor, 0), 尺寸(${spacing}x${totalMinor})")
+                            canvas.drawRect(currentMajor.toFloat(), 0f, (currentMajor + spacing).toFloat(), totalMinor.toFloat(), blackPaint)
+                            currentMajor += spacing
+                        }
+                    } else {
+                        currentMajor += if (isVertical) bitmap.height else bitmap.width
+                    }
                 }
+            } finally {
+                canvas.setBitmap(null)
+                paint.reset()
+                blackPaint.reset()
             }
 
             logManager.debug(TAG, "${if (isVertical) "垂直" else "水平"}拼接完成，结果位图尺寸：${result.width}x${result.height}")

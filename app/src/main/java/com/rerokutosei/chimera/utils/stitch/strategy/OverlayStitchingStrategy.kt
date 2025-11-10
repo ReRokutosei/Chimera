@@ -176,10 +176,12 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
                             processedBitmaps[i].width, 
                             overlayHeight
                         )
-                        canvas.drawBitmap(overlayBitmap, 0f, currentY.toFloat(), paint)
-
-                        if (!overlayBitmap.isRecycled) {
-                            overlayBitmap.recycle()
+                        try {
+                            canvas.drawBitmap(overlayBitmap, 0f, currentY.toFloat(), paint)
+                        } finally {
+                            if (!overlayBitmap.isRecycled) {
+                                overlayBitmap.recycle()
+                            }
                         }
                         
                         currentY += overlayHeight
@@ -217,10 +219,12 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
                             overlayWidth, 
                             processedBitmaps[i].height
                         )
-                        canvas.drawBitmap(overlayBitmap, currentX.toFloat(), 0f, paint)
-
-                        if (!overlayBitmap.isRecycled) {
-                            overlayBitmap.recycle()
+                        try {
+                            canvas.drawBitmap(overlayBitmap, currentX.toFloat(), 0f, paint)
+                        } finally {
+                            if (!overlayBitmap.isRecycled) {
+                                overlayBitmap.recycle()
+                            }
                         }
                         
                         currentX += overlayWidth
@@ -237,6 +241,10 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
                     }
                 }
             }
+            
+            canvas.setBitmap(null)
+            paint.reset()
+            blackPaint.reset()
             
             return result
         } catch (e: Exception) {
