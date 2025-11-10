@@ -412,6 +412,9 @@ class BitmapLoader(private val context: Context) {
         bitmapLock.write {
             bitmaps.forEach { bitmap ->
                 if (bitmap != exclude && !bitmap.isRecycled) {
+                    val width = bitmap.width
+                    val height = bitmap.height
+                    
                     activeBitmaps.entries.removeIf { it.value == bitmap }
 
                     memoryCache.snapshot().entries.find { it.value == bitmap }?.let { entry ->
@@ -420,7 +423,7 @@ class BitmapLoader(private val context: Context) {
                     }
 
                     bitmap.recycle()
-                    logManager.debug(TAG, "回收位图: ${bitmap.width}x${bitmap.height}")
+                    logManager.debug(TAG, "回收位图: ${width}x${height}")
                 }
             }
         }
