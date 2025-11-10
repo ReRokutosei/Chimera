@@ -19,7 +19,6 @@
 package com.rerokutosei.chimera.utils.image
 
 import android.annotation.SuppressLint
-import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -28,7 +27,6 @@ import android.graphics.BitmapRegionDecoder
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
-import android.util.LruCache
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.utils.common.LogManager
 import java.io.InputStream
@@ -37,7 +35,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
 
 /**
- * 图片加载器，负责从Uri加载Bitmap并管理缓存
+ * 图片加载器，负责从Uri加载Bitmap
  */
 class BitmapLoader(private val context: Context) {
     
@@ -52,22 +50,6 @@ class BitmapLoader(private val context: Context) {
     
     private val logManager = LogManager.getInstance(context)
     private val imageSettingsManager = ImageSettingsManager.getInstance(context)
-    
-    // LRU缓存，用于缓存加载的图片
-    // Coil有自己的缓存机制，这里的缓存主要用于快速访问
-    private val memoryCache: LruCache<String, Bitmap> by lazy {
-        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        val memoryInfo = ActivityManager.MemoryInfo()
-        activityManager.getMemoryInfo(memoryInfo)
-        val maxMemory = (memoryInfo.totalMem / 1024).toInt()
-        val cacheSize = maxMemory / 16 // 使用最大内存的1/16作为缓存大小，以免与Coil冲突
-        
-        object : LruCache<String, Bitmap>(cacheSize) {
-            override fun sizeOf(key: String, bitmap: Bitmap): Int {
-                return bitmap.allocationByteCount / 1024
-            }
-        }
-    }
     
     // 用于跟踪正在使用的位图
     private val activeBitmaps = ConcurrentHashMap<String, Bitmap>()
@@ -178,24 +160,6 @@ class BitmapLoader(private val context: Context) {
         
         logManager.debug(TAG, "开始加载图片: $uriString")
 
-        memoryCache.get(uriString)?.let { 
-            logManager.debug(TAG, "从缓存中获取图片: $uriString")
-            if (!it.isRecycled) {
-                activeBitmaps[uriString] = it
-                return it 
-            } else {
-                memoryCache.remove(uriString)
-                logManager.warn(TAG, "缓存中的位图已被回收，已从缓存中移除: $uriString")
-            }
-        }
-        
-        // 添加一个简短的延迟，给Coil一点时间来处理缓存
-        try {
-            Thread.sleep(10)
-        } catch (e: InterruptedException) {
-            // 忽略中断异常
-        }
-        
         return try {
             logManager.debug(TAG, "打开输入流")
             val options = BitmapFactory.Options().apply {
@@ -284,14 +248,13 @@ class BitmapLoader(private val context: Context) {
             
             logManager.debug(TAG, "图片加载完成: ${bitmap?.width}x${bitmap?.height}")
             
-            // 将加载的图片放入缓存和活跃位图集合
+            // 将加载的图片放入活跃位图集合
             bitmap?.let {
                 if (!it.isRecycled) {
-                    memoryCache.put(uriString, it)
                     activeBitmaps[uriString] = it
-                    logManager.debug(TAG, "将图片放入缓存: $uriString")
+                    logManager.debug(TAG, "将图片添加到活跃位图集合: $uriString")
                 } else {
-                    logManager.warn(TAG, "尝试将已回收的位图放入缓存: $uriString")
+                    logManager.warn(TAG, "尝试将已回收的位图添加到活跃位图集合: $uriString")
                 }
             }
             
@@ -399,9 +362,12 @@ class BitmapLoader(private val context: Context) {
      */
     fun clearCache() {
         bitmapLock.write {
-            memoryCache.evictAll()
+            // 回收所有活跃位图
+            activeBitmaps.values.filter { !it.isRecycled }.forEach { bitmap ->
+                bitmap.recycle()
+            }
             activeBitmaps.clear()
-            logManager.debug(TAG, "清空图片缓存和活跃位图集合")
+            logManager.debug(TAG, "清空活跃位图集合")
         }
     }
     
@@ -416,11 +382,6 @@ class BitmapLoader(private val context: Context) {
                     val height = bitmap.height
                     
                     activeBitmaps.entries.removeIf { it.value == bitmap }
-
-                    memoryCache.snapshot().entries.find { it.value == bitmap }?.let { entry ->
-                        memoryCache.remove(entry.key)
-                        logManager.debug(TAG, "从缓存中移除位图: ${entry.key}")
-                    }
 
                     bitmap.recycle()
                     logManager.debug(TAG, "回收位图: ${width}x${height}")
