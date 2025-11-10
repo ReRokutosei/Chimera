@@ -119,17 +119,14 @@ class EstimateResolution(private val bitmapLoader: BitmapLoader) {
     }
 
     /**
-     * 计算普通拼接模式的预期尺寸
+     * 通用缩放方法
      */
-    private fun calculateDirectResolution(
+    private fun scaleImages(
         images: List<ImageInfo>,
-        stitchMode: StitchMode,
         widthScale: WidthScale,
-        imageSpacing: Int
-    ): Pair<Long, Long> {
-        if (images.isEmpty()) return 0L to 0L
-
-        val scaledImages = when (widthScale) {
+        stitchMode: StitchMode
+    ): List<ImageInfo> {
+        return when (widthScale) {
             WidthScale.MAX_WIDTH -> {
                 if (stitchMode == StitchMode.DIRECT_VERTICAL) {
                     scaleToMaxWidth(images)
@@ -146,6 +143,20 @@ class EstimateResolution(private val bitmapLoader: BitmapLoader) {
             }
             else -> images
         }
+    }
+
+    /**
+     * 计算普通拼接模式的预期尺寸
+     */
+    private fun calculateDirectResolution(
+        images: List<ImageInfo>,
+        stitchMode: StitchMode,
+        widthScale: WidthScale,
+        imageSpacing: Int
+    ): Pair<Long, Long> {
+        if (images.isEmpty()) return 0L to 0L
+
+        val scaledImages = scaleImages(images, widthScale, stitchMode)
 
         return when (stitchMode) {
             StitchMode.DIRECT_VERTICAL -> {
@@ -172,23 +183,7 @@ class EstimateResolution(private val bitmapLoader: BitmapLoader) {
     ): Pair<Long, Long> {
         if (images.isEmpty()) return 0L to 0L
 
-        val scaledImages = when (widthScale) {
-            WidthScale.MAX_WIDTH -> {
-                if (stitchMode == StitchMode.DIRECT_VERTICAL) {
-                    scaleToMaxWidth(images)
-                } else {
-                    scaleToMaxHeight(images)
-                }
-            }
-            WidthScale.MIN_WIDTH -> {
-                if (stitchMode == StitchMode.DIRECT_VERTICAL) {
-                    scaleToMinWidth(images)
-                } else {
-                    scaleToMinHeight(images)
-                }
-            }
-            else -> images
-        }
+        val scaledImages = scaleImages(images, widthScale, stitchMode)
 
         return when (stitchMode) {
             StitchMode.DIRECT_VERTICAL -> {
