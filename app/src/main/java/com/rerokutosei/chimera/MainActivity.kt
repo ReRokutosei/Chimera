@@ -48,7 +48,9 @@ import com.rerokutosei.chimera.ui.navigation.AppNavGraph
 import com.rerokutosei.chimera.ui.theme.AppTheme
 import com.rerokutosei.chimera.ui.theme.shouldUseDarkTheme
 import com.rerokutosei.chimera.utils.common.LogManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
     private val logManager by lazy { LogManager.getInstance(this) }
@@ -65,9 +67,12 @@ class MainActivity : ComponentActivity() {
 
         PreloadManager.getInstance(this).preloadAllData()
 
-        cleanupExpiredTempFiles()
-
-        cleanupResidualTempFiles()
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                cleanupExpiredTempFiles()
+                cleanupResidualTempFiles()
+            }
+        }
 
         setContent {
             val context = LocalContext.current
