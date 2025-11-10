@@ -19,6 +19,7 @@
 package com.rerokutosei.chimera.utils.image
 
 import android.net.Uri
+import android.util.LruCache
 import com.rerokutosei.chimera.data.model.ImageInfo
 import com.rerokutosei.chimera.ui.main.OverlayMode
 import com.rerokutosei.chimera.ui.main.StitchMode
@@ -29,6 +30,9 @@ import com.rerokutosei.chimera.ui.main.WidthScale
  * 用于计算和验证拼接图片的预期尺寸是否超出格式限制
  */
 class EstimateResolution(private val bitmapLoader: BitmapLoader) {
+
+    // LRU缓存存储最近计算的尺寸结果
+    private val resolutionCache = LruCache<String, Pair<Long, Long>>(50)
 
     /**
      * 验证图片尺寸是否超出格式限制
@@ -90,6 +94,20 @@ class EstimateResolution(private val bitmapLoader: BitmapLoader) {
     }
 
     /**
+     * 生成缓存键
+     */
+    private fun generateCacheKey(
+        imageUris: List<Uri>,
+        stitchMode: StitchMode,
+        widthScale: WidthScale,
+        overlayMode: OverlayMode,
+        overlayArea: Int,
+        imageSpacing: Int
+    ): String {
+        return "${imageUris.joinToString(",") { it.toString() }}|$stitchMode|$widthScale|$overlayMode|$overlayArea|$imageSpacing"
+    }
+
+    /**
      * 根据拼接参数计算预期尺寸
      */
     private fun calculateExpectedResolution(
@@ -100,6 +118,14 @@ class EstimateResolution(private val bitmapLoader: BitmapLoader) {
         overlayArea: Int,
         imageSpacing: Int
     ): Pair<Long, Long> {
+        // 生成缓存键
+        val cacheKey = generateCacheKey(imageUris, stitchMode, widthScale, overlayMode, overlayArea, imageSpacing)
+
+        // 尝试从缓存中获取结果
+        resolutionCache.get(cacheKey)?.let {
+            return it
+        }
+
         if (imageUris.isEmpty()) return 0L to 0L
 
         val images = imageUris.mapNotNull { uri ->
@@ -108,7 +134,7 @@ class EstimateResolution(private val bitmapLoader: BitmapLoader) {
             }
         }
 
-        return when {
+        val result = when {
             overlayMode == OverlayMode.ENABLED -> {
                 calculateOverlayResolution(images, stitchMode, widthScale, overlayArea)
             }
@@ -116,6 +142,11 @@ class EstimateResolution(private val bitmapLoader: BitmapLoader) {
                 calculateDirectResolution(images, stitchMode, widthScale, imageSpacing)
             }
         }
+
+        // 将结果存入缓存
+        resolutionCache.put(cacheKey, result)
+
+        return result
     }
 
     /**
