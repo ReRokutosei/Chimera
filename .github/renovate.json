@@ -24,25 +24,47 @@
     },
 
     {
-      "description": "Automerge patch updates",
+      "description": "Automerge all patch updates",
       "matchUpdateTypes": ["patch"],
       "automerge": true
     },
 
     {
-      "description": "Automerge minor updates for key libraries",
+      "description": "Automerge minor for safe runtime libraries",
       "matchUpdateTypes": ["minor"],
       "matchPackagePatterns": [
-        "androidx.*",
-        "org\\.jetbrains\\.kotlin.*",
-        "org\\.jetbrains\\.kotlinx:kotlinx-coroutines-.*",
-        "org\\.jetbrains\\.kotlinx:kotlinx-serialization-.*",
-        "io\\.coil-kt.*",
-        "com\\.google\\.android\\.material",
-        "androidx\\.datastore.*",
-        "com\\.github\\.skydoves:colorpicker-compose"
+        "^androidx\\.(?!compose\\.compiler)",
+        "^io\\.coil-kt",
+        "^androidx\\.datastore",
+        "^androidx\\.navigation",
+        "^androidx\\.lifecycle",
+        "^androidx\\.activity",
+        "^org\\.jetbrains\\.kotlinx:kotlinx-coroutines-.*",
+        "^org\\.jetbrains\\.kotlinx:kotlinx-serialization-.*"
+      ],
+      "excludePackagePatterns": [
+        "alpha", "beta", "rc"
       ],
       "automerge": true
+    },
+    {
+      "description": "Block Kotlin compiler minor automerge",
+      "matchPackagePatterns": [
+        "^org\\.jetbrains\\.kotlin($|:)"
+      ],
+      "matchUpdateTypes": ["minor"],
+      "automerge": false
+    },
+    {
+      "description": "Block alpha/beta autoupdates",
+      "matchPackagePatterns": [
+        "androidx\\.compose\\.material3",
+        "com\\.google\\.android\\.material"
+      ],
+      "matchUpdateTypes": ["minor"],
+      "excludePackagePatterns": [],
+      "prPriority": -1,
+      "automerge": false
     }
   ]
 }
