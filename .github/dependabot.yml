@@ -26,6 +26,35 @@ updates:
       - "dependency"
       - "gradle"
       - "version-catalog"
+    automerge: true
+    automerged_updates:
+      # 所有 patch 自动合并
+      - match:
+          dependency_type: "all"
+          update_type: "version-update:semver-patch"
+
+      # 主流库的 minor 更新也自动合并
+      - match:
+          dependency_name: "androidx.*"
+          update_type: "version-update:semver-minor"
+      - match:
+          dependency_name: "org.jetbrains.kotlin*"
+          update_type: "version-update:semver-minor"
+      - match:
+          dependency_name: "org.jetbrains.kotlinx:kotlinx-coroutines-*"
+          update_type: "version-update:semver-minor"
+      - match:
+          dependency_name: "io.coil-kt*"
+          update_type: "version-update:semver-minor"
+      - match:
+          dependency_name: "com.google.android.material"
+          update_type: "version-update:semver-minor"
+      - match:
+          dependency_name: "androidx.datastore*"
+          update_type: "version-update:semver-minor"
+      - match:
+          dependency_name: "com.github.skydoves:colorpicker-compose"
+          update_type: "version-update:semver-minor"
 
   # ----------------------------------------------------
   # 更新 Gradle Wrapper 版本 (gradle-wrapper.properties)
@@ -42,6 +71,11 @@ updates:
     labels:
       - "dependency"
       - "gradle-wrapper"
+    automerge: true
+    automerged_updates:
+      - match:
+          dependency_type: "all"
+          update_type: "version-update:semver-patch"
 
   # ----------------------------------------------------
   # 更新 GitHub Actions
