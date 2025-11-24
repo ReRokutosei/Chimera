@@ -158,7 +158,7 @@ dependencies {
     implementation(project(":t8rin:image-reorder-carousel-library"))
 
     // Color picker compose library
-    implementation("com.github.skydoves:colorpicker-compose:1.1.2")
+    implementation("com.github.skydoves:colorpicker-compose:1.1.3")
 
     // Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
