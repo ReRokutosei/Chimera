@@ -16,7 +16,7 @@ navigation = "2.9.6"
 material3 = "1.4.0"
 recyclerview = "1.4.0"
 reorderableVersion = "3.0.0"
-ui = "1.9.4"
+ui = "1.9.5"
 aboutLibraries = "13.1.0"
 
 [libraries]
