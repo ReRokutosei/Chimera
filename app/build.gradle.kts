@@ -143,7 +143,7 @@ dependencies {
     // 添加AppCompat支持
     implementation("androidx.appcompat:appcompat:1.7.1")
 
-    implementation("androidx.compose.animation:animation:1.9.3")
+    implementation("androidx.compose.animation:animation:1.9.5")
     implementation("androidx.compose.animation:animation-core:1.9.3")
 
     // 添加Material3支持
