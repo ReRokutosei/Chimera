@@ -132,25 +132,23 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     // 直接指定使用带 Expressive 功能的 Material 3 alpha 版本
-    implementation("androidx.compose.material3:material3:1.5.0-alpha09")
+    implementation(libs.androidx.compose.material3.alpha)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
     // 添加DataStore数据存储库
     implementation(libs.androidx.datastore.preferences)
-    // 添加Navigation导航库
-    implementation(libs.androidx.navigation.compose)
     // 添加AppCompat支持
-    implementation("androidx.appcompat:appcompat:1.7.1")
+    implementation(libs.androidx.appcompat)
 
-    implementation("androidx.compose.animation:animation:1.9.5")
-    implementation("androidx.compose.animation:animation-core:1.9.5")
+    implementation(libs.androidx.compose.animation)
+    implementation(libs.androidx.compose.animation.core)
 
     // 添加Material3支持
-    implementation("com.google.android.material:material:1.13.0")
+    implementation(libs.material.design)
     implementation(libs.androidx.material3)
     // 添加SubsamplingScaleImageView库用于大图显示
-    implementation("com.davemorrissey.labs:subsampling-scale-image-view-androidx:3.10.0")
+    implementation(libs.subsampling.scale.image.view)
     
     // 添加ImageToolbox组件库
     implementation(project(":t8rin:fancy-slider-library"))
@@ -158,10 +156,10 @@ dependencies {
     implementation(project(":t8rin:image-reorder-carousel-library"))
 
     // Color picker compose library
-    implementation("com.github.skydoves:colorpicker-compose:1.1.3")
+    implementation(libs.colorpicker.compose)
 
     // Serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.ui)
     
     // AboutLibraries 核心库
