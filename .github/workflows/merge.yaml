@@ -1,0 +1,68 @@
+name: Auto Merge
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge PR if label is merge-ready
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.PAT_TOKEN }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const labelName = context.payload.label.name.toLowerCase();
+            const actor = context.payload.sender.login;
+
+            // 检查触发者
+            if (actor.trim() !== 'ReRokutosei') {
+              console.log(`Action triggered by ${actor}, skipping.`);
+              return;
+            }
+
+            // 检查标签
+            if (labelName !== 'merge-ready') {
+              console.log(`Label ${labelName} is not merge-ready, skipping.`);
+              return;
+            }
+
+            // 获取 PR 信息
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
+            // 检查 PR 是否可合并
+            if (!pr.data.mergeable) {
+              console.log(`PR #${prNumber} is not mergeable yet, skipping.`);
+              return;
+            }
+
+            // 检查是否有至少一次 approve
+            const reviews = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
+            const approved = reviews.data.some(r => r.state === 'APPROVED');
+            if (!approved) {
+              console.log(`PR #${prNumber} has not been approved, skipping.`);
+              return;
+            }
+
+            // 执行 squash merge
+            await github.rest.pulls.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+              merge_method: 'squash'
+            });
+            console.log(`PR #${prNumber} squash merged.`);
