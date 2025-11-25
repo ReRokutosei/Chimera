@@ -1,4 +1,4 @@
-name: Build and Release
+name: Build and Publish Release APK
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - '*'
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
 
     steps:
@@ -44,7 +44,6 @@ jobs:
       - name: Prepare release files
         run: |
           cp ${{ steps.sign_app.outputs.signedFile }} Chimera-${{ env.RELEASE_VERSION }}.apk
-          cp app/build/outputs/mapping/release/mapping.txt Chimera-${{ env.RELEASE_VERSION }}-mapping.txt
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -55,4 +54,3 @@ jobs:
           generate_release_notes: true
           files: |
             Chimera-${{ env.RELEASE_VERSION }}.apk
-            Chimera-${{ env.RELEASE_VERSION }}-mapping.txt

@@ -20,14 +20,14 @@ jobs:
           repository: ${{ github.repository }}
           retain_days: 7           # 保留最近7天的 workflow runs
           keep_minimum_runs: 10     # 至少保留10条 workflow runs
-          delete_workflow_pattern: "Auto Merge|CI|Delete old workflow runs|Dependabot Updates"
+          delete_workflow_pattern: "Auto Merge|Delete old workflow runs|Dependabot Updates|Verify"
 
-      # Build and Release workflow 清理
-      - name: Delete workflow runs for 'Build and Release' workflow
+      # Build and Publish Release APK workflow 清理
+      - name: Delete workflow runs for 'Build and Publish Release APK' workflow
         uses: Mattraks/delete-workflow-runs@v2
         with:
           token: ${{ secrets.PAT_TOKEN }}
           repository: ${{ github.repository }}
           retain_days: 0           # 不限制时间
           keep_minimum_runs: 10    # 保留至少10条 runs
-          delete_workflow_pattern: "Build and Release"
+          delete_workflow_pattern: "Build and Publish Release APK"
