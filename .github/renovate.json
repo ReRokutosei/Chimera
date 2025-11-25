@@ -33,16 +33,16 @@
       "description": "Automerge minor for safe runtime libraries",
       "matchUpdateTypes": ["minor"],
       "matchPackagePatterns": [
-        "^androidx\\.(?!compose\\.compiler)",
+        "^androidx\\.",
         "^io\\.coil-kt",
         "^androidx\\.datastore",
         "^androidx\\.navigation",
         "^androidx\\.lifecycle",
         "^androidx\\.activity",
-        "^org\\.jetbrains\\.kotlinx:kotlinx-coroutines-.*",
-        "^org\\.jetbrains\\.kotlinx:kotlinx-serialization-.*"
+        "^org\\.jetbrains\\.kotlinx"
       ],
       "excludePackagePatterns": [
+        "^androidx\\.compose\\.compiler",
         "alpha", "beta", "rc"
       ],
       "automerge": true
@@ -58,11 +58,10 @@
     {
       "description": "Block alpha/beta autoupdates",
       "matchPackagePatterns": [
-        "androidx\\.compose\\.material3",
-        "com\\.google\\.android\\.material"
+        "^androidx\\.compose\\.material3",
+        "^com\\.google\\.android\\.material"
       ],
       "matchUpdateTypes": ["minor"],
-      "excludePackagePatterns": [],
       "prPriority": -1,
       "automerge": false
     }
