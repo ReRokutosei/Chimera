@@ -1,4 +1,4 @@
-name: Batch Merge PR by Label
+name: Auto Merge
 
 on:
   pull_request:
@@ -33,7 +33,7 @@ jobs:
             }
 
             // 获取 PR 信息
-            const pr = await github.pulls.get({
+            const pr = await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: prNumber
@@ -46,7 +46,7 @@ jobs:
             }
 
             // 执行 squash merge
-            await github.pulls.merge({
+            await github.rest.pulls.merge({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: prNumber,

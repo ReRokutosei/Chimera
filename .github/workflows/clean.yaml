@@ -1,0 +1,33 @@
+name: Delete old workflow runs
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+jobs:
+  del_runs:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      # 普通 workflow 清理
+      - name: Delete workflow runs for current repo (default)
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ secrets.WORK_TOKEN }}
+          repository: ${{ github.repository }}
+          retain_days: 7           # 保留最近7天的 workflow runs
+          keep_minimum_runs: 10     # 至少保留10条 workflow runs
+          exclude_workflows: "Build and Release" # 排除 release workflow
+
+      # Build and Release workflow 清理
+      - name: Delete workflow runs for 'Build and Release' workflow
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ secrets.WORK_TOKEN }}
+          repository: ${{ github.repository }}
+          retain_days: 0           # 不限制时间
+          keep_minimum_runs: 10    # 保留至少10条 runs
+          workflow_name: "Build and Release"
