@@ -20,7 +20,7 @@ jobs:
           repository: ${{ github.repository }}
           retain_days: 7           # 保留最近7天的 workflow runs
           keep_minimum_runs: 10     # 至少保留10条 workflow runs
-          delete_workflow_pattern: "^(?!Build and Release).*"  # 排除 release workflow
+          delete_workflow_pattern: "Auto Merge|CI|Delete old workflow runs|Dependabot Updates"
 
       # Build and Release workflow 清理
       - name: Delete workflow runs for 'Build and Release' workflow
