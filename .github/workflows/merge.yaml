@@ -14,7 +14,7 @@ jobs:
       - name: Merge PR if label is merge-ready
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.PAT_TOKEN }}
           script: |
             const prNumber = context.payload.pull_request.number;
             const labelName = context.payload.label.name.toLowerCase();
@@ -22,8 +22,8 @@ jobs:
 
             // 检查触发者
             if (actor.trim() !== 'ReRokutosei') {
-            console.log(`Action triggered by ${actor}, skipping.`);
-            return;
+              console.log(`Action triggered by ${actor}, skipping.`);
+              return;
             }
 
             // 检查标签
@@ -42,6 +42,19 @@ jobs:
             // 检查 PR 是否可合并
             if (!pr.data.mergeable) {
               console.log(`PR #${prNumber} is not mergeable yet, skipping.`);
+              return;
+            }
+
+            // 检查是否有至少一次 approve
+            const reviews = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
+            const approved = reviews.data.some(r => r.state === 'APPROVED');
+            if (!approved) {
+              console.log(`PR #${prNumber} has not been approved, skipping.`);
               return;
             }
 
