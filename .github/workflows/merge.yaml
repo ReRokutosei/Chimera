@@ -1,0 +1,55 @@
+name: Batch Merge PR by Label
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge PR if label is merge-ready
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const labelName = context.payload.label.name.toLowerCase();
+            const actor = context.payload.sender.login;
+
+            // 检查触发者
+            if (actor !== 'ReRokutosei ') {
+              console.log(`Action triggered by ${actor}, skipping.`);
+              return;
+            }
+
+            // 检查标签
+            if (labelName !== 'merge-ready') {
+              console.log(`Label ${labelName} is not merge-ready, skipping.`);
+              return;
+            }
+
+            // 获取 PR 信息
+            const pr = await github.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
+            // 检查 PR 是否可合并
+            if (!pr.data.mergeable) {
+              console.log(`PR #${prNumber} is not mergeable yet, skipping.`);
+              return;
+            }
+
+            // 执行 squash merge
+            await github.pulls.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+              merge_method: 'squash'
+            });
+            console.log(`PR #${prNumber} squash merged.`);
