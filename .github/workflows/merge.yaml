@@ -21,9 +21,9 @@ jobs:
             const actor = context.payload.sender.login;
 
             // 检查触发者
-            if (actor !== 'ReRokutosei ') {
-              console.log(`Action triggered by ${actor}, skipping.`);
-              return;
+            if (actor.trim() !== 'ReRokutosei') {
+            console.log(`Action triggered by ${actor}, skipping.`);
+            return;
             }
 
             // 检查标签
