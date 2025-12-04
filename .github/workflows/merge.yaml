@@ -77,6 +77,6 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: prNumber,
-                body: body: `❌ Automatic merge failed:\n\n${error.message}`
+                body: `❌ Automatic merge failed:\n\n${error.message}`
               });
             }
