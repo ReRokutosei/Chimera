@@ -20,49 +20,63 @@ jobs:
             const labelName = context.payload.label.name.toLowerCase();
             const actor = context.payload.sender.login;
 
-            // 检查触发者
+            // Trigger 校验
             if (actor.trim() !== 'ReRokutosei') {
               console.log(`Action triggered by ${actor}, skipping.`);
               return;
             }
 
-            // 检查标签
+            // Label 校验
             if (labelName !== 'merge-ready') {
               console.log(`Label ${labelName} is not merge-ready, skipping.`);
               return;
             }
 
             // 获取 PR 信息
-            const pr = await github.rest.pulls.get({
+            const { data: pr } = await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: prNumber
             });
 
-            // 检查 PR 是否可合并
-            if (!pr.data.mergeable) {
-              console.log(`PR #${prNumber} is not mergeable yet, skipping.`);
+            // 忽略 draft PR
+            if (pr.draft) {
+              console.log(`PR #${prNumber} is draft, skipping.`);
               return;
             }
 
-            // 检查是否有至少一次 approve
-            const reviews = await github.rest.pulls.listReviews({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber
-            });
+            // 跳过冲突 PR
+            if (pr.mergeable === false) {
+              console.log(`PR #${prNumber} has conflicts or is not mergeable, skipping.`);
 
-            const approved = reviews.data.some(r => r.state === 'APPROVED');
-            if (!approved) {
-              console.log(`PR #${prNumber} has not been approved, skipping.`);
+              // 无法合并则留下 PR comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: "⚠️ This PR cannot be automatically merged at the moment (there may be conflicts). Please resolve manually and try again."
+              });
               return;
             }
 
             // 执行 squash merge
-            await github.rest.pulls.merge({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber,
-              merge_method: 'squash'
-            });
-            console.log(`PR #${prNumber} squash merged.`);
+            try {
+              await github.rest.pulls.merge({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                merge_method: 'squash'
+              });
+
+              console.log(`PR #${prNumber} squash merged.`);
+            } catch (error) {
+              console.log(`Merge failed for PR #${prNumber}: ${error.message}`);
+
+              // merge 失败留下 comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body: body: `❌ Automatic merge failed:\n\n${error.message}`
+              });
+            }
