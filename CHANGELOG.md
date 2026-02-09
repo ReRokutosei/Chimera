@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/ReRokutosei/Chimera/compare/v1.0.3...v1.1.0) (2026-02-09)
+
+
+### Bug Fixes
+
+* 修复 EXIF 方向导致的拼接旋转问题 ([#57](https://github.com/ReRokutosei/Chimera/issues/57)) ([beff441](https://github.com/ReRokutosei/Chimera/commit/beff441a28d8d254db471df8abc1d98ebc29bd69))
+* **deps:** update animation to v1.10.2 ([#50](https://github.com/ReRokutosei/Chimera/issues/50)) ([ba19a18](https://github.com/ReRokutosei/Chimera/commit/ba19a18c77c7f64ea4c86d35de24687c6634eca4))
+* **deps:** update dependency androidx.activity:activity-compose to v1.12.3 ([#55](https://github.com/ReRokutosei/Chimera/issues/55)) ([95638be](https://github.com/ReRokutosei/Chimera/commit/95638be6e7ad4ddcd43f5b6264180ec81ba98d9d))
+* **deps:** update dependency androidx.compose:compose-bom to v2026.01.01 ([#51](https://github.com/ReRokutosei/Chimera/issues/51)) ([1b19d9e](https://github.com/ReRokutosei/Chimera/commit/1b19d9e3d4a336e50ffe0ccce7f33c1a6e87a4d9))
+* **deps:** update dependency androidx.compose.material3:material3 to v1.5.0-alpha13 ([#52](https://github.com/ReRokutosei/Chimera/issues/52)) ([81b2b1e](https://github.com/ReRokutosei/Chimera/commit/81b2b1ee9b07fc22e0ef2fc40b562e78dd7cb3a4))
+* **deps:** update dependency androidx.compose.ui:ui to v1.10.2 ([#53](https://github.com/ReRokutosei/Chimera/issues/53)) ([7a69ecc](https://github.com/ReRokutosei/Chimera/commit/7a69ecc280bad49a5ddda76f888657a7cfbe81d9))
+* **deps:** update dependency androidx.navigation:navigation-compose to v2.9.7 ([#49](https://github.com/ReRokutosei/Chimera/issues/49)) ([4d80265](https://github.com/ReRokutosei/Chimera/commit/4d802650c76d69a2cd8e18ee992b238b9f1c9e84))
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.10.0 ([#48](https://github.com/ReRokutosei/Chimera/issues/48)) ([ab9f85a](https://github.com/ReRokutosei/Chimera/commit/ab9f85aa86a921bccbe347894736adab92d58792))
+
 ### [1.0.3](https://github.com/ReRokutosei/Chimera/compare/v1.0.2...v1.0.3) (2026-01-16)
 
 ### [1.0.2](https://github.com/ReRokutosei/Chimera/compare/v1.0.1...v1.0.2) (2026-01-15)
