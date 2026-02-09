@@ -24,7 +24,9 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.BitmapRegionDecoder
+import android.graphics.Matrix
 import android.graphics.Rect
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
@@ -205,51 +207,57 @@ class BitmapLoader(private val context: Context) {
             logManager.debug(TAG, "图片尺寸: ${options.outWidth}x${options.outHeight}, 是否为大图片: $isLargeImage")
 
             val estimatedSize = options.outWidth.toLong() * options.outHeight.toLong() * 4
-            if (estimatedSize > DEFAULT_REGION_DECODER_THRESHOLD) {
+
+            val bitmap = if (estimatedSize > DEFAULT_REGION_DECODER_THRESHOLD) {
                 logManager.debug(TAG, "使用 BitmapRegionDecoder 处理超大图片")
-                return loadBitmapWithRegionDecoder(uri, options)
-            }
-
-            val targetSize = if (isLargeImage) {
-                DEFAULT_TARGET_SIZE_LARGE
+                loadBitmapWithRegionDecoder(uri, options)
             } else {
-                DEFAULT_TARGET_SIZE_NORMAL
-            }
-
-            options.inSampleSize = calculateInSampleSize(options, targetSize, targetSize)
-            options.inJustDecodeBounds = false
-            
-            // 根据是否需要透明度选择合适的格式
-            val mimeType = options.outMimeType?.lowercase() ?: ""
-            val hasAlpha = mimeType.contains("png") || 
-                          mimeType.contains("webp") || 
-                          mimeType.contains("avif") ||
-                          mimeType.contains("gif")
-
-            options.inPreferredConfig = if (hasAlpha) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565
-
-            logManager.debug(TAG, "缩放比例: ${options.inSampleSize}, 格式: ${options.inPreferredConfig}, MIME类型: $mimeType")
-
-            logManager.debug(TAG, "加载缩放后的图片")
-            val bitmap = try {
-                context.contentResolver.openInputStream(uri)?.use { scaledInputStream ->
-                    BitmapFactory.decodeStream(scaledInputStream, null, options)
+                val targetSize = if (isLargeImage) {
+                    DEFAULT_TARGET_SIZE_LARGE
+                } else {
+                    DEFAULT_TARGET_SIZE_NORMAL
                 }
-            } catch (e: OutOfMemoryError) {
-                logManager.error(TAG, "内存不足，加载缩放后的图片时出错: $uri | ${e.message}", e)
-                null
-            } catch (e: Exception) {
-                logManager.error(TAG, "加载缩放后的图片时出错: $uri | ${e.message}", e)
-                null
-            } catch (e: SecurityException) {
-                logManager.error(TAG, "加载缩放后的图片时出现安全异常: $uri | ${e.message}", e)
-                null
+
+                options.inSampleSize = calculateInSampleSize(options, targetSize, targetSize)
+                options.inJustDecodeBounds = false
+                
+                // 根据是否需要透明度选择合适的格式
+                val mimeType = options.outMimeType?.lowercase() ?: ""
+                val hasAlpha = mimeType.contains("png") || 
+                              mimeType.contains("webp") || 
+                              mimeType.contains("avif") ||
+                              mimeType.contains("gif")
+
+                options.inPreferredConfig = if (hasAlpha) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565
+
+                logManager.debug(TAG, "缩放比例: ${options.inSampleSize}, 格式: ${options.inPreferredConfig}, MIME类型: $mimeType")
+
+                logManager.debug(TAG, "加载缩放后的图片")
+                try {
+                    context.contentResolver.openInputStream(uri)?.use { scaledInputStream ->
+                        BitmapFactory.decodeStream(scaledInputStream, null, options)
+                    }
+                } catch (e: OutOfMemoryError) {
+                    logManager.error(TAG, "内存不足，加载缩放后的图片时出错: $uri | ${e.message}", e)
+                    null
+                } catch (e: Exception) {
+                    logManager.error(TAG, "加载缩放后的图片时出错: $uri | ${e.message}", e)
+                    null
+                } catch (e: SecurityException) {
+                    logManager.error(TAG, "加载缩放后的图片时出现安全异常: $uri | ${e.message}", e)
+                    null
+                }
             }
             
-            logManager.debug(TAG, "图片加载完成: ${bitmap?.width}x${bitmap?.height}")
+            val correctedBitmap = applyExifOrientation(uri, bitmap)
+            if (correctedBitmap != bitmap && bitmap != null && !bitmap.isRecycled) {
+                bitmap.recycle()
+            }
+
+            logManager.debug(TAG, "图片加载完成: ${correctedBitmap?.width}x${correctedBitmap?.height}")
             
             // 将加载的图片放入活跃位图集合
-            bitmap?.let {
+            correctedBitmap?.let {
                 if (!it.isRecycled) {
                     activeBitmaps[uriString] = it
                     logManager.debug(TAG, "将图片添加到活跃位图集合: $uriString")
@@ -258,7 +266,7 @@ class BitmapLoader(private val context: Context) {
                 }
             }
             
-            bitmap
+            correctedBitmap
         } catch (e: OutOfMemoryError) {
             logManager.error(TAG, "内存不足，无法加载位图: $uri", e)
             null
@@ -320,6 +328,66 @@ class BitmapLoader(private val context: Context) {
         }
     }
     
+
+    /**
+     * 根据EXIF方向修正位图方向
+     */
+    private fun applyExifOrientation(uri: Uri, bitmap: Bitmap?): Bitmap? {
+        if (bitmap == null) return null
+
+        val orientation = try {
+            context.contentResolver.openInputStream(uri)?.use { stream ->
+                ExifInterface(stream).getAttributeInt(
+                    ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_UNDEFINED
+                )
+            } ?: ExifInterface.ORIENTATION_UNDEFINED
+        } catch (e: Exception) {
+            logManager.error(TAG, "读取EXIF方向失败: $uri", e)
+            return bitmap
+        }
+
+        if (orientation == ExifInterface.ORIENTATION_NORMAL ||
+            orientation == ExifInterface.ORIENTATION_UNDEFINED
+        ) {
+            return bitmap
+        }
+
+        val matrix = Matrix()
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.setRotate(90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.setRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.setRotate(270f)
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> {
+                matrix.setScale(-1f, 1f)
+                matrix.postTranslate(bitmap.width.toFloat(), 0f)
+            }
+            ExifInterface.ORIENTATION_FLIP_VERTICAL -> {
+                matrix.setScale(1f, -1f)
+                matrix.postTranslate(0f, bitmap.height.toFloat())
+            }
+            ExifInterface.ORIENTATION_TRANSPOSE -> {
+                matrix.setRotate(90f)
+                matrix.postScale(-1f, 1f)
+            }
+            ExifInterface.ORIENTATION_TRANSVERSE -> {
+                matrix.setRotate(270f)
+                matrix.postScale(-1f, 1f)
+            }
+            else -> return bitmap
+        }
+
+        return try {
+            Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        } catch (e: OutOfMemoryError) {
+            logManager.error(TAG, "内存不足，EXIF方向修正失败: $uri", e)
+            bitmap
+        } catch (e: Exception) {
+            logManager.error(TAG, "EXIF方向修正失败: $uri", e)
+            bitmap
+        }
+    }
+
     /**
      * 检查是否为大图片
      */
