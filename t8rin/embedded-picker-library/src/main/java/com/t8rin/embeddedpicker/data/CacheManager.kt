@@ -89,7 +89,7 @@ class CacheManager(private val context: Context) {
     fun clearExpired() {
         val now = System.currentTimeMillis()
         memoryCache.entries.removeIf { entry ->
-            val cachedData = entry.value as CachedData<*>
+            val cachedData = entry.value
             cachedData.strategy != CacheStrategy.NEVER_EXPIRE && 
             now - cachedData.timestamp >= cachedData.strategy.expiryTime
         }

@@ -240,11 +240,11 @@ class BitmapLoader(private val context: Context) {
                 } catch (e: OutOfMemoryError) {
                     logManager.error(TAG, "内存不足，加载缩放后的图片时出错: $uri | ${e.message}", e)
                     null
-                } catch (e: Exception) {
-                    logManager.error(TAG, "加载缩放后的图片时出错: $uri | ${e.message}", e)
-                    null
                 } catch (e: SecurityException) {
                     logManager.error(TAG, "加载缩放后的图片时出现安全异常: $uri | ${e.message}", e)
+                    null
+                } catch (e: Exception) {
+                    logManager.error(TAG, "加载缩放后的图片时出错: $uri | ${e.message}", e)
                     null
                 }
             }
