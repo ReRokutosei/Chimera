@@ -1,6 +1,6 @@
 [versions]
 agp = "9.0.0"
-animation = "1.10.2"
+animation = "1.10.3"
 appcompat = "1.7.1"
 kotlin = "2.3.10"
 coreKtx = "1.17.0"
