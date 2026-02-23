@@ -33,7 +33,9 @@ import com.rerokutosei.chimera.utils.image.ResolutionValidationResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -54,6 +56,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val resolutionValidationState: StateFlow<ResolutionValidationState> = _resolutionValidationState.asStateFlow()
     private val _showResolutionErrorToast = MutableStateFlow<String?>(null)
     val showResolutionErrorToast: StateFlow<String?> = _showResolutionErrorToast.asStateFlow()
+    private var resolutionValidationJob: Job? = null
+    private var resolutionValidationVersion: Long = 0
     
     init { loadSettings() }
     
@@ -86,7 +90,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
      */
     private fun listenToSettingsChanges() {
         viewModelScope.launch {
-            imageSettingsManager.getOutputImageFormatFlow().collect {
+            imageSettingsManager.getOutputImageFormatFlow().collectLatest {
                 validateResolution()
             }
         }
@@ -246,13 +250,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private fun validateResolution() {
         val images = _uiState.value.selectedImages
         if (images.isEmpty()) {
+            resolutionValidationJob?.cancel()
             _resolutionValidationState.value = ResolutionValidationState.NotNeeded
             return
         }
-        
+
+        resolutionValidationJob?.cancel()
+        val currentVersion = ++resolutionValidationVersion
         _resolutionValidationState.value = ResolutionValidationState.InProgress
-        
-        viewModelScope.launch {
+
+        resolutionValidationJob = viewModelScope.launch {
             val outputFormat = imageSettingsManager.getOutputImageFormatFlow().first()
 
             val validationResult = estimateResolution.validateResolution(
@@ -264,6 +271,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 imageSpacing = _uiState.value.imageSpacing,
                 outputFormat = outputFormat
             )
+
+            if (currentVersion != resolutionValidationVersion) {
+                return@launch
+            }
 
             when (validationResult) {
                 is ResolutionValidationResult.NotNeeded -> {
