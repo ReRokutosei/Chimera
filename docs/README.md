@@ -246,9 +246,9 @@ The background of the app Settings page, and README Screenshots are from the ani
 
 - [AboutLibraries Core Library](https://github.com/mikepenz/AboutLibraries) 13.2.1 | Under Apache License 2.0
 - [Accompanist Drawable Painter library](https://github.com/google/accompanist/) 0.32.0 | Under Apache License 2.0
-- [Activity](https://developer.android.com/jetpack/androidx/releases/activity#1.12.3) 1.12.3 | Under Apache License 2.0
-- [Activity Compose](https://developer.android.com/jetpack/androidx/releases/activity#1.12.3) 1.12.3 | Under Apache License 2.0
-- [Activity Kotlin Extensions](https://developer.android.com/jetpack/androidx/releases/activity#1.12.3) 1.12.3 | Under Apache License 2.0
+- [Activity](https://developer.android.com/jetpack/androidx/releases/activity#1.12.4) 1.12.4 | Under Apache License 2.0
+- [Activity Compose](https://developer.android.com/jetpack/androidx/releases/activity#1.12.4) 1.12.4 | Under Apache License 2.0
+- [Activity Kotlin Extensions](https://developer.android.com/jetpack/androidx/releases/activity#1.12.4) 1.12.4 | Under Apache License 2.0
 - [Android App Startup Runtime](https://developer.android.com/jetpack/androidx/releases/startup#1.1.1) 1.1.1 | Under Apache License 2.0
 - [Android Arch-Common](https://developer.android.com/jetpack/androidx/releases/arch-core#2.2.0) 2.2.0 | Under Apache License 2.0
 - [Android Arch-Runtime](https://developer.android.com/jetpack/androidx/releases/arch-core#2.2.0) 2.2.0 | Under Apache License 2.0
@@ -274,41 +274,41 @@ The background of the app Settings page, and README Screenshots are from the ani
 - [collections](https://github.com/JetBrains/compose-jb) 1.9.3 | Under Apache License 2.0
 - [Collections Kotlin Extensions](https://developer.android.com/jetpack/androidx/releases/collection#1.5.0) 1.5.0 | Under Apache License 2.0
 - [colorpicker-compose](https://github.com/skydoves/colorpicker-compose/) 1.1.3 | Under Apache License 2.0
-- [Compose Animation](https://developer.android.com/jetpack/androidx/releases/compose-animation#1.10.2) 1.10.2 | Under Apache License 2.0
+- [Compose Animation](https://developer.android.com/jetpack/androidx/releases/compose-animation#1.10.3) 1.10.3 | Under Apache License 2.0
 - [Compose Animation](https://github.com/JetBrains/compose-jb) 1.9.3 | Under Apache License 2.0
-- [Compose Animation Core](https://developer.android.com/jetpack/androidx/releases/compose-animation#1.10.2) 1.10.2 | Under Apache License 2.0
+- [Compose Animation Core](https://developer.android.com/jetpack/androidx/releases/compose-animation#1.10.3) 1.10.3 | Under Apache License 2.0
 - [Compose Animation Core](https://github.com/JetBrains/compose-jb) 1.9.3 | Under Apache License 2.0
-- [Compose Foundation](https://developer.android.com/jetpack/androidx/releases/compose-foundation#1.10.2) 1.10.2 | Under Apache License 2.0
+- [Compose Foundation](https://developer.android.com/jetpack/androidx/releases/compose-foundation#1.10.3) 1.10.3 | Under Apache License 2.0
 - [Compose Foundation](https://github.com/JetBrains/compose-jb) 1.9.3 | Under Apache License 2.0
-- [Compose Geometry](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.2) 1.10.2 | Under Apache License 2.0
+- [Compose Geometry](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.3) 1.10.3 | Under Apache License 2.0
 - [Compose Geometry](https://github.com/JetBrains/compose-jb) 1.9.3 | Under Apache License 2.0
-- [Compose Graphics](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.2) 1.10.2 | Under Apache License 2.0
+- [Compose Graphics](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.3) 1.10.3 | Under Apache License 2.0
 - [Compose Graphics](https://github.com/JetBrains/compose-jb) 1.9.3 | Under Apache License 2.0
-- [Compose Layouts](https://developer.android.com/jetpack/androidx/releases/compose-foundation#1.10.2) 1.10.2 | Under Apache License 2.0
+- [Compose Layouts](https://developer.android.com/jetpack/androidx/releases/compose-foundation#1.10.3) 1.10.3 | Under Apache License 2.0
 - [Compose Layouts](https://github.com/JetBrains/compose-jb) 1.9.3 | Under Apache License 2.0
-- [Compose Material Components](https://developer.android.com/jetpack/androidx/releases/compose-material#1.10.2) 1.10.2 | Under Apache License 2.0
+- [Compose Material Components](https://developer.android.com/jetpack/androidx/releases/compose-material#1.10.3) 1.10.3 | Under Apache License 2.0
 - [Compose Material Icons Core](https://developer.android.com/jetpack/androidx/releases/compose-material#1.7.8) 1.7.8 | Under Apache License 2.0
 - [Compose Material Icons Extended](https://developer.android.com/jetpack/androidx/releases/compose-material#1.7.8) 1.7.8 | Under Apache License 2.0
-- [Compose Material Ripple](https://developer.android.com/jetpack/androidx/releases/compose-material#1.10.2) 1.10.2 | Under Apache License 2.0
-- [Compose Material3 Components](https://developer.android.com/jetpack/androidx/releases/compose-material3#1.5.0-alpha13) 1.5.0-alpha13 | Under Apache License 2.0
+- [Compose Material Ripple](https://developer.android.com/jetpack/androidx/releases/compose-material#1.10.3) 1.10.3 | Under Apache License 2.0
+- [Compose Material3 Components](https://developer.android.com/jetpack/androidx/releases/compose-material3#1.5.0-alpha14) 1.5.0-alpha14 | Under Apache License 2.0
 - [Compose Navigation](https://developer.android.com/jetpack/androidx/releases/navigation#2.9.7) 2.9.7 | Under Apache License 2.0
-- [Compose Runtime](https://developer.android.com/jetpack/androidx/releases/compose-runtime#1.10.2) 1.10.2 | Under Apache License 2.0
+- [Compose Runtime](https://developer.android.com/jetpack/androidx/releases/compose-runtime#1.10.3) 1.10.3 | Under Apache License 2.0
 - [Compose Runtime](https://github.com/JetBrains/compose-jb) 1.9.3 | Under Apache License 2.0
-- [Compose Runtime Annotation](https://developer.android.com/jetpack/androidx/releases/compose-runtime#1.10.2) 1.10.2 | Under Apache License 2.0
-- [Compose Runtime Retain](https://developer.android.com/jetpack/androidx/releases/compose-runtime#1.10.2) 1.10.2 | Under Apache License 2.0
-- [Compose Saveable](https://developer.android.com/jetpack/androidx/releases/compose-runtime#1.10.2) 1.10.2 | Under Apache License 2.0
+- [Compose Runtime Annotation](https://developer.android.com/jetpack/androidx/releases/compose-runtime#1.10.3) 1.10.3 | Under Apache License 2.0
+- [Compose Runtime Retain](https://developer.android.com/jetpack/androidx/releases/compose-runtime#1.10.3) 1.10.3 | Under Apache License 2.0
+- [Compose Saveable](https://developer.android.com/jetpack/androidx/releases/compose-runtime#1.10.3) 1.10.3 | Under Apache License 2.0
 - [Compose Saveable](https://github.com/JetBrains/compose-jb) 1.9.3 | Under Apache License 2.0
-- [Compose Testing manifest dependency](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.2) 1.10.2 | Under Apache License 2.0
-- [Compose Tooling](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.2) 1.10.2 | Under Apache License 2.0
-- [Compose Tooling Data](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.2) 1.10.2 | Under Apache License 2.0
-- [Compose UI](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.2) 1.10.2 | Under Apache License 2.0
-- [Compose UI Preview Tooling](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.2) 1.10.2 | Under Apache License 2.0
+- [Compose Testing manifest dependency](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.3) 1.10.3 | Under Apache License 2.0
+- [Compose Tooling](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.3) 1.10.3 | Under Apache License 2.0
+- [Compose Tooling Data](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.3) 1.10.3 | Under Apache License 2.0
+- [Compose UI](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.3) 1.10.3 | Under Apache License 2.0
+- [Compose UI Preview Tooling](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.3) 1.10.3 | Under Apache License 2.0
 - [Compose UI primitives](https://github.com/JetBrains/compose-jb) 1.9.3 | Under Apache License 2.0
-- [Compose UI Text](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.2) 1.10.2 | Under Apache License 2.0
+- [Compose UI Text](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.3) 1.10.3 | Under Apache License 2.0
 - [Compose UI Text](https://github.com/JetBrains/compose-jb) 1.9.3 | Under Apache License 2.0
-- [Compose Unit](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.2) 1.10.2 | Under Apache License 2.0
+- [Compose Unit](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.3) 1.10.3 | Under Apache License 2.0
 - [Compose Unit](https://github.com/JetBrains/compose-jb) 1.9.3 | Under Apache License 2.0
-- [Compose Util](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.2) 1.10.2 | Under Apache License 2.0
+- [Compose Util](https://developer.android.com/jetpack/androidx/releases/compose-ui#1.10.3) 1.10.3 | Under Apache License 2.0
 - [Compose Util](https://github.com/JetBrains/compose-jb) 1.9.3 | Under Apache License 2.0
 - [Core](https://developer.android.com/jetpack/androidx/releases/core#1.17.0) 1.17.0 | Under Apache License 2.0
 - [Core Kotlin Extensions](https://developer.android.com/jetpack/androidx/releases/core#1.17.0) 1.17.0 | Under Apache License 2.0
@@ -323,7 +323,7 @@ The background of the app Settings page, and README Screenshots are from the ani
 - [Graphics Shapes](https://developer.android.com/jetpack/androidx/releases/graphics#1.0.1) 1.0.1 | Under Apache License 2.0
 - [Guava ListenableFuture only](https://github.com/google/guava/listenablefuture) 1.0 | Under Apache License 2.0
 - [JetBrains Java Annotations](https://github.com/JetBrains/java-annotations) 23.0.0 | Under Apache License 2.0
-- [Jetpack Compose Libraries BOM](https://developer.android.com/jetpack) 2026.01.01 | Under Apache License 2.0
+- [Jetpack Compose Libraries BOM](https://developer.android.com/jetpack) 2026.02.00 | Under Apache License 2.0
 - [JSpecify annotations](http://jspecify.org/) 1.0.0 | Under Apache License 2.0
 - [Kotlin Libraries bill-of-materials](https://kotlinlang.org/) 1.8.22 | Under Apache License 2.0
 - [Kotlin Stdlib](https://kotlinlang.org/) 2.3.10 | Under Apache License 2.0
