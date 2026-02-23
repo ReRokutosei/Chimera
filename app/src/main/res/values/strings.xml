@@ -11,7 +11,7 @@
     <string name="grant_camera_permission_to_capture_image">Grant camera permission to capture image</string>
     <string name="pick_image">Pick image</string>
     <string name="file_provider">com.t8rin.embeddedpicker.fileprovider</string>
-    <string name="embedded_picker">Embedded Picker</string>
+  <string name="embedded_picker">Use Embedded Picker</string>
     <string name="embedded_picker_sub">Uses Image Toolbox\'s elegant image picker</string>
     
     <!-- Image Reorder Carousel Strings -->
@@ -84,9 +84,9 @@
     <string name="squircle_shape">Squircle</string>
     <string name="file_picker_settings">File Picker Settings</string>
     <string name="auto_clear_selected">Auto Clear Selected Images</string>
-    <string name="clear_after_stitching">Delete Selected Images from Main Page After Stitching</string>
+  <string name="clear_after_stitching">Clear selected image list from main page after stitching (does not delete local files)</string>
     <string name="use_saf_picker">Use Storage Access Framework Picker</string>
-    <string name="use_saf_without_permission">Use SAF to Select Images Without Permissions</string>
+  <string name="use_saf_without_permission">Use Storage Access Framework to select images without permissions</string>
     <string name="default_picker_info">Your device uses this picker by default</string>
     <string name="image_output_settings">Image Output Settings</string>
     <string name="output_format">Output Image Format</string>

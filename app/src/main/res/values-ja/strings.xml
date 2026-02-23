@@ -12,7 +12,7 @@
     <string name="grant_camera_permission_to_capture_image">カメラのアクセス許可を与えて写真を撮影</string>
     <string name="pick_image">画像を選択</string>
     <string name="file_provider">com.t8rin.embeddedpicker.fileprovider</string>
-    <string name="embedded_picker">埋め込みピッカー</string>
+    <string name="embedded_picker">埋め込みピッカーを使用</string>
     <string name="embedded_picker_sub">Image Toolboxの高機能な画像ピッカーを使用</string>
     
     <!-- Image Reorder Carousel Strings -->
@@ -72,9 +72,9 @@
     <string name="squircle_shape">スクワークル</string>
     <string name="file_picker_settings">ファイル選択設定</string>
     <string name="auto_clear_selected">選択した画像を自動クリア</string>
-    <string name="clear_after_stitching">スティッチング後にメインページの選択画像を削除</string>
+    <string name="clear_after_stitching">スティッチ後にメインページの選択画像リストをクリア（ローカルファイルは削除しません）</string>
     <string name="use_saf_picker">ストレージアクセスフレームワークピッカーを使用</string>
-    <string name="use_saf_without_permission">権限なしでSAFを使用して画像を選択</string>
+    <string name="use_saf_without_permission">権限なしで Storage Access Framework を使用して画像を選択</string>
     <string name="default_picker_info">お使いのデバイスはデフォルトでこのピッカーを使用します</string>
     <string name="image_output_settings">画像出力設定</string>
     <string name="output_format">出力画像形式</string>
@@ -144,4 +144,41 @@
     <string name="custom_color">Custom Color</string>
     <string name="preview">プレビュー</string>
     <string name="help">Help</string>
+    <string name="sort_images">画像を並び替え</string>
+    <string name="sort_by_time_asc">日時で並び替え（古い順）</string>
+    <string name="sort_by_time_desc">日時で並び替え（新しい順）</string>
+    <string name="sort_by_name_asc">名前で並び替え（A-Z）</string>
+    <string name="sort_by_name_desc">名前で並び替え（Z-A）</string>
+    <string name="images_sorted_time_asc">日時順で並び替えました（古い順）</string>
+    <string name="images_sorted_time_desc">日時順で並び替えました（新しい順）</string>
+    <string name="images_sorted_name_asc">名前順で並び替えました（A-Z）</string>
+    <string name="images_sorted_name_desc">名前順で並び替えました（Z-A）</string>
+    <string name="help_card_title_mode_direct">✨ 通常の結合</string>
+    <string name="help_card_content_mode_direct">（画像オーバーレイ無効時）
+        \n設定した方向（横または縦）に従って画像を直接結合します。
+        \n画像間隔（0～50px）と全体の拡大縮小モード（縦結合は幅を統一、横結合は高さを統一）を調整できます。
+        \n\n最小：すべての画像の中で最小の揃え寸法（最小幅または最小高さ）を基準に、すべての画像を比例縮小します。
+        \n\n原寸：各画像の元のサイズを維持します。
+        \n\n最大：すべての画像の中で最大の揃え寸法（最大幅または最大高さ）を基準に、すべての画像を比例拡大します。</string>
+    <string name="help_card_title_mode_overlay">✨ オーバーレイ結合</string>
+    <string name="help_card_content_mode_overlay" formatted="false">最初の画像を基準に次の画像を重ねて描画します。動画字幕の長いスクリーンショット作成に便利です。
+        \n次の画像の重ねる領域割合（0～100%）を調整できます。</string>
+    <string name="help_card_title_format_limit">🔒 画像形式の制限</string>
+    <string name="help_card_content_format_limit">画像結合は、ファイル形式の技術仕様と端末メモリの両方に制限されます。
+        \nご注意ください：
+        \n\nJPEG：理論上の最大サイズは 65,535 × 65,535 ピクセル（16ビット制限）。アプリの既定出力は JPEG です。
+        \n\nWebP：可逆・非可逆を問わず、最大サイズは通常 16,384 × 16,384 ピクセル前後です。
+        \n\nPNG：理論上の最大サイズは 4,294,967,295 × 4,294,967,295 ピクセル（32ビット符号なし整数制限）で、理論上は最も大きいです。
+        \n\n❗ 画像枚数が多い場合や画像が大きい場合は、設定で PNG に切り替え、メモリ閾値引き上げを有効化することを推奨します。
+        \n\n❗❗❗ 形式に関わらず、実運用での最終的な制限は端末メモリ（RAM）と Android 仮想マシンです。超高解像度画像のデコードに必要なメモリ（幅 * 高さ * 4 byte/pixel）は OOM クラッシュを引き起こしやすくなります。</string>
+    <string name="help_card_title_setting_output">⚙️ 出力画像設定</string>
+    <string name="help_card_content_setting_output" formatted="false">出力形式：PNG、JPEG、WEBP に対応。
+        \n\n出力品質：スライダー（1%-100%）は出力形式が JPEG または WEBP の場合のみ有効です。値が高いほど画質は高くなりますが、ファイルサイズも大きくなります。</string>
+    <string name="help_card_title_setting_performance">🚀 パフォーマンス設定</string>
+    <string name="help_card_content_setting_performance" formatted="false">マルチスレッド高速化：有効にすると、画像読み込みと結合処理を Kotlin Coroutines で並列実行し、結合速度を大幅に向上できます。
+        \n\nメモリ閾値引き上げ：結合キャンバスのメモリ割り当て上限を既定の 50% から 80% に引き上げ、大きな画像を処理しやすくしますが、OOM（メモリ不足）リスクが高まります。</string>
+    <string name="help_card_title_setting_picker">🖼️ ファイルピッカー設定</string>
+    <string name="help_card_content_setting_picker">選択画像の自動クリア：結合完了後、メイン画面の選択画像を自動でクリアします。
+        \n\nSAF ピッカーを使用：ストレージ権限なしでシステムのファイルピッカーからアクセスできます。プライバシー重視のユーザー向けです。
+        \n\n埋め込みピッカー：ImageToolbox から抽出した高機能ピッカーです。システムの Photo Picker で起きる「アルバムが全表示されない」「URI順序が乱れる」問題を改善します。ただしストレージ権限が必要で、初回のアルバム読み込みに数秒かかる場合があります。</string>
 </resources>

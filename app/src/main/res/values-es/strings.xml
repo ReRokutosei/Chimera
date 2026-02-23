@@ -12,7 +12,7 @@
     <string name="grant_camera_permission_to_capture_image">Otorgar permiso de cámara para capturar imagen</string>
     <string name="pick_image">Seleccionar imagen</string>
     <string name="file_provider">com.t8rin.embeddedpicker.fileprovider</string>
-    <string name="embedded_picker">Selector integrado</string>
+    <string name="embedded_picker">Usar selector integrado</string>
     <string name="embedded_picker_sub">Utiliza el selector de imágenes de alta gama de Image Toolbox</string>
     
     <!-- Image Reorder Carousel Strings -->
@@ -72,9 +72,9 @@
     <string name="squircle_shape">Cuadrado redondeado</string>
     <string name="file_picker_settings">Configuración del selector de archivos</string>
     <string name="auto_clear_selected">Limpiar automáticamente las imágenes seleccionadas</string>
-    <string name="clear_after_stitching">Eliminar las imágenes seleccionadas de la página principal después de coser</string>
+    <string name="clear_after_stitching">Limpiar la lista de imágenes seleccionadas de la página principal después de unir (no elimina archivos locales)</string>
     <string name="use_saf_picker">Usar selector de marco de acceso de almacenamiento</string>
-    <string name="use_saf_without_permission">Usar SAF para seleccionar imágenes sin permisos</string>
+    <string name="use_saf_without_permission">Usar Storage Access Framework para seleccionar imágenes sin permisos</string>
     <string name="default_picker_info">Su dispositivo usa este selector por defecto</string>
     <string name="image_output_settings">Configuración de salida de imagen</string>
     <string name="output_format">Formato de imagen de salida</string>
@@ -145,4 +145,41 @@
     <string name="custom_color">Custom Color</string>
     <string name="preview">Vista previa</string>
     <string name="help">Help</string>
+    <string name="sort_images">Ordenar imágenes</string>
+    <string name="sort_by_time_asc">Ordenar por fecha (más antiguas primero)</string>
+    <string name="sort_by_time_desc">Ordenar por fecha (más recientes primero)</string>
+    <string name="sort_by_name_asc">Ordenar por nombre (A-Z)</string>
+    <string name="sort_by_name_desc">Ordenar por nombre (Z-A)</string>
+    <string name="images_sorted_time_asc">Ordenadas por fecha: más antiguas primero</string>
+    <string name="images_sorted_time_desc">Ordenadas por fecha: más recientes primero</string>
+    <string name="images_sorted_name_asc">Ordenadas por nombre: A-Z</string>
+    <string name="images_sorted_name_desc">Ordenadas por nombre: Z-A</string>
+    <string name="help_card_title_mode_direct">✨ Costura normal</string>
+    <string name="help_card_content_mode_direct">(Superposición desactivada)
+        \nUne imágenes directamente según la dirección configurada (horizontal o vertical).
+        \nPermite ajustar el espacio entre imágenes (0–50 px) y el modo de escalado general (ancho uniforme en vertical, alto uniforme en horizontal).
+        \n\nMínimo: Busca la dimensión de alineación más pequeña (ancho mínimo o alto mínimo) entre todas las imágenes y escala todas proporcionalmente.
+        \n\nOriginal: Mantiene el tamaño original de cada imagen.
+        \n\nMáximo: Busca la dimensión de alineación más grande (ancho máximo o alto máximo) entre todas las imágenes y escala todas proporcionalmente.</string>
+    <string name="help_card_title_mode_overlay">✨ Costura con superposición</string>
+    <string name="help_card_content_mode_overlay" formatted="false">Usa la primera imagen como base y superpone la siguiente imagen. Es útil para crear capturas de subtítulos de video.
+        \nPuedes ajustar el porcentaje (0–100%) del área de la siguiente imagen que se superpone.</string>
+    <string name="help_card_title_format_limit">🔒 Límites de formato de imagen</string>
+    <string name="help_card_content_format_limit">La unión de imágenes está limitada por las especificaciones técnicas del formato y por la memoria del dispositivo.
+        \nTen en cuenta:
+        \n\nJPEG: tamaño máximo teórico de 65,535 × 65,535 píxeles (límite de 16 bits). La app usa JPEG por defecto.
+        \n\nWebP: ya sea sin pérdida o con pérdida, su tamaño máximo suele estar alrededor de 16,384 × 16,384 píxeles.
+        \n\nPNG: tamaño máximo teórico de hasta 4,294,967,295 × 4,294,967,295 píxeles (límite de entero sin signo de 32 bits), en teoría el más alto.
+        \n\n❗ Si tienes muchas imágenes o imágenes grandes, se recomienda cambiar a PNG en Ajustes y activar el umbral de memoria alto.
+        \n\n❗❗❗ Sin importar el formato, el límite real es la memoria (RAM) del dispositivo y el mecanismo de la máquina virtual de Android. La memoria necesaria para decodificar una imagen muy grande (ancho * alto * 4 bytes/píxel) puede causar fácilmente un cierre por falta de memoria (OOM).</string>
+    <string name="help_card_title_setting_output">⚙️ Ajustes de salida de imagen</string>
+    <string name="help_card_content_setting_output" formatted="false">Formato de salida: compatible con PNG, JPEG y WEBP.
+        \n\nCalidad de salida: el control deslizante (1%-100%) solo tiene efecto cuando el formato es JPEG o WEBP. Un valor mayor genera imágenes de mayor calidad y mayor tamaño de archivo.</string>
+    <string name="help_card_title_setting_performance">🚀 Ajustes de rendimiento</string>
+    <string name="help_card_content_setting_performance" formatted="false">Aceleración multihilo: al activarla, la carga y unión de imágenes se ejecutarán en paralelo con corrutinas de Kotlin, lo que puede mejorar notablemente la velocidad.
+        \n\nAumentar umbral de memoria: eleva el límite de asignación para el lienzo de unión del 50% predeterminado al 80%, permitiendo procesar imágenes más grandes, pero aumentando el riesgo de OOM (sin memoria).</string>
+    <string name="help_card_title_setting_picker">🖼️ Ajustes del selector de archivos</string>
+    <string name="help_card_content_setting_picker">Limpiar imágenes seleccionadas automáticamente: tras completar la unión, limpia las imágenes seleccionadas en la pantalla principal.
+        \n\nUsar SAF: accede a archivos mediante el selector del sistema sin permisos de almacenamiento. Ideal para usuarios que priorizan la privacidad.
+        \n\nSelector integrado: un selector potente extraído del proyecto ImageToolbox. Resuelve problemas del selector del sistema, como no mostrar todos los álbumes o desordenar el orden de URI. Requiere permisos de almacenamiento y la primera carga de álbumes puede tardar unos segundos.</string>
 </resources>

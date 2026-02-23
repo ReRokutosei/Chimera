@@ -11,7 +11,7 @@
     <string name="grant_camera_permission_to_capture_image">授予相机权限以拍照</string>
     <string name="pick_image">选择图片</string>
     <string name="file_provider">com.t8rin.embeddedpicker.fileprovider</string>
-    <string name="embedded_picker">嵌入式选择器</string>
+    <string name="embedded_picker">使用嵌入式选择器</string>
     <string name="embedded_picker_sub">使用 Image Toolbox 的高级图片选择器</string>
     
     <!-- Image Reorder Carousel Strings -->
@@ -71,9 +71,9 @@
     <string name="squircle_shape">方圆</string>
     <string name="file_picker_settings">文件选择设置</string>
     <string name="auto_clear_selected">自动清理已选图片</string>
-    <string name="clear_after_stitching">完成拼接后删除主页面已选的图片</string>
+    <string name="clear_after_stitching">完成拼接后删除主页面已选的图片列表（并非删除本地文件）</string>
     <string name="use_saf_picker">使用存储访问框架选择器</string>
-    <string name="use_saf_without_permission">使用无需权限的SAF选择图片</string>
+    <string name="use_saf_without_permission">使用无需权限的 Storage Access Framework 选择图片</string>
     <string name="default_picker_info">您的设备默认使用此选择器</string>
     <string name="image_output_settings">图片输出设置</string>
     <string name="output_format">输出图片格式</string>
@@ -88,7 +88,7 @@
     <string name="multithreading">多线程加速计算</string>
     <string name="multithreading_desc">使用多线程并行处理图片，提高拼接速度</string>
     <string name="high_memory_threshold">提高内存阈值</string>
-    <string name="high_memory_threshold_desc">将内存阈值提升到设备总RAM的80%</string>
+    <string name="high_memory_threshold_desc">将内存阈值提升到设备总 RAM 的 80%</string>
     <string name="stitching_result">拼接结果</string>
     <string name="no_valid_result">未生成有效的图片结果</string>
     <string name="stitching_failed">拼接失败</string>

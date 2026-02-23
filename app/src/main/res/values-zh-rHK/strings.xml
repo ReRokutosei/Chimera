@@ -12,7 +12,7 @@
     <string name="grant_camera_permission_to_capture_image">授予相機權限以拍照</string>
     <string name="pick_image">選擇圖片</string>
     <string name="file_provider">com.t8rin.embeddedpicker.fileprovider</string>
-    <string name="embedded_picker">嵌入式選擇器</string>
+    <string name="embedded_picker">使用嵌入式選擇器</string>
     <string name="embedded_picker_sub">使用 Image Toolbox 的高級圖片選擇器</string>
     
     <!-- Image Reorder Carousel Strings -->
@@ -72,9 +72,9 @@
     <string name="squircle_shape">方圓</string>
     <string name="file_picker_settings">文件選擇設置</string>
     <string name="auto_clear_selected">自動清理已選圖片</string>
-    <string name="clear_after_stitching">完成拼接後刪除主頁面已選的圖片</string>
+    <string name="clear_after_stitching">完成拼接後刪除主頁面已選的圖片列表（並非刪除本機檔案）</string>
     <string name="use_saf_picker">使用存儲訪問框架選擇器</string>
-    <string name="use_saf_without_permission">使用無需權限的SAF選擇圖片</string>
+    <string name="use_saf_without_permission">使用無需權限的 Storage Access Framework 選擇圖片</string>
     <string name="default_picker_info">您的設備默認使用此選擇器</string>
     <string name="image_output_settings">圖片輸出設置</string>
     <string name="output_format">輸出圖片格式</string>
@@ -89,7 +89,7 @@
     <string name="multithreading">多線程加速計算</string>
     <string name="multithreading_desc">使用多線程並行處理圖片，提高拼接速度</string>
     <string name="high_memory_threshold">提高內存閾值</string>
-    <string name="high_memory_threshold_desc">將內存閾值提升到設備總RAM的80%</string>
+    <string name="high_memory_threshold_desc">將內存閾值提升到設備總 RAM 的 80%</string>
     <string name="stitching_result">拼接結果</string>
     <string name="no_valid_result">未生成有效的圖片結果</string>
     <string name="stitching_failed">拼接失敗</string>
@@ -139,4 +139,41 @@
     <string name="custom_color">Custom Color</string>
     <string name="preview">預覽</string>
     <string name="help">Help</string>
+    <string name="sort_images">排序圖片</string>
+    <string name="sort_by_time_asc">按時間排序（由舊到新）</string>
+    <string name="sort_by_time_desc">按時間排序（由新到舊）</string>
+    <string name="sort_by_name_asc">按名稱排序（A-Z）</string>
+    <string name="sort_by_name_desc">按名稱排序（Z-A）</string>
+    <string name="images_sorted_time_asc">已按時間排序：由舊到新</string>
+    <string name="images_sorted_time_desc">已按時間排序：由新到舊</string>
+    <string name="images_sorted_name_asc">已按名稱排序：A-Z</string>
+    <string name="images_sorted_name_desc">已按名稱排序：Z-A</string>
+    <string name="help_card_title_mode_direct">✨ 普通拼接</string>
+    <string name="help_card_content_mode_direct">（即不啟用圖片疊加）
+        \n按設定方向（橫向或縱向）直接拼接圖片。
+        \n支援調整圖片間隔（0–50px）和整體縮放模式（縱向拼接統一寬度，橫向拼接統一高度）。
+        \n\n最小：找出所有圖片中的最小對齊尺寸（最小寬度或最小高度），再將全部圖片按比例縮放。
+        \n\n原始：保留各圖片原始尺寸。
+        \n\n最大：找出所有圖片中的最大對齊尺寸（最大寬度或最大高度），再將全部圖片按比例縮放。</string>
+    <string name="help_card_title_mode_overlay">✨ 疊加拼接</string>
+    <string name="help_card_content_mode_overlay" formatted="false">以第一張圖片為基準，與下一張圖片重疊繪製，可用於製作常見影片字幕截圖。
+        \n你可以調整下一張圖片被疊加區域的比例（0–100%）。</string>
+    <string name="help_card_title_format_limit">🔒 圖片格式限制</string>
+    <string name="help_card_content_format_limit">拼接圖片受檔案格式技術規格與裝置記憶體雙重限制。
+        \n請注意：
+        \n\nJPEG：技術理論最大尺寸為 65,535 × 65,535 像素（16 位元限制），App 預設輸出 JPEG。
+        \n\nWebP：無論無損或有損，最大尺寸通常約為 16,384 × 16,384 像素。
+        \n\nPNG：技術理論最大尺寸可達 4,294,967,295 × 4,294,967,295 像素（32 位元無符號整數限制），理論上最高。
+        \n\n❗ 若圖片較多或圖片較大，建議到設定切換為 PNG，並啟用提高記憶體閾值。
+        \n\n❗❗❗ 無論格式如何，實際限制主要來自裝置記憶體（RAM）和 Android 虛擬機制。超大圖解碼所需記憶體（寬 * 高 * 4 bytes/pixel）很容易導致 OOM 崩潰。</string>
+    <string name="help_card_title_setting_output">⚙️ 圖片輸出設定</string>
+    <string name="help_card_content_setting_output" formatted="false">輸出格式：支援 PNG、JPEG、WEBP。
+        \n\n輸出品質：滑桿（1%-100%）只在輸出格式為 JPEG 或 WEBP 時生效，數值越高畫質越好，檔案體積也越大。</string>
+    <string name="help_card_title_setting_performance">🚀 效能設定</string>
+    <string name="help_card_content_setting_performance" formatted="false">多執行緒加速：啟用後，圖片載入與拼接會以 Kotlin 協程並行處理，可顯著提升速度。
+        \n\n提高記憶體閾值：將拼接畫布的記憶體上限由預設 50% 提升至 80%，可處理更大圖片，但 OOM（記憶體不足）風險也會上升。</string>
+    <string name="help_card_title_setting_picker">🖼️ 檔案選擇設定</string>
+    <string name="help_card_content_setting_picker">自動清理已選圖片：拼接完成後，清理主頁面已選圖片。
+        \n\n使用儲存存取框架選擇器（SAF）：不需儲存權限，透過系統檔案選擇器存取檔案，適合重視私隱的用戶。
+        \n\n嵌入式選擇器：從 ImageToolbox 抽取的高級選擇器。可改善系統 Photo Picker 不能顯示全部相簿或 URI 順序混亂等問題。不過需要儲存權限，首次載入相簿資料可能需數秒。</string>
 </resources>
