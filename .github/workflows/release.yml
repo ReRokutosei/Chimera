@@ -49,7 +49,7 @@ jobs:
           cp ${{ steps.sign_app.outputs.signedFile }} Chimera-${{ env.RELEASE_VERSION }}.apk
 
       - name: Create Release
-        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631 # v2.2.2
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: ${{ contains(env.RELEASE_VERSION, '-') }}
