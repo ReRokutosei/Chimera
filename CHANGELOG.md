@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/ReRokutosei/Chimera/compare/v1.1.0...v1.2.0) (2026-02-23)
+
+
+### Features
+
+* **carousel:** 支持方向切换与外层滚动弱化 ([b9c9aa5](https://github.com/ReRokutosei/Chimera/commit/b9c9aa5ed7e1a6fe05761abd586ea8b250e40375))
+* **main:** 添加一键自动排序 ([3f9847d](https://github.com/ReRokutosei/Chimera/commit/3f9847decc216a5d8568e09a45c65027dbbedc80))
+* **main:** 优化排序浮层交互与多语言文案 ([75c4e71](https://github.com/ReRokutosei/Chimera/commit/75c4e7154582beee86781baa3f716fd85e642ce6))
+
+
+### Bug Fixes
+
+* **deps:** update animation to v1.10.3 ([#58](https://github.com/ReRokutosei/Chimera/issues/58)) ([0b34852](https://github.com/ReRokutosei/Chimera/commit/0b34852733d359ab0e11aca181d16a194dd2267b))
+* **deps:** update dependency androidx.activity:activity-compose to v1.12.4 ([#59](https://github.com/ReRokutosei/Chimera/issues/59)) ([0741baf](https://github.com/ReRokutosei/Chimera/commit/0741bafcc1baa5cb7a184f00639fbad6842885e9))
+* **deps:** update dependency androidx.compose:compose-bom to v2026.02.00 ([#62](https://github.com/ReRokutosei/Chimera/issues/62)) ([11c3e97](https://github.com/ReRokutosei/Chimera/commit/11c3e97377a929faff4430ac1e22ba3c784473e8))
+* **deps:** update dependency androidx.compose.material3:material3 to v1.5.0-alpha14 ([#60](https://github.com/ReRokutosei/Chimera/issues/60)) ([3762294](https://github.com/ReRokutosei/Chimera/commit/3762294b57ec02903923e862a95a24bc3abc0ca8))
+* **deps:** update dependency androidx.compose.ui:ui to v1.10.3 ([#61](https://github.com/ReRokutosei/Chimera/issues/61)) ([e5c6185](https://github.com/ReRokutosei/Chimera/commit/e5c61854d3866e9819d73ce1d2abaaf7e166a4e1))
+* **engine:** 修复叠加模式判定不一致 ([1dfc99d](https://github.com/ReRokutosei/Chimera/commit/1dfc99ddd155c434c65daa004179cbdb4123f067))
+* **memory:** 修复缩放中间位图未回收 ([95eb72e](https://github.com/ReRokutosei/Chimera/commit/95eb72ebc711e8b4065cebddcdca377acb882133))
+* **stitch:** 修复叠加裁剪越界崩溃 ([c35108f](https://github.com/ReRokutosei/Chimera/commit/c35108fd2b18de081f0d43597a072c8502d077b3))
+* **viewmodel:** 修复分辨率校验结果竞态 ([5fc6586](https://github.com/ReRokutosei/Chimera/commit/5fc6586feec7f3e782e8614884f179f855ad74a1))
+
 ## [1.1.0](https://github.com/ReRokutosei/Chimera/compare/v1.0.3...v1.1.0) (2026-02-09)
 
 
