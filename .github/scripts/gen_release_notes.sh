@@ -17,6 +17,45 @@ repo="${GITHUB_REPOSITORY:-ReRokutosei/Chimera}"
 to_handle() {
   local name="$1"
   local email="$2"
+  local name_lc email_lc
+  name_lc="${name,,}"
+  email_lc="${email,,}"
+
+  # Canonical bot/assistant aliases
+  if [[ "$email_lc" == "199175422+chatgpt-codex-connector[bot]@users.noreply.github.com" ]] || [[ "$name_lc" == "chatgpt-codex-connector[bot]" ]]; then
+    echo "@codex"
+    return
+  fi
+
+  if [[ "$email_lc" == "29139614+renovate[bot]@users.noreply.github.com" ]] || [[ "$name_lc" == "renovate[bot]" ]]; then
+    echo "@renovatebot"
+    return
+  fi
+
+  if [[ "$email_lc" == "175728472+copilot@users.noreply.github.com" ]] || [[ "$name_lc" == "copilot" ]]; then
+    echo "@MicrosoftCopilot"
+    return
+  fi
+
+  if [[ "$email_lc" == "136622811+coderabbitai[bot]@users.noreply.github.com" ]] || [[ "$name_lc" == "coderabbitai[bot]" ]]; then
+    echo "@coderabbitai"
+    return
+  fi
+
+  if [[ "$email_lc" == "qwen-coder@alibabacloud.com" ]] || [[ "$name_lc" == "qwen-coder" ]]; then
+    echo "@QwenLM"
+    return
+  fi
+
+  if [[ "$email_lc" == "176961590+gemini-code-assist[bot]@users.noreply.github.com" ]] || [[ "$email_lc" == "noreply@google.com" ]] || [[ "$name_lc" == *"gemini"* ]]; then
+    echo "@gemini-code-assist"
+    return
+  fi
+
+  if [[ "$email_lc" == *"@anthropic.com" ]] || [[ "$name_lc" == *"claude"* ]]; then
+    echo "@claude"
+    return
+  fi
 
   if [[ "$email" =~ ^[0-9]+\+([^@]+)@users\.noreply\.github\.com$ ]]; then
     echo "@${BASH_REMATCH[1]}"
