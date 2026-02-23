@@ -40,6 +40,7 @@ interface StitchingStrategy {
  */
 data class StitchingOptions(
     val spacing: Int = 0,
+    val isOverlayEnabled: Boolean = false,
     val overlayRatio: Int = 0,
     val widthScale: WidthScale = WidthScale.NONE,
     val orientation: StitchOrientation = StitchOrientation.VERTICAL,

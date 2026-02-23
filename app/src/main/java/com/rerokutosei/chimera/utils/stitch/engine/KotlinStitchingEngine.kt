@@ -87,7 +87,7 @@ class KotlinStitchingEngine(private val context: Context) : StitchingEngine {
                 }
 
                 val stitcherFactory = StitcherFactory(context)
-                val isOverlay = options.overlayRatio > 0
+                val isOverlay = options.isOverlayEnabled
                 val strategy = stitcherFactory.createStitcher(options.orientation, isOverlay)
 
                 val result = strategy.stitch(bitmaps, options)

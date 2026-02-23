@@ -141,6 +141,7 @@ class ImageStitcher(private val context: Context) {
 
             val options = StitchingOptions(
                 spacing = imageSpacing,
+                isOverlayEnabled = false,
                 widthScale = widthScale,
                 orientation = orientation,
                 quality = quality,
@@ -178,6 +179,7 @@ class ImageStitcher(private val context: Context) {
             val format = imageSettingsManager.getOutputImageFormatFlow().first()
 
             val options = StitchingOptions(
+                isOverlayEnabled = true,
                 overlayRatio = overlayRatio,
                 widthScale = widthScale,
                 orientation = orientation,
