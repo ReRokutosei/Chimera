@@ -26,6 +26,7 @@ import android.graphics.Paint
 import androidx.core.graphics.createBitmap
 import com.rerokutosei.chimera.ui.main.WidthScale
 import com.rerokutosei.chimera.utils.stitch.StitchOrientation
+import kotlin.math.min
 
 /**
  * 叠加拼接策略实现
@@ -72,21 +73,31 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
                 }
             }
 
-            val (totalWidth, totalHeight) = when (options.orientation) {
+            val (totalWidth, totalHeight, overlaySteps) = when (options.orientation) {
                 StitchOrientation.VERTICAL -> {
                     // 计算第一张图片的高度（完整显示）
                     val firstImageHeight = processedBitmaps[0].height
 
                     // 计算每张图片的叠加区域高度（基于第一张图片的高度和比例）
                     // 将overlayRatio从分母转换为分子，即用户设置的百分比
-                    val overlayHeight = (firstImageHeight * options.overlayRatio / 100).coerceAtLeast(1)
-                    logManager.debug(TAG, "第一张图片高度: $firstImageHeight, 叠加区域高度: $overlayHeight")
+                    val preferredOverlayHeight = (firstImageHeight * options.overlayRatio / 100).coerceAtLeast(1)
+                    val overlayHeights = processedBitmaps.drop(1).mapIndexed { index, bitmap ->
+                        val safeOverlayHeight = min(preferredOverlayHeight, bitmap.height.coerceAtLeast(1))
+                        if (safeOverlayHeight != preferredOverlayHeight) {
+                            logManager.warn(
+                                TAG,
+                                "第${index + 2}张图片叠加高度被限制: $preferredOverlayHeight -> $safeOverlayHeight"
+                            )
+                        }
+                        safeOverlayHeight
+                    }
+                    logManager.debug(TAG, "第一张图片高度: $firstImageHeight, 期望叠加高度: $preferredOverlayHeight")
 
                     // 计算总高度：第一张图片完整高度 + 后续每张图片的叠加区域高度
-                    val height = firstImageHeight + (processedBitmaps.size - 1) * overlayHeight
+                    val height = firstImageHeight + overlayHeights.sum()
                     val width = processedBitmaps.maxOf { it.width }
                     logManager.debug(TAG, "纵向叠加结果尺寸: ${width}x${height}")
-                    Pair(width, height)
+                    Triple(width, height, overlayHeights)
                 }
                 StitchOrientation.HORIZONTAL -> {
                     // 计算第一张图片的宽度（完整显示）
@@ -94,14 +105,24 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
 
                     // 计算每张图片的叠加区域宽度（基于第一张图片的宽度和比例）
                     // 将overlayRatio从分母转换为分子，即用户设置的百分比
-                    val overlayWidth = (firstImageWidth * options.overlayRatio / 100).coerceAtLeast(1)
-                    logManager.debug(TAG, "第一张图片宽度: $firstImageWidth, 叠加区域宽度: $overlayWidth")
+                    val preferredOverlayWidth = (firstImageWidth * options.overlayRatio / 100).coerceAtLeast(1)
+                    val overlayWidths = processedBitmaps.drop(1).mapIndexed { index, bitmap ->
+                        val safeOverlayWidth = min(preferredOverlayWidth, bitmap.width.coerceAtLeast(1))
+                        if (safeOverlayWidth != preferredOverlayWidth) {
+                            logManager.warn(
+                                TAG,
+                                "第${index + 2}张图片叠加宽度被限制: $preferredOverlayWidth -> $safeOverlayWidth"
+                            )
+                        }
+                        safeOverlayWidth
+                    }
+                    logManager.debug(TAG, "第一张图片宽度: $firstImageWidth, 期望叠加宽度: $preferredOverlayWidth")
 
                     // 计算总宽度：第一张图片完整宽度 + 后续每张图片的叠加区域宽度
-                    val width = firstImageWidth + (processedBitmaps.size - 1) * overlayWidth
+                    val width = firstImageWidth + overlayWidths.sum()
                     val height = processedBitmaps.maxOf { it.height }
                     logManager.debug(TAG, "横向叠加结果尺寸: ${width}x${height}")
-                    Pair(width, height)
+                    Triple(width, height, overlayWidths)
                 }
             }
 
@@ -147,18 +168,16 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
                     
                     // 计算第一张图片的高度（完整显示）
                     val firstImageHeight = processedBitmaps[0].height
-                    
-                    // 计算每张图片的叠加区域高度（基于第一张图片的高度和比例）
-                    val overlayHeight = (firstImageHeight * options.overlayRatio / 100).coerceAtLeast(1)
-                    
+
                     // 绘制后续图片的叠加区域
                     var currentY = firstImageHeight
                     for (i in 1 until processedBitmaps.size) {
                         logManager.debug(TAG, "处理第${i+1}张图片的叠加区域")
-                        
+
+                        val overlayHeight = overlaySteps[i - 1]
                         // 计算叠加区域在当前图片中的位置（底部）
-                        val overlayStartY = processedBitmaps[i].height - overlayHeight
-                        
+                        val overlayStartY = (processedBitmaps[i].height - overlayHeight).coerceAtLeast(0)
+
                         // 在结果图片上绘制黑色背景
                         canvas.drawRect(
                             0f, 
@@ -193,16 +212,14 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
                     canvas.drawBitmap(processedBitmaps[0], 0f, 0f, paint)
 
                     val firstImageWidth = processedBitmaps[0].width
-                    
-                    // 计算每张图片的叠加区域宽度（基于第一张图片的宽度和比例）
-                    val overlayWidth = (firstImageWidth * options.overlayRatio / 100).coerceAtLeast(1)
 
                     var currentX = firstImageWidth
                     for (i in 1 until processedBitmaps.size) {
                         logManager.debug(TAG, "处理第${i+1}张图片的叠加区域")
-                        
+
+                        val overlayWidth = overlaySteps[i - 1]
                         // 计算叠加区域在当前图片中的位置（右侧）
-                        val overlayStartX = processedBitmaps[i].width - overlayWidth
+                        val overlayStartX = (processedBitmaps[i].width - overlayWidth).coerceAtLeast(0)
 
                         canvas.drawRect(
                             currentX.toFloat(), 
