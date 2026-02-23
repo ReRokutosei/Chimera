@@ -43,6 +43,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -54,6 +55,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -75,6 +77,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.t8rin.imagereordercarousel.helper.Picture
@@ -100,6 +103,9 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
  * @param showSortButton Whether to show the sort button, default is true
  * @param showRemoveButtons Whether to show the remove buttons, default is true
  * @param enableImagePreview Whether to enable image preview, default is true
+ * @param scrollDirection Scroll direction of carousel list
+ * @param verticalViewportHeight Fixed viewport height used in vertical mode
+ * @param onInteractionStateChanged Callback when list is interacting (dragging/scrolling)
  */
 @Composable
 @OptIn(
@@ -116,7 +122,10 @@ fun ImageReorderCarousel(
     showAddButton: Boolean = true,
     showSortButton: Boolean = true,
     showRemoveButtons: Boolean = true,
-    enableImagePreview: Boolean = true
+    enableImagePreview: Boolean = true,
+    scrollDirection: CarouselScrollDirection = CarouselScrollDirection.HORIZONTAL,
+    verticalViewportHeight: Dp = 360.dp,
+    onInteractionStateChanged: (Boolean) -> Unit = {}
 ) {
     val data = remember { mutableStateListOf<Uri>() }
     val context = LocalContext.current
@@ -148,6 +157,16 @@ fun ImageReorderCarousel(
             haptic.performHapticFeedback(HapticFeedbackType.LongPress)
         }
         wasDragging.value = isDragging
+    }
+
+    val isInteracting = isDragging || listState.isScrollInProgress
+    LaunchedEffect(isInteracting) {
+        onInteractionStateChanged(isInteracting)
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            onInteractionStateChanged(false)
+        }
     }
 
     var previewUri by rememberSaveable {
@@ -211,93 +230,193 @@ fun ImageReorderCarousel(
             val maxWidth = constraints.maxWidth
             val density = LocalDensity.current
             val itemSize = with(density) { (maxWidth * 0.75f).toDp().coerceAtMost(165.dp) }
+            val listModifier = Modifier
+                .padding(12.dp)
+                .let {
+                    if (scrollDirection == CarouselScrollDirection.VERTICAL) {
+                        it.height(verticalViewportHeight)
+                    } else {
+                        it
+                    }
+                }
 
             Box {
                 val showButton = showRemoveButtons && !state.isAnyItemDragging
-                LazyRow(
-                    state = listState,
-                    modifier = Modifier
-                        .padding(12.dp),
-                    contentPadding = PaddingValues(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    itemsIndexed(
-                        items = data,
-                        key = { _, uri -> uri.toString() + uri.hashCode() }
-                    ) { index, uri ->
-                        ReorderableItem(
-                            state = state,
-                            key = uri.toString() + uri.hashCode()
-                        ) { isDragging ->
-                            val alpha by animateFloatAsState(if (isDragging) 0.3f else 0.6f)
-                            val scale by animateFloatAsState(if (isDragging) 1.05f else 1f)
+                val itemKey: (Int, Uri) -> String = { _, uri -> uri.toString() + uri.hashCode() }
 
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(itemSize)
-                                        .scale(scale)
-                                        .clip(
-                                            if (showButton) MaterialTheme.shapes.medium else MaterialTheme.shapes.small
-                                        )
-                                        .background(Color.Transparent)
+                if (scrollDirection == CarouselScrollDirection.HORIZONTAL) {
+                    LazyRow(
+                        state = listState,
+                        modifier = listModifier,
+                        contentPadding = PaddingValues(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        itemsIndexed(items = data, key = itemKey) { index, uri ->
+                            ReorderableItem(
+                                state = state,
+                                key = uri.toString() + uri.hashCode()
+                            ) { isDragging ->
+                                val alpha by animateFloatAsState(if (isDragging) 0.3f else 0.6f)
+                                val scale by animateFloatAsState(if (isDragging) 1.05f else 1f)
+
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    Picture(
-                                        model = uri,
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .combinedClickable(
-                                                onClick = {},
-                                                onLongClick = {
-                                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                                }
-                                            )
-                                            .longPressDraggableHandle(), // 使用长按拖拽而不是普通拖拽
-                                        shape = RectangleShape,
-                                        contentScale = ContentScale.Fit
-                                    )
                                     Box(
                                         modifier = Modifier
                                             .size(itemSize)
-                                            .background(
-                                                MaterialTheme.colorScheme
-                                                    .surface
-                                                    .copy(alpha)
-                                            ),
-                                        contentAlignment = Alignment.Center
+                                            .scale(scale)
+                                            .clip(
+                                                if (showButton) MaterialTheme.shapes.medium else MaterialTheme.shapes.small
+                                            )
+                                            .background(Color.Transparent)
                                     ) {
-                                        Text(
-                                            text = "${index + 1}",
-                                            color = MaterialTheme.colorScheme.onSurface,
-                                            fontSize = 20.sp,
-                                            fontWeight = FontWeight.Bold
+                                        Picture(
+                                            model = uri,
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .combinedClickable(
+                                                    onClick = {},
+                                                    onLongClick = {
+                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                    }
+                                                )
+                                                .longPressDraggableHandle(),
+                                            shape = RectangleShape,
+                                            contentScale = ContentScale.Fit
                                         )
+                                        Box(
+                                            modifier = Modifier
+                                                .size(itemSize)
+                                                .background(
+                                                    MaterialTheme.colorScheme
+                                                        .surface
+                                                        .copy(alpha)
+                                                ),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = "${index + 1}",
+                                                color = MaterialTheme.colorScheme.onSurface,
+                                                fontSize = 20.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
+                                    }
+                                    AnimatedVisibility(
+                                        visible = showButton,
+                                        enter = expandVertically(tween(300)) + fadeIn(),
+                                        exit = shrinkVertically(tween(300)) + fadeOut(),
+                                        modifier = Modifier.width(itemSize)
+                                    ) {
+                                        EnhancedButton(
+                                            contentPadding = PaddingValues(),
+                                            onClick = { onNeedToRemoveImageAt(index) },
+                                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
+                                                0.5f
+                                            ),
+                                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                                            shape = MaterialTheme.shapes.large,
+                                            modifier = Modifier
+                                                .padding(top = 10.dp)
+                                                .height(30.dp)
+                                                .width(itemSize * 0.65f)
+                                        ) {
+                                            Text(
+                                                text = stringResource(R.string.remove),
+                                                fontSize = 12.sp,
+                                                fontWeight = FontWeight.Medium
+                                            )
+                                        }
                                     }
                                 }
-                                AnimatedVisibility(
-                                    visible = showButton,
-                                    enter = expandVertically(tween(300)) + fadeIn(),
-                                    exit = shrinkVertically(tween(300)) + fadeOut(),
-                                    modifier = Modifier.width(itemSize)
+                            }
+                        }
+                    }
+                } else {
+                    LazyColumn(
+                        state = listState,
+                        modifier = listModifier,
+                        contentPadding = PaddingValues(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        itemsIndexed(items = data, key = itemKey) { index, uri ->
+                            ReorderableItem(
+                                state = state,
+                                key = uri.toString() + uri.hashCode()
+                            ) { isDragging ->
+                                val alpha by animateFloatAsState(if (isDragging) 0.3f else 0.6f)
+                                val scale by animateFloatAsState(if (isDragging) 1.05f else 1f)
+
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    EnhancedButton(
-                                        contentPadding = PaddingValues(),
-                                        onClick = { onNeedToRemoveImageAt(index) },
-                                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
-                                            0.5f
-                                        ),
-                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                                        shape = MaterialTheme.shapes.large,
+                                    Box(
                                         modifier = Modifier
-                                            .padding(top = 10.dp)
-                                            .height(30.dp)
-                                            .width(itemSize * 0.65f)
+                                            .size(itemSize)
+                                            .scale(scale)
+                                            .clip(
+                                                if (showButton) MaterialTheme.shapes.medium else MaterialTheme.shapes.small
+                                            )
+                                            .background(Color.Transparent)
                                     ) {
-                                        Text(text = stringResource(R.string.remove),
-                                            fontSize = 12.sp,
-                                            fontWeight = FontWeight.Medium)
+                                        Picture(
+                                            model = uri,
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .combinedClickable(
+                                                    onClick = {},
+                                                    onLongClick = {
+                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                    }
+                                                )
+                                                .longPressDraggableHandle(),
+                                            shape = RectangleShape,
+                                            contentScale = ContentScale.Fit
+                                        )
+                                        Box(
+                                            modifier = Modifier
+                                                .size(itemSize)
+                                                .background(
+                                                    MaterialTheme.colorScheme
+                                                        .surface
+                                                        .copy(alpha)
+                                                ),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = "${index + 1}",
+                                                color = MaterialTheme.colorScheme.onSurface,
+                                                fontSize = 20.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        }
+                                    }
+                                    AnimatedVisibility(
+                                        visible = showButton,
+                                        enter = expandVertically(tween(300)) + fadeIn(),
+                                        exit = shrinkVertically(tween(300)) + fadeOut(),
+                                        modifier = Modifier.width(itemSize)
+                                    ) {
+                                        EnhancedButton(
+                                            contentPadding = PaddingValues(),
+                                            onClick = { onNeedToRemoveImageAt(index) },
+                                            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(
+                                                0.5f
+                                            ),
+                                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                                            shape = MaterialTheme.shapes.large,
+                                            modifier = Modifier
+                                                .padding(top = 10.dp)
+                                                .height(30.dp)
+                                                .width(itemSize * 0.65f)
+                                        ) {
+                                            Text(
+                                                text = stringResource(R.string.remove),
+                                                fontSize = 12.sp,
+                                                fontWeight = FontWeight.Medium
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -318,4 +437,9 @@ fun ImageReorderCarousel(
             onDismiss = { previewUri = null }
         )
     }
+}
+
+enum class CarouselScrollDirection {
+    HORIZONTAL,
+    VERTICAL
 }

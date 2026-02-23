@@ -63,6 +63,7 @@ import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.data.repository.ThemeRepository
 import com.rerokutosei.chimera.ui.settings.SettingsViewModel
 import com.rerokutosei.chimera.utils.common.ShowToast
+import com.t8rin.imagereordercarousel.CarouselScrollDirection
 import com.t8rin.imagereordercarousel.ImageReorderCarousel
 import kotlinx.coroutines.delay
 
@@ -104,6 +105,7 @@ fun MainScreen(
     // 添加标识，用于跟踪当前使用的图片选择器类型
     var isUsingEmbeddedPicker by remember { mutableStateOf(false) }
     var sortMenuExpanded by remember { mutableStateOf(false) }
+    var isCarouselInteracting by remember { mutableStateOf(false) }
 
     // 显示Toast消息
     ShowToast(
@@ -115,6 +117,9 @@ fun MainScreen(
     LaunchedEffect(uiState.selectedImages) {
         if (uiState.selectedImages.isNotEmpty() && uiState.isImagePreviewLoading) {
             viewModel.setImagePreviewLoading(false)
+        }
+        if (uiState.selectedImages.isEmpty()) {
+            isCarouselInteracting = false
         }
     }
 
@@ -145,7 +150,8 @@ fun MainScreen(
                     alpha = if (isPageEntered) 1f else 0f
                     translationX = if (isPageEntered) 0f else 100f
                 }
-                .animateContentSize()
+                .animateContentSize(),
+            userScrollEnabled = !isCarouselInteracting
         ) {
             item {
                 TopAppBar(
@@ -310,6 +316,14 @@ fun MainScreen(
                         showAddButton = false,
                         showSortButton = false,
                         enableImagePreview = false,
+                        scrollDirection = if (uiState.stitchMode == StitchMode.DIRECT_HORIZONTAL) {
+                            CarouselScrollDirection.HORIZONTAL
+                        } else {
+                            CarouselScrollDirection.VERTICAL
+                        },
+                        onInteractionStateChanged = { interacting ->
+                            isCarouselInteracting = interacting
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .alpha(if (isPageEntered && isDataLoaded) 1f else 0f)
