@@ -105,6 +105,15 @@
     <string name="failed_to_read_log_file">无法读取日志文件: %1$s</string>
     <string name="log_file_not_exist">日志文件不存在</string>
     <string name="images_selected">已选择%1$d张新图片</string>
+    <string name="sort_images">排序图片</string>
+    <string name="sort_by_time_asc">按时间排序（从旧到新）</string>
+    <string name="sort_by_time_desc">按时间排序（从新到旧）</string>
+    <string name="sort_by_name_asc">按名称排序（A-Z）</string>
+    <string name="sort_by_name_desc">按名称排序（Z-A）</string>
+    <string name="images_sorted_time_asc">已按时间排序：从旧到新</string>
+    <string name="images_sorted_time_desc">已按时间排序：从新到旧</string>
+    <string name="images_sorted_name_asc">已按名称排序：A-Z</string>
+    <string name="images_sorted_name_desc">已按名称排序：Z-A</string>
     <string name="select_two_or_more_images">请选择两张及其以上的图片</string>
     <string name="estimated_resolution">预计分辨率: %1$d × %2$d</string>
     <string name="resolution_limit_exceeded">分辨率超出限制！\n请在设置中选择PNG格式</string>

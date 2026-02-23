@@ -22,15 +22,22 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Sort
 import androidx.compose.material3.ContainedLoadingIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -93,6 +100,7 @@ fun MainScreen(
     
     // 添加标识，用于跟踪当前使用的图片选择器类型
     var isUsingEmbeddedPicker by remember { mutableStateOf(false) }
+    var sortMenuExpanded by remember { mutableStateOf(false) }
 
     // 显示Toast消息
     ShowToast(
@@ -211,6 +219,56 @@ fun MainScreen(
             
             if (uiState.selectedImages.isNotEmpty()) {
                 item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Box {
+                            IconButton(
+                                onClick = { sortMenuExpanded = true }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Rounded.Sort,
+                                    contentDescription = stringResource(R.string.sort_images)
+                                )
+                            }
+
+                            DropdownMenu(
+                                expanded = sortMenuExpanded,
+                                onDismissRequest = { sortMenuExpanded = false }
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.sort_by_time_asc)) },
+                                    onClick = {
+                                        sortMenuExpanded = false
+                                        viewModel.sortSelectedImages(ImageSortMode.TIME_ASC)
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.sort_by_time_desc)) },
+                                    onClick = {
+                                        sortMenuExpanded = false
+                                        viewModel.sortSelectedImages(ImageSortMode.TIME_DESC)
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.sort_by_name_asc)) },
+                                    onClick = {
+                                        sortMenuExpanded = false
+                                        viewModel.sortSelectedImages(ImageSortMode.NAME_ASC)
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.sort_by_name_desc)) },
+                                    onClick = {
+                                        sortMenuExpanded = false
+                                        viewModel.sortSelectedImages(ImageSortMode.NAME_DESC)
+                                    }
+                                )
+                            }
+                        }
+                    }
+
                     ImageReorderCarousel(
                         images = imageUris,
                         onReorder = { reorderedUris -> viewModel.reorderImages(reorderedUris) },

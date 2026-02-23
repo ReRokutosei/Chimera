@@ -118,6 +118,15 @@
     <string name="failed_to_read_log_file">Failed to read log file: %1$s</string>
     <string name="log_file_not_exist">Log file does not exist</string>
     <string name="images_selected">%1$d new images selected</string>
+    <string name="sort_images">Sort Images</string>
+    <string name="sort_by_time_asc">Sort by Time (Oldest First)</string>
+    <string name="sort_by_time_desc">Sort by Time (Newest First)</string>
+    <string name="sort_by_name_asc">Sort by Name (A-Z)</string>
+    <string name="sort_by_name_desc">Sort by Name (Z-A)</string>
+    <string name="images_sorted_time_asc">Sorted by time: oldest first</string>
+    <string name="images_sorted_time_desc">Sorted by time: newest first</string>
+    <string name="images_sorted_name_asc">Sorted by name: A-Z</string>
+    <string name="images_sorted_name_desc">Sorted by name: Z-A</string>
     <string name="select_two_or_more_images">Please select two or more images</string>
     <string name="estimated_resolution">Estimated Resolution: %1$d × %2$d</string>
     <string name="resolution_limit_exceeded">Resolution exceeds limit!\nPlease select PNG format in settings</string>

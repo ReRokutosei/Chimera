@@ -20,6 +20,9 @@ package com.rerokutosei.chimera.ui.main
 
 import android.app.Application
 import android.net.Uri
+import android.provider.MediaStore
+import android.provider.OpenableColumns
+import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.rerokutosei.chimera.R
@@ -36,7 +39,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -228,6 +235,40 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         validateResolution()
     }
 
+    fun sortSelectedImages(mode: ImageSortMode) {
+        val currentImages = _uiState.value.selectedImages
+        if (currentImages.size < 2) return
+
+        viewModelScope.launch {
+            val sortedImages = withContext(Dispatchers.IO) {
+                val sortable = currentImages.map { image ->
+                    val normalizedName = extractDisplayName(image).lowercase(Locale.ROOT)
+                    val takenTime = resolveTakenTimeMillis(image.uri)
+                    SortableImage(image = image, normalizedName = normalizedName, takenTime = takenTime)
+                }
+
+                when (mode) {
+                    ImageSortMode.TIME_ASC -> sortable
+                        .sortedWith(compareBy<SortableImage>({ it.takenTime ?: Long.MAX_VALUE }, { it.normalizedName }))
+                    ImageSortMode.TIME_DESC -> sortable
+                        .sortedWith(compareByDescending<SortableImage> { it.takenTime ?: Long.MIN_VALUE }.thenBy { it.normalizedName })
+                    ImageSortMode.NAME_ASC -> sortable.sortedBy { it.normalizedName }
+                    ImageSortMode.NAME_DESC -> sortable.sortedByDescending { it.normalizedName }
+                }.map { it.image }
+            }
+
+            _uiState.value = _uiState.value.copy(selectedImages = sortedImages)
+            val messageId = when (mode) {
+                ImageSortMode.TIME_ASC -> R.string.images_sorted_time_asc
+                ImageSortMode.TIME_DESC -> R.string.images_sorted_time_desc
+                ImageSortMode.NAME_ASC -> R.string.images_sorted_name_asc
+                ImageSortMode.NAME_DESC -> R.string.images_sorted_name_desc
+            }
+            setToastMessage(getApplication<Application>().getString(messageId))
+            validateResolution()
+        }
+    }
+
     /**
      * 设置图片预览加载状态
      */
@@ -306,6 +347,71 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun clearResolutionErrorToast() {
         _showResolutionErrorToast.value = null
     }
+
+    private fun extractDisplayName(imageInfo: ImageInfo): String {
+        imageInfo.name?.takeIf { it.isNotBlank() }?.let { return it }
+
+        return runCatching {
+            getApplication<Application>().contentResolver.query(
+                imageInfo.uri,
+                arrayOf(OpenableColumns.DISPLAY_NAME),
+                null,
+                null,
+                null
+            )?.use { cursor ->
+                val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if (nameIndex >= 0 && cursor.moveToFirst() && !cursor.isNull(nameIndex)) {
+                    cursor.getString(nameIndex)
+                } else {
+                    null
+                }
+            }
+        }.getOrNull()?.takeIf { it.isNotBlank() } ?: imageInfo.uri.lastPathSegment.orEmpty()
+    }
+
+    private fun resolveTakenTimeMillis(uri: Uri): Long? {
+        val resolver = getApplication<Application>().contentResolver
+        val projection = arrayOf(
+            MediaStore.Images.ImageColumns.DATE_TAKEN,
+            MediaStore.MediaColumns.DATE_ADDED,
+            MediaStore.MediaColumns.DATE_MODIFIED
+        )
+
+        runCatching {
+            resolver.query(uri, projection, null, null, null)?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val dateTaken = cursor.getLongOrNull(MediaStore.Images.ImageColumns.DATE_TAKEN)
+                    if (dateTaken != null && dateTaken > 0L) return dateTaken
+
+                    val dateAdded = cursor.getLongOrNull(MediaStore.MediaColumns.DATE_ADDED)
+                    if (dateAdded != null && dateAdded > 0L) return dateAdded * 1000L
+
+                    val dateModified = cursor.getLongOrNull(MediaStore.MediaColumns.DATE_MODIFIED)
+                    if (dateModified != null && dateModified > 0L) return dateModified * 1000L
+                }
+            }
+        }
+
+        return readExifDateTime(uri)
+    }
+
+    private fun readExifDateTime(uri: Uri): Long? {
+        val parser = SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.US).apply { isLenient = false }
+        return runCatching {
+            getApplication<Application>().contentResolver.openInputStream(uri)?.use { stream ->
+                val exif = ExifInterface(stream)
+                val dateString = exif.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL)
+                    ?: exif.getAttribute(ExifInterface.TAG_DATETIME)
+                dateString?.let { parser.parse(it)?.time }
+            }
+        }.getOrNull()
+    }
+
+    private fun android.database.Cursor.getLongOrNull(columnName: String): Long? {
+        val index = getColumnIndex(columnName)
+        if (index < 0 || isNull(index)) return null
+        return getLong(index)
+    }
 }
 
 data class MainUiState(
@@ -345,3 +451,16 @@ enum class WidthScale {
     MAX_WIDTH,  // 缩放到最大宽度
     MIN_WIDTH   // 缩放到最小宽度
 }
+
+enum class ImageSortMode {
+    TIME_ASC,
+    TIME_DESC,
+    NAME_ASC,
+    NAME_DESC
+}
+
+private data class SortableImage(
+    val image: ImageInfo,
+    val normalizedName: String,
+    val takenTime: Long?
+)
