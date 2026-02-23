@@ -45,34 +45,35 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
             return null
         }
 
-        try {
-            val processedBitmaps = when (options.orientation) {
-                StitchOrientation.VERTICAL -> {
-                    when (options.widthScale) {
-                        WidthScale.MAX_WIDTH -> {
-                            logManager.debug(TAG, "纵向叠加 - 缩放到最大宽度")
-                            scaleToMaxWidth(bitmaps, TAG)
-                        }
-                        else -> {
-                            logManager.debug(TAG, "纵向叠加 - 缩放到最小宽度")
-                            scaleToMinWidth(bitmaps, TAG)
-                        }
+        val processedBitmaps = when (options.orientation) {
+            StitchOrientation.VERTICAL -> {
+                when (options.widthScale) {
+                    WidthScale.MAX_WIDTH -> {
+                        logManager.debug(TAG, "纵向叠加 - 缩放到最大宽度")
+                        scaleToMaxWidth(bitmaps, TAG)
                     }
-                }
-                StitchOrientation.HORIZONTAL -> {
-                    when (options.widthScale) {
-                        WidthScale.MAX_WIDTH -> {
-                            logManager.debug(TAG, "横向叠加 - 缩放到最大高度")
-                            scaleToMaxHeight(bitmaps, TAG)
-                        }
-                        else -> {
-                            logManager.debug(TAG, "横向叠加 - 缩放到最小高度")
-                            scaleToMinHeight(bitmaps, TAG)
-                        }
+                    else -> {
+                        logManager.debug(TAG, "纵向叠加 - 缩放到最小宽度")
+                        scaleToMinWidth(bitmaps, TAG)
                     }
                 }
             }
+            StitchOrientation.HORIZONTAL -> {
+                when (options.widthScale) {
+                    WidthScale.MAX_WIDTH -> {
+                        logManager.debug(TAG, "横向叠加 - 缩放到最大高度")
+                        scaleToMaxHeight(bitmaps, TAG)
+                    }
+                    else -> {
+                        logManager.debug(TAG, "横向叠加 - 缩放到最小高度")
+                        scaleToMinHeight(bitmaps, TAG)
+                    }
+                }
+            }
+        }
 
+        var resultBitmap: Bitmap? = null
+        try {
             val (totalWidth, totalHeight, overlaySteps) = when (options.orientation) {
                 StitchOrientation.VERTICAL -> {
                     // 计算第一张图片的高度（完整显示）
@@ -250,23 +251,23 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
             }
 
             logManager.debug(TAG, "叠加拼接模式拼接完成")
-
-            if (processedBitmaps !== bitmaps) {
-                bitmaps.forEach { bitmap ->
-                    if (!bitmap.isRecycled && bitmap != result) {
-                        bitmap.recycle()
-                    }
-                }
-            }
             
             canvas.setBitmap(null)
             paint.reset()
             blackPaint.reset()
             
+            resultBitmap = result
             return result
         } catch (e: Exception) {
             logManager.error(TAG, "叠加拼接模式拼接出错", e)
             return null
+        } finally {
+            recycleScaledIntermediates(
+                originalBitmaps = bitmaps,
+                processedBitmaps = processedBitmaps,
+                exclude = resultBitmap,
+                tag = TAG
+            )
         }
     }
 }

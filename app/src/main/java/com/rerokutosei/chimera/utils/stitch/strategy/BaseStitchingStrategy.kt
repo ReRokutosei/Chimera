@@ -134,4 +134,23 @@ abstract class BaseStitchingStrategy(
     protected fun getCurrentOutputFormat(): Int = runBlocking {
         imageSettingsManager.getOutputImageFormatFlow().first()
     }
+
+    protected fun recycleScaledIntermediates(
+        originalBitmaps: List<Bitmap>,
+        processedBitmaps: List<Bitmap>,
+        exclude: Bitmap? = null,
+        tag: String
+    ) {
+        if (processedBitmaps === originalBitmaps) return
+
+        processedBitmaps.forEach { bitmap ->
+            val isOriginal = originalBitmaps.any { original -> original === bitmap }
+            if (!isOriginal && bitmap !== exclude && !bitmap.isRecycled) {
+                val width = bitmap.width
+                val height = bitmap.height
+                bitmap.recycle()
+                logManager.debug(tag, "回收缩放中间位图: ${width}x${height}")
+            }
+        }
+    }
 }

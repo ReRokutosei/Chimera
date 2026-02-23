@@ -66,12 +66,24 @@ class DirectStitchingStrategy(
             }
         }
         
-        return withContext(Dispatchers.Default) {
-            if (isVertical) {
-                stitchVertically(processedBitmaps, options.spacing)
-            } else {
-                stitchHorizontally(processedBitmaps, options.spacing)
+        var resultBitmap: Bitmap? = null
+        return try {
+            withContext(Dispatchers.Default) {
+                if (isVertical) {
+                    stitchVertically(processedBitmaps, options.spacing)
+                } else {
+                    stitchHorizontally(processedBitmaps, options.spacing)
+                }
+            }.also { bitmap ->
+                resultBitmap = bitmap
             }
+        } finally {
+            recycleScaledIntermediates(
+                originalBitmaps = bitmaps,
+                processedBitmaps = processedBitmaps,
+                exclude = resultBitmap,
+                tag = TAG
+            )
         }
     }
     
