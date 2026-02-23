@@ -140,10 +140,12 @@
     <string name="preview">預覽</string>
     <string name="help">Help</string>
     <string name="sort_images">排序圖片</string>
-    <string name="sort_by_time_asc">按時間排序（由舊到新）</string>
-    <string name="sort_by_time_desc">按時間排序（由新到舊）</string>
-    <string name="sort_by_name_asc">按名稱排序（A-Z）</string>
-    <string name="sort_by_name_desc">按名稱排序（Z-A）</string>
+    <string name="sort_by_time">按時間</string>
+    <string name="sort_by_name">按名稱</string>
+    <string name="sort_old_to_new">舊-新</string>
+    <string name="sort_new_to_old">新-舊</string>
+    <string name="sort_a_to_z">A-Z</string>
+    <string name="sort_z_to_a">Z-A</string>
     <string name="images_sorted_time_asc">已按時間排序：由舊到新</string>
     <string name="images_sorted_time_desc">已按時間排序：由新到舊</string>
     <string name="images_sorted_name_asc">已按名稱排序：A-Z</string>

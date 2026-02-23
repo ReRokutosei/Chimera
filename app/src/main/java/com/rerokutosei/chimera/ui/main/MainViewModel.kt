@@ -230,7 +230,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
         val imageInfoMap = currentImages.associateBy { it.uri }
         val reorderedImages = newUriOrder.mapNotNull { uri -> imageInfoMap[uri] }
-        _uiState.value = _uiState.value.copy(selectedImages = reorderedImages)
+        _uiState.value = _uiState.value.copy(
+            selectedImages = reorderedImages,
+            currentSortMode = null
+        )
 
         validateResolution()
     }
@@ -257,7 +260,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 }.map { it.image }
             }
 
-            _uiState.value = _uiState.value.copy(selectedImages = sortedImages)
+            _uiState.value = _uiState.value.copy(
+                selectedImages = sortedImages,
+                currentSortMode = mode
+            )
             val messageId = when (mode) {
                 ImageSortMode.TIME_ASC -> R.string.images_sorted_time_asc
                 ImageSortMode.TIME_DESC -> R.string.images_sorted_time_desc
@@ -425,7 +431,8 @@ data class MainUiState(
     val errorMessage: String? = null,
     val toastMessage: String? = null,
     val imageSpacing: Int = 0,  // 添加图片间隔参数
-    val autoClearImages: Boolean = true // 是否自动清理已选图片
+    val autoClearImages: Boolean = true, // 是否自动清理已选图片
+    val currentSortMode: ImageSortMode? = null
 )
 
 // 添加尺寸验证状态的密封类

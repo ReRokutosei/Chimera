@@ -19,6 +19,7 @@
 package com.rerokutosei.chimera.ui.main
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,12 +29,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Sort
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ContainedLoadingIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -54,6 +56,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.rerokutosei.chimera.R
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
@@ -223,9 +226,9 @@ fun MainScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
                     ) {
-                        Box {
+                        Column(horizontalAlignment = Alignment.End) {
                             IconButton(
-                                onClick = { sortMenuExpanded = true }
+                                onClick = { sortMenuExpanded = !sortMenuExpanded }
                             ) {
                                 Icon(
                                     imageVector = Icons.AutoMirrored.Rounded.Sort,
@@ -233,38 +236,64 @@ fun MainScreen(
                                 )
                             }
 
-                            DropdownMenu(
-                                expanded = sortMenuExpanded,
-                                onDismissRequest = { sortMenuExpanded = false }
-                            ) {
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.sort_by_time_asc)) },
-                                    onClick = {
-                                        sortMenuExpanded = false
-                                        viewModel.sortSelectedImages(ImageSortMode.TIME_ASC)
+                            AnimatedVisibility(visible = sortMenuExpanded) {
+                                Card(
+                                    modifier = Modifier.width(250.dp),
+                                    shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                                    ),
+                                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(12.dp),
+                                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.sort_by_time),
+                                            style = MaterialTheme.typography.labelMedium,
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+                                        CustomSegmentedButtonRow(
+                                            options = listOf(ImageSortMode.TIME_ASC, ImageSortMode.TIME_DESC),
+                                            selectedOption = uiState.currentSortMode,
+                                            onOptionSelected = {
+                                                sortMenuExpanded = false
+                                                viewModel.sortSelectedImages(it)
+                                            },
+                                            optionDisplayName = {
+                                                when (it) {
+                                                    ImageSortMode.TIME_ASC -> stringResource(R.string.sort_old_to_new)
+                                                    ImageSortMode.TIME_DESC -> stringResource(R.string.sort_new_to_old)
+                                                    else -> ""
+                                                }
+                                            },
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+
+                                        Text(
+                                            text = stringResource(R.string.sort_by_name),
+                                            style = MaterialTheme.typography.labelMedium,
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+                                        CustomSegmentedButtonRow(
+                                            options = listOf(ImageSortMode.NAME_ASC, ImageSortMode.NAME_DESC),
+                                            selectedOption = uiState.currentSortMode,
+                                            onOptionSelected = {
+                                                sortMenuExpanded = false
+                                                viewModel.sortSelectedImages(it)
+                                            },
+                                            optionDisplayName = {
+                                                when (it) {
+                                                    ImageSortMode.NAME_ASC -> stringResource(R.string.sort_a_to_z)
+                                                    ImageSortMode.NAME_DESC -> stringResource(R.string.sort_z_to_a)
+                                                    else -> ""
+                                                }
+                                            },
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
                                     }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.sort_by_time_desc)) },
-                                    onClick = {
-                                        sortMenuExpanded = false
-                                        viewModel.sortSelectedImages(ImageSortMode.TIME_DESC)
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.sort_by_name_asc)) },
-                                    onClick = {
-                                        sortMenuExpanded = false
-                                        viewModel.sortSelectedImages(ImageSortMode.NAME_ASC)
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.sort_by_name_desc)) },
-                                    onClick = {
-                                        sortMenuExpanded = false
-                                        viewModel.sortSelectedImages(ImageSortMode.NAME_DESC)
-                                    }
-                                )
+                                }
                             }
                         }
                     }

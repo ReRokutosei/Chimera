@@ -37,7 +37,7 @@ import com.rerokutosei.chimera.R
 @Composable
 fun <T> CustomSegmentedButtonRow(
     options: List<T>,
-    selectedOption: T,
+    selectedOption: T?,
     onOptionSelected: (T) -> Unit,
     optionDisplayName: @Composable (T) -> String,
     modifier: Modifier = Modifier

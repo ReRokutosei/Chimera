@@ -119,10 +119,12 @@
     <string name="log_file_not_exist">Log file does not exist</string>
     <string name="images_selected">%1$d new images selected</string>
     <string name="sort_images">Sort Images</string>
-    <string name="sort_by_time_asc">Sort by Time (Oldest First)</string>
-    <string name="sort_by_time_desc">Sort by Time (Newest First)</string>
-    <string name="sort_by_name_asc">Sort by Name (A-Z)</string>
-    <string name="sort_by_name_desc">Sort by Name (Z-A)</string>
+    <string name="sort_by_time">By Time</string>
+    <string name="sort_by_name">By Name</string>
+    <string name="sort_old_to_new">Old-New</string>
+    <string name="sort_new_to_old">New-Old</string>
+    <string name="sort_a_to_z">A-Z</string>
+    <string name="sort_z_to_a">Z-A</string>
     <string name="images_sorted_time_asc">Sorted by time: oldest first</string>
     <string name="images_sorted_time_desc">Sorted by time: newest first</string>
     <string name="images_sorted_name_asc">Sorted by name: A-Z</string>

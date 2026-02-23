@@ -146,10 +146,12 @@
     <string name="preview">Vista previa</string>
     <string name="help">Help</string>
     <string name="sort_images">Ordenar imágenes</string>
-    <string name="sort_by_time_asc">Ordenar por fecha (más antiguas primero)</string>
-    <string name="sort_by_time_desc">Ordenar por fecha (más recientes primero)</string>
-    <string name="sort_by_name_asc">Ordenar por nombre (A-Z)</string>
-    <string name="sort_by_name_desc">Ordenar por nombre (Z-A)</string>
+    <string name="sort_by_time">Por fecha</string>
+    <string name="sort_by_name">Por nombre</string>
+    <string name="sort_old_to_new">Antiguo-Nuevo</string>
+    <string name="sort_new_to_old">Nuevo-Antiguo</string>
+    <string name="sort_a_to_z">A-Z</string>
+    <string name="sort_z_to_a">Z-A</string>
     <string name="images_sorted_time_asc">Ordenadas por fecha: más antiguas primero</string>
     <string name="images_sorted_time_desc">Ordenadas por fecha: más recientes primero</string>
     <string name="images_sorted_name_asc">Ordenadas por nombre: A-Z</string>

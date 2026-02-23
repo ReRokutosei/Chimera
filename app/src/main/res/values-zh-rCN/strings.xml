@@ -106,10 +106,12 @@
     <string name="log_file_not_exist">日志文件不存在</string>
     <string name="images_selected">已选择%1$d张新图片</string>
     <string name="sort_images">排序图片</string>
-    <string name="sort_by_time_asc">按时间排序（从旧到新）</string>
-    <string name="sort_by_time_desc">按时间排序（从新到旧）</string>
-    <string name="sort_by_name_asc">按名称排序（A-Z）</string>
-    <string name="sort_by_name_desc">按名称排序（Z-A）</string>
+    <string name="sort_by_time">按时间</string>
+    <string name="sort_by_name">按名称</string>
+    <string name="sort_old_to_new">旧-新</string>
+    <string name="sort_new_to_old">新-旧</string>
+    <string name="sort_a_to_z">A-Z</string>
+    <string name="sort_z_to_a">Z-A</string>
     <string name="images_sorted_time_asc">已按时间排序：从旧到新</string>
     <string name="images_sorted_time_desc">已按时间排序：从新到旧</string>
     <string name="images_sorted_name_asc">已按名称排序：A-Z</string>

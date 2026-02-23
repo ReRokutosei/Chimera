@@ -145,10 +145,12 @@
     <string name="preview">プレビュー</string>
     <string name="help">Help</string>
     <string name="sort_images">画像を並び替え</string>
-    <string name="sort_by_time_asc">日時で並び替え（古い順）</string>
-    <string name="sort_by_time_desc">日時で並び替え（新しい順）</string>
-    <string name="sort_by_name_asc">名前で並び替え（A-Z）</string>
-    <string name="sort_by_name_desc">名前で並び替え（Z-A）</string>
+    <string name="sort_by_time">時間順</string>
+    <string name="sort_by_name">名前順</string>
+    <string name="sort_old_to_new">旧-新</string>
+    <string name="sort_new_to_old">新-旧</string>
+    <string name="sort_a_to_z">A-Z</string>
+    <string name="sort_z_to_a">Z-A</string>
     <string name="images_sorted_time_asc">日時順で並び替えました（古い順）</string>
     <string name="images_sorted_time_desc">日時順で並び替えました（新しい順）</string>
     <string name="images_sorted_name_asc">名前順で並び替えました（A-Z）</string>
