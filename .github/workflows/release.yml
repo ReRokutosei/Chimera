@@ -6,8 +6,8 @@ on:
       - '*'
 
 concurrency:
-  group: release-${{ github.workflow }}
-  cancel-in-progress: false
+  group: ci-${{ github.sha }}
+  cancel-in-progress: true
 
 jobs:
   release:
@@ -72,3 +72,4 @@ jobs:
           body_path: release.md
           files: |
             Chimera-${{ env.RELEASE_VERSION }}.apk
+

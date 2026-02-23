@@ -16,8 +16,8 @@ on:
       - 'assets/**'
       
 concurrency:
-  group: verify-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.sha }}
+  cancel-in-progress: false
 
 jobs:
   build:
