@@ -5,6 +5,10 @@ on:
     tags:
       - '*'
 
+concurrency:
+  group: release-${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -18,7 +22,6 @@ jobs:
         with:
           java-version: '21'
           distribution: 'zulu'
-          cache: gradle
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
@@ -31,7 +34,7 @@ jobs:
         run: bash ./gradlew assembleRelease -PappVerName=${{ env.RELEASE_VERSION }}
 
       - name: Sign APK
-        uses: ilharp/sign-android-release@v2
+        uses: ilharp/sign-android-release@13dd52242698526f951aa8bb8696204f6fea702a # v2.0.0
         id: sign_app
         with:
           releaseDir: app/build/outputs/apk/release
@@ -46,7 +49,7 @@ jobs:
           cp ${{ steps.sign_app.outputs.signedFile }} Chimera-${{ env.RELEASE_VERSION }}.apk
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.2.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: ${{ contains(env.RELEASE_VERSION, '-') }}

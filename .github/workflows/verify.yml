@@ -15,6 +15,10 @@ on:
       - 'docs/**'
       - 'assets/**'
       
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
