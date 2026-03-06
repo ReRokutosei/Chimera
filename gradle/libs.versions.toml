@@ -1,5 +1,5 @@
 [versions]
-agp = "9.0.1"
+agp = "9.1.0"
 animation = "1.10.4"
 appcompat = "1.7.1"
 kotlin = "2.3.10"
