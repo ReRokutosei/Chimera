@@ -2,6 +2,6 @@
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.compose) apply false
-    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
+    id("org.jlleitschuh.gradle.ktlint") version "14.1.0"
     id("io.gitlab.arturbosch.detekt") version "1.23.8"
 }
