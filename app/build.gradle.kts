@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     id("io.gitlab.arturbosch.detekt")
-    kotlin("plugin.serialization") version "2.3.10"
+    kotlin("plugin.serialization") version "2.3.20"
     alias(libs.plugins.aboutLibraries)
 }
 
