@@ -1,5 +1,13 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+fun computeVersionCode(versionName: String): Int {
+    val parts = versionName.substringBefore('-').split('.')
+    val major = parts.getOrNull(0)?.toIntOrNull() ?: 1
+    val minor = parts.getOrNull(1)?.toIntOrNull() ?: 0
+    val patch = parts.getOrNull(2)?.toIntOrNull() ?: 0
+    return major * 10000 + minor * 100 + patch
+}
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -12,12 +20,18 @@ android {
     namespace = "com.rerokutosei.chimera"
     compileSdk = 36
 
+    val appVersionName = project.findProperty("appVerName")?.toString() ?: "1.0.0"
+    val appVersionCode = project.findProperty("appVerCode")
+        ?.toString()
+        ?.toIntOrNull()
+        ?: computeVersionCode(appVersionName)
+
     defaultConfig {
         applicationId = "com.rerokutosei.chimera"
         minSdk = 29
         targetSdk = 36
-        versionCode = 1
-        versionName = project.findProperty("appVerName")?.toString() ?: "1.0.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
     }
     
     // 配置ABI分包
@@ -51,6 +65,11 @@ android {
     }
     
     buildTypes {
+        debug {
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+        }
+
         release {
             isMinifyEnabled = true          // 启用代码混淆和压缩
             isShrinkResources = true        // 启用资源压缩
