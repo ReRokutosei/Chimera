@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/ReRokutosei/Chimera/compare/v1.2.1-alpha.1...v1.3.0) (2026-03-18)
+
+
+### Features
+
+* 新增拼接前的图片列表方向设置 ([6ae1dea](https://github.com/ReRokutosei/Chimera/commit/6ae1deabec4be3c132ab51283913433d876c1505))
+
+
+### Bug Fixes
+
+* **deps:** update animation to v1.10.5 ([#73](https://github.com/ReRokutosei/Chimera/issues/73)) ([8329fe4](https://github.com/ReRokutosei/Chimera/commit/8329fe46177dd9d6cec8bd9c14f0f85758651243))
+* **deps:** update dependency androidx.activity:activity-compose to v1.13.0 ([#75](https://github.com/ReRokutosei/Chimera/issues/75)) ([6b86ea6](https://github.com/ReRokutosei/Chimera/commit/6b86ea6e8b348cc48e6adbb2d662e2e67f4d9c76))
+* **deps:** update dependency androidx.compose:compose-bom to v2026.02.01 ([#69](https://github.com/ReRokutosei/Chimera/issues/69)) ([a15c844](https://github.com/ReRokutosei/Chimera/commit/a15c84460936ad765088aa4466c5fdb03e5367f5))
+* **deps:** update dependency androidx.compose:compose-bom to v2026.03.00 ([#76](https://github.com/ReRokutosei/Chimera/issues/76)) ([d052106](https://github.com/ReRokutosei/Chimera/commit/d0521066b50e5ddd3aa9a20fb27d12c3bd8c379e))
+* **deps:** update dependency androidx.compose.animation:animation to v1.10.4 ([#66](https://github.com/ReRokutosei/Chimera/issues/66)) ([6899da4](https://github.com/ReRokutosei/Chimera/commit/6899da473a3ca55a063b6f915fdbc7cbf8c91d54))
+* **deps:** update dependency androidx.compose.material3:material3 to v1.5.0-alpha15 ([#67](https://github.com/ReRokutosei/Chimera/issues/67)) ([bc2bd8b](https://github.com/ReRokutosei/Chimera/commit/bc2bd8b6f9e6ad223acaff1ab40cc65426697f54))
+* **deps:** update dependency androidx.compose.ui:ui to v1.10.4 ([#68](https://github.com/ReRokutosei/Chimera/issues/68)) ([abcbd7f](https://github.com/ReRokutosei/Chimera/commit/abcbd7f837f2c9e28d270014ad31bbd6a736960d))
+* **deps:** update dependency androidx.compose.ui:ui to v1.10.5 ([#74](https://github.com/ReRokutosei/Chimera/issues/74)) ([0f3dc72](https://github.com/ReRokutosei/Chimera/commit/0f3dc72bbfea821d97beda69f1cd28277adf5dbc))
+* **deps:** update dependency androidx.core:core-ktx to v1.18.0 ([#77](https://github.com/ReRokutosei/Chimera/issues/77)) ([0329747](https://github.com/ReRokutosei/Chimera/commit/032974702819e13c699e65f517fdfd2267732bd1))
+* **deps:** update dependency androidx.datastore:datastore-preferences to v1.2.1 ([#79](https://github.com/ReRokutosei/Chimera/issues/79)) ([d229d44](https://github.com/ReRokutosei/Chimera/commit/d229d44abd0d091ecd48817699d95b04f10b0366))
+
 ### [1.2.1-alpha.1](https://github.com/ReRokutosei/Chimera/compare/v1.2.0...v1.2.1-alpha.1) (2026-02-23)
 
 ## [1.2.0](https://github.com/ReRokutosei/Chimera/compare/v1.1.0...v1.2.0) (2026-02-23)
