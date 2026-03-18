@@ -85,6 +85,9 @@
     <string name="file_picker_settings">File Picker Settings</string>
     <string name="auto_clear_selected">Auto Clear Selected Images</string>
   <string name="clear_after_stitching">Clear selected image list from main page after stitching (does not delete local files)</string>
+    <string name="image_list_direction">Image List Direction</string>
+    <string name="image_list_direction_desc">Choose the direction of preview images before stitching</string>
+    <string name="auto">Auto</string>
     <string name="use_saf_picker">Use Storage Access Framework Picker</string>
   <string name="use_saf_without_permission">Use Storage Access Framework to select images without permissions</string>
     <string name="default_picker_info">Your device uses this picker by default</string>

@@ -72,6 +72,9 @@
     <string name="file_picker_settings">文件选择设置</string>
     <string name="auto_clear_selected">自动清理已选图片</string>
     <string name="clear_after_stitching">完成拼接后删除主页面已选的图片列表（并非删除本地文件）</string>
+    <string name="image_list_direction">图片列表方向</string>
+    <string name="image_list_direction_desc">选择拼接前预览图片的方向</string>
+    <string name="auto">自动</string>
     <string name="use_saf_picker">使用存储访问框架选择器</string>
     <string name="use_saf_without_permission">使用无需权限的 Storage Access Framework 选择图片</string>
     <string name="default_picker_info">您的设备默认使用此选择器</string>

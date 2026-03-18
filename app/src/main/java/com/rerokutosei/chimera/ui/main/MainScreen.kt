@@ -60,6 +60,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.rerokutosei.chimera.R
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
+import com.rerokutosei.chimera.data.model.ImageListDirectionMode
 import com.rerokutosei.chimera.data.repository.ThemeRepository
 import com.rerokutosei.chimera.ui.settings.SettingsViewModel
 import com.rerokutosei.chimera.utils.common.ShowToast
@@ -94,6 +95,8 @@ fun MainScreen(
     val useSafPicker by imageSettingsManager.getUseSafPickerFlow().collectAsState(initial = false)
     val useEmbeddedPicker by imageSettingsManager.getUseEmbeddedPickerFlow().collectAsState(initial = false)
     val sliderThumbShape by imageSettingsManager.getSliderThumbShapeFlow().collectAsState(initial = 0)
+    val imageListDirection by imageSettingsManager.getImageListDirectionFlow()
+        .collectAsState(initial = ImageListDirectionMode.HORIZONTAL)
     
     // 添加尺寸验证状态
     val resolutionValidationState by viewModel.resolutionValidationState.collectAsState()
@@ -316,10 +319,14 @@ fun MainScreen(
                         showAddButton = false,
                         showSortButton = false,
                         enableImagePreview = false,
-                        scrollDirection = if (uiState.stitchMode == StitchMode.DIRECT_HORIZONTAL) {
-                            CarouselScrollDirection.HORIZONTAL
-                        } else {
-                            CarouselScrollDirection.VERTICAL
+                        scrollDirection = when (imageListDirection) {
+                            ImageListDirectionMode.HORIZONTAL -> CarouselScrollDirection.HORIZONTAL
+                            ImageListDirectionMode.VERTICAL -> CarouselScrollDirection.VERTICAL
+                            ImageListDirectionMode.AUTO -> if (uiState.stitchMode == StitchMode.DIRECT_HORIZONTAL) {
+                                CarouselScrollDirection.HORIZONTAL
+                            } else {
+                                CarouselScrollDirection.VERTICAL
+                            }
                         },
                         onInteractionStateChanged = { interacting ->
                             isCarouselInteracting = interacting

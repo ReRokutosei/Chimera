@@ -24,6 +24,9 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -43,6 +46,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.rerokutosei.chimera.R
+import com.rerokutosei.chimera.data.model.ImageListDirectionMode
 
 @Composable
 fun FilePickerSettingsSection(
@@ -105,6 +109,58 @@ fun FilePickerSettingsSection(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { viewModel.setAutoClearImages(!uiState.autoClearImages) }
+    )
+
+    ListItem(
+        headlineContent = {
+            Text(
+                text = stringResource(R.string.image_list_direction),
+                style = MaterialTheme.typography.bodyLarge
+            )
+        },
+        supportingContent = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.image_list_direction_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    SelectableOutlinedButton(
+                        selected = uiState.imageListDirection == ImageListDirectionMode.HORIZONTAL,
+                        text = stringResource(R.string.horizontal),
+                        onClick = { viewModel.setImageListDirection(ImageListDirectionMode.HORIZONTAL) },
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(horizontal = 2.dp)
+                    )
+
+                    SelectableOutlinedButton(
+                        selected = uiState.imageListDirection == ImageListDirectionMode.VERTICAL,
+                        text = stringResource(R.string.vertical),
+                        onClick = { viewModel.setImageListDirection(ImageListDirectionMode.VERTICAL) },
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(horizontal = 2.dp)
+                    )
+
+                    SelectableOutlinedButton(
+                        selected = uiState.imageListDirection == ImageListDirectionMode.AUTO,
+                        text = stringResource(R.string.auto),
+                        onClick = { viewModel.setImageListDirection(ImageListDirectionMode.AUTO) },
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(horizontal = 2.dp)
+                    )
+                }
+            }
+        }
     )
 
     // 使用存储访问框架选择器

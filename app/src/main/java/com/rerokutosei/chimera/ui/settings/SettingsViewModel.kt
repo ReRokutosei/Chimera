@@ -24,6 +24,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.data.local.StitchSettingsManager
+import com.rerokutosei.chimera.data.model.ImageListDirectionMode
 import com.rerokutosei.chimera.data.model.ThemeMode
 import com.rerokutosei.chimera.data.repository.ThemeRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -155,6 +156,12 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                         _uiState.value = _uiState.value.copy(sliderThumbShape = sliderThumbShape)
                     }
                 }
+
+                launch {
+                    imageSettingsManager.getImageListDirectionFlow().collect { imageListDirection ->
+                        _uiState.value = _uiState.value.copy(imageListDirection = imageListDirection)
+                    }
+                }
             }
         }
     }
@@ -276,6 +283,12 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             imageSettingsManager.setSliderThumbShape(shape)
         }
     }
+
+    fun setImageListDirection(direction: ImageListDirectionMode) {
+        viewModelScope.launch {
+            imageSettingsManager.setImageListDirection(direction)
+        }
+    }
 }
 
 data class SettingsUiState(
@@ -296,6 +309,7 @@ data class SettingsUiState(
     val useSafPicker: Boolean = false, // 是否使用存储访问框架选择器
     val useEmbeddedPicker: Boolean = false, // 是否使用Embedded Picker
     val sliderThumbShape: Int = 0, // 滑块手柄形状
+    val imageListDirection: ImageListDirectionMode = ImageListDirectionMode.HORIZONTAL, // 图片列表方向
     val themeMode: ThemeMode = ThemeMode.AUTO, // 主题模式
     val selectedColorScheme: String = "dynamic", // 选中的颜色方案名称
     val customPrimaryColor: String = "", // 自定义主色

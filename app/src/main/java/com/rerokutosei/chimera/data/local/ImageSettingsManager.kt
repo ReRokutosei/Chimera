@@ -27,6 +27,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.rerokutosei.chimera.data.model.ImageListDirectionMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -61,6 +62,7 @@ class ImageSettingsManager private constructor(private val context: Context) {
         val USE_SAF_PICKER = booleanPreferencesKey("use_saf_picker") // 使用存储访问框架选择器
         val USE_EMBEDDED_PICKER = booleanPreferencesKey("use_embedded_picker") // 使用Embedded Picker
         val SLIDER_THUMB_SHAPE = intPreferencesKey("slider_thumb_shape") // 滑块手柄形状
+        val IMAGE_LIST_DIRECTION = intPreferencesKey("image_list_direction") // 图片列表方向
     }
     
     /**
@@ -259,6 +261,35 @@ class ImageSettingsManager private constructor(private val context: Context) {
     suspend fun setSliderThumbShape(shape: Int) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.SLIDER_THUMB_SHAPE] = shape
+        }
+    }
+
+    /**
+     * 获取图片列表方向
+     */
+    fun getImageListDirectionFlow(): Flow<ImageListDirectionMode> {
+        return context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }
+            .map { preferences ->
+                ImageListDirectionMode.fromValue(
+                    preferences[PreferencesKeys.IMAGE_LIST_DIRECTION]
+                        ?: ImageListDirectionMode.HORIZONTAL.value
+                )
+            }
+    }
+
+    /**
+     * 设置图片列表方向
+     */
+    suspend fun setImageListDirection(direction: ImageListDirectionMode) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.IMAGE_LIST_DIRECTION] = direction.value
         }
     }
 }

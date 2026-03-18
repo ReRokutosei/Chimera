@@ -73,6 +73,9 @@
     <string name="file_picker_settings">Configuración del selector de archivos</string>
     <string name="auto_clear_selected">Limpiar automáticamente las imágenes seleccionadas</string>
     <string name="clear_after_stitching">Limpiar la lista de imágenes seleccionadas de la página principal después de unir (no elimina archivos locales)</string>
+    <string name="image_list_direction">Dirección de la lista de imágenes</string>
+    <string name="image_list_direction_desc">Elige la dirección de las imágenes de vista previa antes de unirlas</string>
+    <string name="auto">Automático</string>
     <string name="use_saf_picker">Usar selector de marco de acceso de almacenamiento</string>
     <string name="use_saf_without_permission">Usar Storage Access Framework para seleccionar imágenes sin permisos</string>
     <string name="default_picker_info">Su dispositivo usa este selector por defecto</string>

@@ -73,6 +73,9 @@
     <string name="file_picker_settings">ファイル選択設定</string>
     <string name="auto_clear_selected">選択した画像を自動クリア</string>
     <string name="clear_after_stitching">スティッチ後にメインページの選択画像リストをクリア（ローカルファイルは削除しません）</string>
+    <string name="image_list_direction">画像リストの方向</string>
+    <string name="image_list_direction_desc">結合前のプレビュー画像の並ぶ方向を選択します</string>
+    <string name="auto">自動</string>
     <string name="use_saf_picker">ストレージアクセスフレームワークピッカーを使用</string>
     <string name="use_saf_without_permission">権限なしで Storage Access Framework を使用して画像を選択</string>
     <string name="default_picker_info">お使いのデバイスはデフォルトでこのピッカーを使用します</string>
