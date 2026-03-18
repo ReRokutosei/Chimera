@@ -19,10 +19,23 @@ class BaselineProfileGenerator {
     val baselineProfileRule = BaselineProfileRule()
 
     @Test
-    fun generate() = baselineProfileRule.collect(PACKAGE_NAME) {
+    fun generateStartupProfile() = baselineProfileRule.collect(
+        packageName = PACKAGE_NAME,
+        outputFilePrefix = "startup",
+        includeInStartupProfile = true
+    ) {
         pressHome()
         startActivityAndWait()
+        dismissWelcomeDialogIfShown()
+    }
 
+    @Test
+    fun generateAppFlowProfile() = baselineProfileRule.collect(
+        packageName = PACKAGE_NAME,
+        outputFilePrefix = "app-flow"
+    ) {
+        pressHome()
+        startActivityAndWait()
         dismissWelcomeDialogIfShown()
         openSettingsScreen()
         scrollSettingsScreen()

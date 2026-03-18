@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-private const val BASELINE_PROFILE_VERSION_CODE_OFFSET = 1_000_000
+val baselineProfileVersionCodeOffset = 1_000_000
 
 fun computeVersionCode(versionName: String): Int {
     val parts = versionName.substringBefore('-').split('.')
@@ -31,7 +31,7 @@ android {
         ?.toString()
         ?.toIntOrNull()
         ?: computeVersionCode(appVersionName) + if (isGeneratingBaselineProfile) {
-            BASELINE_PROFILE_VERSION_CODE_OFFSET
+            baselineProfileVersionCodeOffset
         } else {
             0
         }
