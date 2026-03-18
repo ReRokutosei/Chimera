@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+private const val BASELINE_PROFILE_VERSION_CODE_OFFSET = 1_000_000
+
 fun computeVersionCode(versionName: String): Int {
     val parts = versionName.substringBefore('-').split('.')
     val major = parts.getOrNull(0)?.toIntOrNull() ?: 1
@@ -11,6 +13,7 @@ fun computeVersionCode(versionName: String): Int {
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.androidx.baselineprofile)
     id("io.gitlab.arturbosch.detekt")
     kotlin("plugin.serialization") version "2.3.20"
     alias(libs.plugins.aboutLibraries)
@@ -21,10 +24,17 @@ android {
     compileSdk = 36
 
     val appVersionName = project.findProperty("appVerName")?.toString() ?: "1.0.0"
+    val isGeneratingBaselineProfile = gradle.startParameter.taskNames.any {
+        it.contains("generateBaselineProfile", ignoreCase = true)
+    }
     val appVersionCode = project.findProperty("appVerCode")
         ?.toString()
         ?.toIntOrNull()
-        ?: computeVersionCode(appVersionName)
+        ?: computeVersionCode(appVersionName) + if (isGeneratingBaselineProfile) {
+            BASELINE_PROFILE_VERSION_CODE_OFFSET
+        } else {
+            0
+        }
 
     defaultConfig {
         applicationId = "com.rerokutosei.chimera"
@@ -179,9 +189,11 @@ dependencies {
     // Serialization
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.ui)
+    implementation(libs.androidx.profileinstaller)
     
     // AboutLibraries 核心库
     implementation(libs.aboutlibraries.core)
+    add("baselineProfile", project(":baselineprofile"))
 
     // 用于调试和Compose预览功能
     debugImplementation(libs.androidx.compose.ui.tooling)
