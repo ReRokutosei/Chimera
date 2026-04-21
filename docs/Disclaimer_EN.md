@@ -1,101 +1,31 @@
 # Disclaimer
 
-Version: 1.0  
-Effective Date: November 3, 2025
+Version: 1.1  
+Effective Date: April 21, 2026
 
-## Absolute Disclaimer
+## 1. Provided "As Is"
+This application (hereinafter referred to as "the Software") is provided on an "AS IS" and "AS AVAILABLE" basis, without warranties of any kind, either express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and non-infringement.
 
-**This application is provided "as is" without any warranties of any kind.**
+## 2. Limitation of Liability
+To the maximum extent permitted by applicable law, the developer shall not be liable for any direct, indirect, incidental, special, exemplary, or consequential damages arising out of the use or inability to use the Software. This includes, but is not limited to:
+- **Data Loss**: Corruption or loss of original images during processing.
+- **Device Impact**: Device heating, lagging, system crashes, or hardware wear caused by intensive computation.
+- **Business Loss**: Loss of profits, business interruption, or wasted time due to the Software not meeting expectations.
 
-## No Liability Commitment
+## 3. Technical Limitations
+Users should understand and accept the following technical limitations imposed by the system or hardware environment:
+- **System Constraints**: The Android system has strict memory management for Bitmap processing. Extremely large images exceeding JPEG/WebP specifications may cause processing failure.
+- **Device Variance**: Differences in OEM systems and hardware performance (RAM/CPU) across devices directly impact stitching speed and stability.
+- **Output Precision**: Stitching results may deviate slightly from sensory expectations due to resampling or scaling algorithms.
 
-We **assume no responsibility** for any consequences arising from the use of this application, including but not limited to:
+## 4. Assumption of Risk
+You are advised to back up your original files before processing important data with the Software. Your use of the Software constitutes your agreement to assume all associated risks.
 
-### 1. Direct Losses
-- Data loss
-- File corruption
-- Device failure
+## 5. Maintenance and Support
+The developer does not guarantee continuous technical support, bug fixes, or feature updates. As an open-source project, its evolution depends on community contributions and the developer's discretion.
 
-### 2. Indirect Losses
-- Business interruption
-- Loss of profits
-- Wasted time
-
-### 3. Special Losses
-- Mental distress
-- Psychological stress
-- Any other indirect impacts
-
-## Technical Limitations
-
-This application is subject to the following technical limitations, and we **assume no responsibility** for these:
-
-### 1. Android System Limitations
-- Image size limitations (JPEG 65535×65535, WebP 16384×16384, PNG theoretical upper limit extremely high)
-- Memory limitations (constrained by device RAM and Android VM mechanisms)
-- Storage space limitations
-
-### 2. Device Compatibility
-- Compatibility issues may exist on different devices
-- Differences may exist between different Android versions
-- Hardware performance may affect user experience
-
-## Usage Risk
-
-**Use of this application is entirely at your own risk.**
-
-### 1. Data Security
-- Please back up important data before use
-- We do not guarantee absolute data security during processing
-
-### 2. Device Performance
-- Image processing may consume large amounts of CPU, memory, and battery
-- May cause device heating, lagging, or crashing
-
-### 3. Result Accuracy
-- Stitching results may not meet expectations
-- Output quality may be affected by device limitations
-
-## No Technical Support Commitment
-
-We do not promise to provide any form of technical support, including:
-- Usage guidance
-- Problem solving
-- Feature updates
-- Bug fixes
-
-## No Ongoing Maintenance Commitment
-
-We do not promise:
-- Ongoing maintenance of this application
-- Fixing known issues
-- Adapting to new system versions
-- Adding new features
-
-## Absolute Terms
-
-### 1. No Warranty
-We do not warrant:
-- Complete application functionality
-- Stable application performance
-- Error-free application
-- Application meeting your needs
-
-### 2. No Liability
-Under any circumstances, we are not responsible for:
-- Application unavailability
-- Function failure
-- Data loss
-- Any direct or indirect losses
-
-## Governing Law
-
+## 6. Governing Law
 This statement is governed by the laws of the People's Republic of China.
 
-## Statement Changes
-
-We may modify this statement at any time, effective with new application versions, without separate notice. Continued use indicates acceptance of the latest statement.
-
-## Final Statement
-
-**Using this application indicates that you fully understand and accept all the above terms. If you do not agree, please do not use this application.**
+## 7. Changes and Acceptance
+The developer reserves the right to modify this statement at any time. Modified terms will be effective upon the release of a new version. Continued use of the Software indicates your reading and acceptance of the latest version of this Disclaimer.
