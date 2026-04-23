@@ -2,7 +2,7 @@
 agp = "9.1.1"
 animation = "1.11.0"
 appcompat = "1.7.1"
-kotlin = "2.3.20"
+kotlin = "2.3.21"
 coreKtx = "1.18.0"
 kotlinxCoroutinesAndroid = "1.10.2"
 kotlinxCoroutinesCore = "1.10.2"
