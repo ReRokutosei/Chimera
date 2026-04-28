@@ -91,7 +91,7 @@ Due to Android VM architecture, processing large bitmaps (Width × Height × 4 b
 <summary><strong>Expand for Dev Environment & Build Steps</strong></summary>
 
 ### Prerequisites
-- **Android Studio Panda 2 | 2025.3.2** or newer.
+- **Android Studio Panda 4| 2025.3.4** or newer.
 - **JDK 21**.
 - **Android SDK**.
 
