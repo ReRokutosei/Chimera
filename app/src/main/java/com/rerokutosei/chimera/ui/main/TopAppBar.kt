@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -56,6 +57,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.rerokutosei.chimera.R
 import com.rerokutosei.chimera.data.model.PredefinedColorSchemes
 import com.rerokutosei.chimera.data.repository.ThemeRepository
@@ -64,6 +72,8 @@ import com.rerokutosei.chimera.utils.common.ToastUtil
 
 @Composable
 fun TopAppBar(
+    isCutMode: Boolean,
+    onToggleCutMode: () -> Unit,
     onNavigateToSettings: () -> Unit
 ) {
     var showHelpSheet by remember { mutableStateOf(false) }
@@ -139,16 +149,53 @@ fun TopAppBar(
             }
         }
 
-        Row {
+        Row(
+            modifier = Modifier.padding(end = 2.dp),
+            horizontalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            val modes = listOf(false, true)
+            modes.forEach { mode ->
+                Button(
+                    onClick = {
+                        val isCut = mode
+                        if (isCut != isCutMode) onToggleCutMode()
+                    },
+                    modifier = Modifier.height(32.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
+                    colors = if (mode == isCutMode) {
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    } else {
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                ) {
+                    Text(
+                        text = if (mode) stringResource(R.string.cut_mode) else stringResource(R.string.stitch_mode),
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            letterSpacing = (-0.5).sp,
+                            fontSize = 13.sp
+                        ),
+                        maxLines = 1
+                    )
+                }
+            }
+        }
+
+        Row (
+            horizontalArrangement = Arrangement.spacedBy(0.dp) 
+        ) {
             IconButton(onClick = { showHelpSheet = true }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Rounded.Help,
                     contentDescription = stringResource(R.string.help)
                 )
             }
-        }
-        
-        Row {
             IconButton(onClick = onNavigateToSettings) {
                 Icon(
                     imageVector = Icons.Rounded.Settings,

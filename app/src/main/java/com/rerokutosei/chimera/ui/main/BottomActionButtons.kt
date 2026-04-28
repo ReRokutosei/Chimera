@@ -38,10 +38,12 @@ import com.rerokutosei.chimera.R
 @Composable
 fun BottomActionButtons(
     uiState: MainUiState,
+    isCutMode: Boolean = false,
     isPageEntered: Boolean,
     isDataLoaded: Boolean,
     onClearImages: () -> Unit,
     onStartStitching: () -> Unit,
+    onStartCutting: () -> Unit = {},
     onNavigateToStitch: () -> Unit,
     isStartButtonEnabled: Boolean = true
 ) {
@@ -66,22 +68,41 @@ fun BottomActionButtons(
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // 开始拼接按钮
-        Button(
-            onClick = {
-                if (isPageEntered && isDataLoaded) {
-                    if (uiState.selectedImages.size >= 2) {
-                        onNavigateToStitch()
-                        onStartStitching()
+        // 开始拼接/切割按钮
+        if (isCutMode) {
+            Button(
+                onClick = {
+                    if (isPageEntered && isDataLoaded) {
+                        if (uiState.selectedImages.isNotEmpty()) {
+                            onNavigateToStitch()
+                            onStartCutting()
+                        }
                     }
-                }
-            },
-            modifier = Modifier.weight(1f),
-            enabled = uiState.selectedImages.size >= 2 && isPageEntered && isDataLoaded && isStartButtonEnabled
-        ) {
-            Icon(Icons.Rounded.SlowMotionVideo, null)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(stringResource(R.string.start_stitching))
+                },
+                modifier = Modifier.weight(1f),
+                enabled = uiState.selectedImages.isNotEmpty() && isPageEntered && isDataLoaded
+            ) {
+                Icon(Icons.Rounded.SlowMotionVideo, null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(stringResource(R.string.start_cutting))
+            }
+        } else {
+            Button(
+                onClick = {
+                    if (isPageEntered && isDataLoaded) {
+                        if (uiState.selectedImages.size >= 2) {
+                            onNavigateToStitch()
+                            onStartStitching()
+                        }
+                    }
+                },
+                modifier = Modifier.weight(1f),
+                enabled = uiState.selectedImages.size >= 2 && isPageEntered && isDataLoaded && isStartButtonEnabled
+            ) {
+                Icon(Icons.Rounded.SlowMotionVideo, null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(stringResource(R.string.start_stitching))
+            }
         }
     }
 }

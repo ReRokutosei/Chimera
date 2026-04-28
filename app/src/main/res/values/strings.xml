@@ -54,6 +54,7 @@
     <string name="ok">OK</string>
     <string name="select_images">Select Images</string>
     <string name="please_select_images">Please select images to stitch</string>
+    <string name="please_select_cut_images">Please select images to cut</string>
     <string name="stitch_direction">Stitch Direction:</string>
     <string name="image_overlay">Image Overlay:</string>
     <string name="overlay_disabled">Disable</string>
@@ -165,6 +166,14 @@
     <string name="custom_color">Custom Color</string>
     <string name="preview">Preview</string>
     <string name="help">Help</string>
+    <string name="stitch_mode">Stitch</string>
+    <string name="cut_mode">Cut</string>
+    <string name="cut_grid_4">4-Cell</string>
+    <string name="cut_grid_9">9-Cell</string>
+    <string name="start_cutting">Start Cutting</string>
+    <string name="cutting_result">Cutting Result</string>
+    <string name="cut_completed_4">4-cell cutting completed. Please check your gallery.</string>
+    <string name="cut_completed_9">9-cell cutting completed. Please check your gallery.</string>
 
     <!-- Help Content -->
     <string name="help_card_title_mode_direct">✨ Normal Stitching</string>

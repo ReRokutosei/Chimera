@@ -22,4 +22,5 @@ import android.graphics.Bitmap
 
 sealed interface PreviewSource {
     data class FromBitmap(val bitmap: Bitmap) : PreviewSource
+    data class FromBitmapWithGrid(val bitmap: Bitmap, val cols: Int, val rows: Int) : PreviewSource
 }

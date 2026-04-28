@@ -30,6 +30,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -41,10 +43,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,10 +64,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rerokutosei.chimera.R
 import com.rerokutosei.chimera.utils.common.LogManager
+import com.rerokutosei.chimera.utils.image.BitmapLoader
 import com.rerokutosei.chimera.utils.image.ImageSaver
 import com.rerokutosei.chimera.utils.image.ImageSharer
+import com.rerokutosei.chimera.utils.image.ImageSplitter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 
@@ -79,91 +86,226 @@ fun ImageViewerScreen(
     val imageSaver = remember { ImageSaver(context) }
     val imageSharer = remember { ImageSharer(context) }
     val coroutineScope = rememberCoroutineScope()
+    val bitmapLoader = remember { BitmapLoader(context) }
 
     val previewSource by viewModel.previewSource.collectAsState()
     val errorMessage by viewModel.error.collectAsState()
     val isProcessing by viewModel.isProcessing.collectAsState()
+    val isCutMode by viewModel.isCutMode.collectAsState()
+    val cutImageUris by viewModel.cutImageUris.collectAsState()
+    val cutGridCols by viewModel.cutGridCols.collectAsState()
+    val cutGridRows by viewModel.cutGridRows.collectAsState()
+    val currentCutIndex by viewModel.currentCutIndex.collectAsState()
 
     var isSaving by remember { mutableStateOf(false) }
     var saveMessage by remember { mutableStateOf<String?>(null) }
     val shareText = stringResource(R.string.share_stitched_image)
     val saveSuccessText = stringResource(R.string.image_saved_to_album)
     val saveFailedText = stringResource(R.string.save_failed)
+    val cutCompleted4 = stringResource(R.string.cut_completed_4)
+    val cutCompleted9 = stringResource(R.string.cut_completed_9)
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.stitching_result),
-            style = MaterialTheme.typography.headlineMedium
-        )
+    // 切割模式：加载当前页面图片
+    val cutBitmaps = remember(cutImageUris) {
+        mutableStateOf<Map<Int, android.graphics.Bitmap>>(emptyMap())
+    }
 
-        Spacer(modifier = Modifier.height(16.dp))
+    if (isCutMode && cutImageUris.isNotEmpty()) {
+        val pagerState = rememberPagerState(pageCount = { cutImageUris.size })
 
-        errorMessage?.let {
-            ErrorDialog(it, onBackClick, context)
+        LaunchedEffect(pagerState.currentPage) {
+            viewModel.setCurrentCutIndex(pagerState.currentPage)
+            val idx = pagerState.currentPage
+            if (!cutBitmaps.value.containsKey(idx)) {
+                val bitmap = withContext(Dispatchers.IO) {
+                    bitmapLoader.loadBitmapFromUri(cutImageUris[idx])
+                }
+                if (bitmap != null) {
+                    cutBitmaps.value = cutBitmaps.value + (idx to bitmap)
+                }
+            }
         }
 
         Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            modifier = modifier
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            if (isProcessing) {
-                logManager.debug("ImageViewerScreen", "显示处理中状态")
-                ContainedLoadingIndicator()
-            } else if (previewSource != null) {
-                logManager.debug("ImageViewerScreen", "显示预览, source: $previewSource")
-                ImageResultPreviewer(
-                    source = previewSource!!,
-                    modifier = Modifier.fillMaxSize()
-                )
-            } else if (errorMessage == null) {
-                Text(stringResource(R.string.no_valid_result))
-            }
-        }
+            Text(
+                text = stringResource(R.string.cutting_result),
+                style = MaterialTheme.typography.headlineMedium
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        saveMessage?.let {
-            SaveResultDialog(it) { saveMessage = null }
-        }
-
-        ActionButtons(
-            previewSource = previewSource,
-            isProcessing = isProcessing,
-            isSaving = isSaving,
-            onShareClick = { source ->
-                coroutineScope.launch {
-                    when (source) {
-                        is PreviewSource.FromBitmap -> imageSharer.shareBitmap(source.bitmap, shareText)
-                    }
-                    viewModel.releaseTempFile()
-                }
-            },
-            onSaveClick = { source ->
-                isSaving = true
-                coroutineScope.launch {
-                    val onResult: (Uri?) -> Unit = { uri ->
-                        saveMessage = if (uri != null) saveSuccessText else saveFailedText
-                        isSaving = false
-                        if (uri != null) viewModel.releaseTempFile()
-                    }
-                    val onError: (Exception) -> Unit = { e ->
-                        saveMessage = "$saveFailedText: ${e.message}"
-                        isSaving = false
-                    }
-
-                    when (source) {
-                        is PreviewSource.FromBitmap -> imageSaver.saveToGallery(source.bitmap, onResult, onError)
-                    }
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) { page ->
+                val bitmap = cutBitmaps.value[page]
+                if (bitmap != null) {
+                    ImageResultPreviewer(
+                        source = PreviewSource.FromBitmapWithGrid(bitmap, cutGridCols, cutGridRows),
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    ContainedLoadingIndicator()
                 }
             }
-        )
+
+            // 页码指示器
+            if (cutImageUris.size > 1) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "${pagerState.currentPage + 1} / ${cutImageUris.size}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            saveMessage?.let {
+                SaveResultDialog(it) { saveMessage = null }
+            }
+
+            // 切割模式：只显示水平居中的保存按钮
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Button(
+                    onClick = {
+                        isSaving = true
+                        coroutineScope.launch {
+                            var allSuccess = true
+                            var totalPieces = 0
+                            for ((idx, uri) in cutImageUris.withIndex()) {
+                                val sourceBitmap = bitmapLoader.loadBitmapFromUri(uri)
+                                if (sourceBitmap != null) {
+                                    val pieces = ImageSplitter.splitBitmap(sourceBitmap, cutGridCols, cutGridRows)
+                                    totalPieces += pieces.size
+                                    for ((pieceIdx, piece) in pieces.withIndex()) {
+                                        imageSaver.saveToGallery(
+                                            piece,
+                                            onSaved = {},
+                                            onError = { allSuccess = false }
+                                        )
+                                    }
+                                    if (sourceBitmap != cutBitmaps.value[idx]) {
+                                        sourceBitmap.recycle()
+                                    }
+                                } else {
+                                    allSuccess = false
+                                }
+                            }
+                            isSaving = false
+                            saveMessage = if (allSuccess) {
+                                if (cutGridCols == 2) cutCompleted4 else cutCompleted9
+                            } else {
+                                saveFailedText
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = Color.White
+                    ),
+                    enabled = !isSaving
+                ) {
+                    if (isSaving) {
+                        CircularProgressIndicator(modifier = Modifier.size(16.dp), color = Color.White)
+                    } else {
+                        Icon(imageVector = Icons.Default.Save, contentDescription = null)
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(if (isSaving) stringResource(R.string.saving) else stringResource(R.string.save))
+                }
+            }
+        }
+    } else {
+        // 原始拼接模式
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.stitching_result),
+                style = MaterialTheme.typography.headlineMedium
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            errorMessage?.let {
+                ErrorDialog(it, onBackClick, context)
+            }
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                if (isProcessing) {
+                    logManager.debug("ImageViewerScreen", "显示处理中状态")
+                    ContainedLoadingIndicator()
+                } else if (previewSource != null) {
+                    logManager.debug("ImageViewerScreen", "显示预览, source: $previewSource")
+                    ImageResultPreviewer(
+                        source = previewSource!!,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else if (errorMessage == null) {
+                    Text(stringResource(R.string.no_valid_result))
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            saveMessage?.let {
+                SaveResultDialog(it) { saveMessage = null }
+            }
+
+            ActionButtons(
+                previewSource = previewSource,
+                isProcessing = isProcessing,
+                isSaving = isSaving,
+                onShareClick = { source ->
+                    coroutineScope.launch {
+                        when (source) {
+                            is PreviewSource.FromBitmap -> imageSharer.shareBitmap(source.bitmap, shareText)
+                            else -> {}
+                        }
+                        viewModel.releaseTempFile()
+                    }
+                },
+                onSaveClick = { source ->
+                    isSaving = true
+                    coroutineScope.launch {
+                        val onResult: (Uri?) -> Unit = { uri ->
+                            saveMessage = if (uri != null) saveSuccessText else saveFailedText
+                            isSaving = false
+                            if (uri != null) viewModel.releaseTempFile()
+                        }
+                        val onError: (Exception) -> Unit = { e ->
+                            saveMessage = "$saveFailedText: ${e.message}"
+                            isSaving = false
+                        }
+
+                        when (source) {
+                            is PreviewSource.FromBitmap -> imageSaver.saveToGallery(source.bitmap, onResult, onError)
+                            else -> {}
+                        }
+                    }
+                }
+            )
+        }
     }
 }
 

@@ -41,6 +41,7 @@
     <string name="ok">确定</string>
     <string name="select_images">选择图片</string>
     <string name="please_select_images">请选择要拼接的图片</string>
+    <string name="please_select_cut_images">请选择要切割的图片</string>
     <string name="stitch_direction">拼接方向:</string>
     <string name="image_overlay">图片叠加:</string>
     <string name="overlay_disabled">禁用</string>
@@ -164,6 +165,14 @@
     <string name="custom_color">自定义色彩</string>
     <string name="preview">预览</string>
     <string name="help">帮助</string>
+    <string name="stitch_mode">拼</string>
+    <string name="cut_mode">切</string>
+    <string name="cut_grid_4">四宫格</string>
+    <string name="cut_grid_9">九宫格</string>
+    <string name="start_cutting">开始切割</string>
+    <string name="cutting_result">切割示意</string>
+    <string name="cut_completed_4">四宫格切割已完成，请打开手机相册查看</string>
+    <string name="cut_completed_9">九宫格切割已完成，请打开手机相册查看</string>
     
     <!-- Help Content -->
     <string name="help_card_title_mode_direct">✨ 普通拼接</string>

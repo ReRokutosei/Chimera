@@ -20,11 +20,15 @@ package com.rerokutosei.chimera.ui.viewer
 
 import android.app.Application
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.stitch.StitchResult
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import java.io.File
 
 class ImageViewerViewModel(application: Application) : AndroidViewModel(application) {
@@ -39,7 +43,42 @@ class ImageViewerViewModel(application: Application) : AndroidViewModel(applicat
     private val _isProcessing = MutableStateFlow(false)
     val isProcessing = _isProcessing.asStateFlow()
 
+    // 切割模式状态
+    private val _isCutMode = MutableStateFlow(false)
+    val isCutMode = _isCutMode.asStateFlow()
+
+    private val _cutImageUris = MutableStateFlow<List<Uri>>(emptyList())
+    val cutImageUris = _cutImageUris.asStateFlow()
+
+    private val _cutGridCols = MutableStateFlow(3)
+    val cutGridCols = _cutGridCols.asStateFlow()
+
+    private val _cutGridRows = MutableStateFlow(3)
+    val cutGridRows = _cutGridRows.asStateFlow()
+
+    private val _currentCutIndex = MutableStateFlow(0)
+    val currentCutIndex = _currentCutIndex.asStateFlow()
+
     private var tempStitchFile: File? = null
+
+    fun setCutMode(
+        imageUris: List<Uri>,
+        gridCols: Int,
+        gridRows: Int,
+        startIndex: Int = 0
+    ) {
+        _isCutMode.value = true
+        _cutImageUris.value = imageUris
+        _cutGridCols.value = gridCols
+        _cutGridRows.value = gridRows
+        _currentCutIndex.value = startIndex
+        _isProcessing.value = false
+        _error.value = null
+    }
+
+    fun setCurrentCutIndex(index: Int) {
+        _currentCutIndex.value = index
+    }
 
     fun setStitchResult(result: Any) {
         _isProcessing.value = false
@@ -48,12 +87,14 @@ class ImageViewerViewModel(application: Application) : AndroidViewModel(applicat
                 logManager.debug("ImageViewerViewModel", "设置新的位图结果.")
                 clearBitmap()
                 releaseTempFile()
+                _isCutMode.value = false
                 _previewSource.value = PreviewSource.FromBitmap(result)
             }
             is StitchResult.BitmapResult -> {
                 logManager.debug("ImageViewerViewModel", "设置Bitmap结果.")
                 clearBitmap()
                 releaseTempFile()
+                _isCutMode.value = false
                 _previewSource.value = PreviewSource.FromBitmap(result.bitmap)
             }
             else -> {
@@ -93,6 +134,10 @@ class ImageViewerViewModel(application: Application) : AndroidViewModel(applicat
                 it.recycle()
             }
         }
+    }
+
+    fun clearAllCutBitmaps() {
+        // no-op: bitmaps managed externally
     }
 
     override fun onCleared() {

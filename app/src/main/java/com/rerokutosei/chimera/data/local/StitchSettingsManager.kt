@@ -63,6 +63,7 @@ class StitchSettingsManager private constructor(private val context: Context) {
         val OVERLAY_MODE = stringPreferencesKey("overlay_mode")
         val IMAGE_SPACING = intPreferencesKey("image_spacing")
         val IMAGE_SPACING_COLOR = stringPreferencesKey("image_spacing_color")
+        val CUT_GRID = intPreferencesKey("cut_grid") // 2 或 3
         val MULTI_THREAD_ENABLED = booleanPreferencesKey("multi_thread_enabled")
     }
     
@@ -232,6 +233,32 @@ class StitchSettingsManager private constructor(private val context: Context) {
     suspend fun setImageSpacingColor(color: String) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.IMAGE_SPACING_COLOR] = color
+        }
+    }
+
+    /**
+     * 获取切割格数（2=四宫格, 3=九宫格）
+     */
+    fun getCutGridFlow(): Flow<Int> {
+        return context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }
+            .map { preferences ->
+                preferences[PreferencesKeys.CUT_GRID] ?: 3
+            }
+    }
+
+    /**
+     * 设置切割格数
+     */
+    suspend fun setCutGrid(grid: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.CUT_GRID] = grid
         }
     }
 

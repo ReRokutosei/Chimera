@@ -75,6 +75,7 @@ fun MainScreen(
     settingsViewModel: SettingsViewModel,
     onNavigateToSettings: () -> Unit,
     onNavigateToStitch: () -> Unit,
+    onNavigateToCut: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -158,6 +159,8 @@ fun MainScreen(
         ) {
             item {
                 TopAppBar(
+                    isCutMode = uiState.isCutMode,
+                    onToggleCutMode = { viewModel.toggleCutMode() },
                     onNavigateToSettings = onNavigateToSettings
                 )
 
@@ -187,27 +190,50 @@ fun MainScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                ParameterSettingsCard(
-                    uiState = uiState,
-                    isPageEntered = isPageEntered,
-                    isDataLoaded = isDataLoaded,
-                    sliderThumbShape = sliderThumbShape,
-                    onUpdateStitchMode = { viewModel.updateStitchMode(it) },
-                    onUpdateOverlayMode = { viewModel.updateOverlayMode(it) },
-                    onUpdateWidthScale = { viewModel.updateWidthScale(it) },
-                    onUpdateOverlayArea = { viewModel.updateOverlayArea(it) },
-                    onUpdateImageSpacing = { viewModel.updateImageSpacing(it) },
-                    onUpdateImageSpacingColor = { viewModel.updateImageSpacingColor(it) }
-                )
+                if (uiState.isCutMode) {
+                    val cutGridOptions = listOf(2, 3)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        CustomSegmentedButtonRow(
+                            options = cutGridOptions,
+                            selectedOption = uiState.cutGrid,
+                            onOptionSelected = { viewModel.updateCutGrid(it) },
+                            optionDisplayName = {
+                                when (it) {
+                                    2 -> stringResource(R.string.cut_grid_4)
+                                    else -> stringResource(R.string.cut_grid_9)
+                                }
+                            }
+                        )
+                    }
+                } else {
+                    ParameterSettingsCard(
+                        uiState = uiState,
+                        isPageEntered = isPageEntered,
+                        isDataLoaded = isDataLoaded,
+                        sliderThumbShape = sliderThumbShape,
+                        onUpdateStitchMode = { viewModel.updateStitchMode(it) },
+                        onUpdateOverlayMode = { viewModel.updateOverlayMode(it) },
+                        onUpdateWidthScale = { viewModel.updateWidthScale(it) },
+                        onUpdateOverlayArea = { viewModel.updateOverlayArea(it) },
+                        onUpdateImageSpacing = { viewModel.updateImageSpacing(it) },
+                        onUpdateImageSpacingColor = { viewModel.updateImageSpacingColor(it) }
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // 尺寸预览卡片
-                EstimatedResolutionCard(
-                    resolutionValidationState = resolutionValidationState,
-                    showResolutionErrorToast = showResolutionErrorToast,
-                    onToastShown = { viewModel.clearResolutionErrorToast() }
-                )
+                // 尺寸预览卡片（仅在拼模式显示）
+                if (!uiState.isCutMode) {
+                    EstimatedResolutionCard(
+                        resolutionValidationState = resolutionValidationState,
+                        showResolutionErrorToast = showResolutionErrorToast,
+                        onToastShown = { viewModel.clearResolutionErrorToast() }
+                    )
+                }
                 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -215,12 +241,14 @@ fun MainScreen(
                 if (uiState.selectedImages.isNotEmpty()) {
                     BottomActionButtons(
                         uiState = uiState,
+                        isCutMode = uiState.isCutMode,
                         isPageEntered = isPageEntered,
                         isDataLoaded = isDataLoaded,
                         onClearImages = { viewModel.clearImages() },
                         onStartStitching = { viewModel.onStartStitching() },
+                        onStartCutting = { viewModel.onStartCutting(); onNavigateToCut() },
                         onNavigateToStitch = onNavigateToStitch,
-                        isStartButtonEnabled = resolutionValidationState !is ResolutionValidationState.Invalid
+                        isStartButtonEnabled = if (uiState.isCutMode) true else resolutionValidationState !is ResolutionValidationState.Invalid
                     )
                 }
                 
@@ -353,7 +381,7 @@ fun MainScreen(
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = stringResource(R.string.please_select_images),
+                                    text = if (uiState.isCutMode) stringResource(R.string.please_select_cut_images) else stringResource(R.string.please_select_images),
                                     style = MaterialTheme.typography.bodyLarge,
                                     modifier = Modifier.alpha(if (isPageEntered && isDataLoaded) 1f else 0f)
                                 )

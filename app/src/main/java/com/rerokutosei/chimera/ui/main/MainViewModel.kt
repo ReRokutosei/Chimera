@@ -76,6 +76,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             val widthScale = stitchSettingsManager.getWidthScaleFlow().first()
             val imageSpacing = stitchSettingsManager.getImageSpacingFlow().first()
             val imageSpacingColor = stitchSettingsManager.getImageSpacingColorFlow().first()
+            val cutGrid = stitchSettingsManager.getCutGridFlow().first()
             val autoClearImages = imageSettingsManager.getAutoClearImagesFlow().first()
             
             _uiState.value = _uiState.value.copy(
@@ -85,6 +86,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 widthScale = widthScale,
                 imageSpacing = imageSpacing,
                 imageSpacingColor = imageSpacingColor,
+                cutGrid = cutGrid,
                 autoClearImages = autoClearImages
             )
 
@@ -299,8 +301,25 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     /**
      * 开始拼接
      */
+    fun toggleCutMode() {
+        _uiState.value = _uiState.value.copy(isCutMode = !_uiState.value.isCutMode)
+    }
+
+    fun updateCutGrid(grid: Int) {
+        _uiState.value = _uiState.value.copy(cutGrid = grid)
+        viewModelScope.launch {
+            stitchSettingsManager.setCutGrid(grid)
+        }
+    }
+
     fun onStartStitching() {
         if (_uiState.value.selectedImages.size < 2) {
+            setErrorMessage(getApplication<Application>().getString(R.string.select_two_or_more_images))
+        }
+    }
+
+    fun onStartCutting() {
+        if (_uiState.value.selectedImages.isEmpty()) {
             setErrorMessage(getApplication<Application>().getString(R.string.select_two_or_more_images))
         }
     }
@@ -437,17 +456,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 data class MainUiState(
     val selectedImages: List<ImageInfo> = emptyList(),
     val isLoading: Boolean = false,
-    val isImagePreviewLoading: Boolean = false, // 图片预览加载状态
-    val stitchMode: StitchMode = StitchMode.DIRECT_VERTICAL, // 拼接模式
-    val overlayMode: OverlayMode = OverlayMode.DISABLED, // 叠加模式
-    val overlayArea: Int = 10, // 叠加区域占比
-    val widthScale: WidthScale = WidthScale.MIN_WIDTH, // 宽/高度缩放
+    val isImagePreviewLoading: Boolean = false,
+    val stitchMode: StitchMode = StitchMode.DIRECT_VERTICAL,
+    val overlayMode: OverlayMode = OverlayMode.DISABLED,
+    val overlayArea: Int = 10,
+    val widthScale: WidthScale = WidthScale.MIN_WIDTH,
     val errorMessage: String? = null,
     val toastMessage: String? = null,
-    val imageSpacing: Int = 0,  // 添加图片间隔参数
-    val imageSpacingColor: String = "#FF000000", // 图片间隔填充颜色
-    val autoClearImages: Boolean = true, // 是否自动清理已选图片
-    val currentSortMode: ImageSortMode? = null
+    val imageSpacing: Int = 0,
+    val imageSpacingColor: String = "#FF000000",
+    val autoClearImages: Boolean = true,
+    val currentSortMode: ImageSortMode? = null,
+    val isCutMode: Boolean = false,
+    val cutGrid: Int = 3
 )
 
 // 添加尺寸验证状态的密封类
