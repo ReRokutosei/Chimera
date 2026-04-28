@@ -86,6 +86,9 @@ fun ImageViewerScreen(
 
     var isSaving by remember { mutableStateOf(false) }
     var saveMessage by remember { mutableStateOf<String?>(null) }
+    val shareText = stringResource(R.string.share_stitched_image)
+    val saveSuccessText = stringResource(R.string.image_saved_to_album)
+    val saveFailedText = stringResource(R.string.save_failed)
 
     Column(
         modifier = modifier
@@ -137,7 +140,7 @@ fun ImageViewerScreen(
             onShareClick = { source ->
                 coroutineScope.launch {
                     when (source) {
-                        is PreviewSource.FromBitmap -> imageSharer.shareBitmap(source.bitmap, context.getString(R.string.share_stitched_image))
+                        is PreviewSource.FromBitmap -> imageSharer.shareBitmap(source.bitmap, shareText)
                     }
                     viewModel.releaseTempFile()
                 }
@@ -146,12 +149,12 @@ fun ImageViewerScreen(
                 isSaving = true
                 coroutineScope.launch {
                     val onResult: (Uri?) -> Unit = { uri ->
-                        saveMessage = if (uri != null) context.getString(R.string.image_saved_to_album) else context.getString(R.string.save_failed)
+                        saveMessage = if (uri != null) saveSuccessText else saveFailedText
                         isSaving = false
                         if (uri != null) viewModel.releaseTempFile()
                     }
                     val onError: (Exception) -> Unit = { e ->
-                        saveMessage = context.getString(R.string.save_failed) + ": ${e.message}"
+                        saveMessage = "$saveFailedText: ${e.message}"
                         isSaving = false
                     }
 

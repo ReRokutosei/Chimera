@@ -55,6 +55,7 @@ fun FilePickerSettingsSection(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val permissionDeniedMessage = stringResource(R.string.storage_permission_required)
     
     // 为 Embedded Picker 权限请求创建 launcher
     val embeddedPickerPermissionLauncher = rememberLauncherForActivityResult(
@@ -64,7 +65,7 @@ fun FilePickerSettingsSection(
             viewModel.setUseEmbeddedPicker(true)
         } else {
             viewModel.setUseEmbeddedPicker(false)
-            Toast.makeText(context, context.getString(R.string.storage_permission_required), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, permissionDeniedMessage, Toast.LENGTH_SHORT).show()
         }
     }
     
