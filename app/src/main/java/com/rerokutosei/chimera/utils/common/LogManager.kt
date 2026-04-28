@@ -22,6 +22,7 @@ import android.content.Context
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
@@ -64,6 +65,7 @@ class LogManager private constructor(context: Context) {
     private var currentLogLevel = LOG_LEVEL_INFO
     private val logDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault())
     private val logMutex = Mutex()
+    private val logScope = CoroutineScope(Dispatchers.IO + kotlinx.coroutines.SupervisorJob())
     
     /**
      * 设置日志等级
@@ -140,7 +142,7 @@ class LogManager private constructor(context: Context) {
      * 将日志写入文件
      */
     private fun writeLogToFile(level: String, tag: String, message: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        logScope.launch {
             writeLogEntry(level, tag, message)
         }
     }

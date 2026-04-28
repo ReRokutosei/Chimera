@@ -162,6 +162,12 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                         _uiState.value = _uiState.value.copy(imageListDirection = imageListDirection)
                     }
                 }
+
+                launch {
+                    stitchSettingsManager.getImageSpacingColorFlow().collect { imageSpacingColor ->
+                        _uiState.value = _uiState.value.copy(imageSpacingColor = imageSpacingColor)
+                    }
+                }
             }
         }
     }
@@ -289,6 +295,12 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             imageSettingsManager.setImageListDirection(direction)
         }
     }
+
+    fun setImageSpacingColor(color: String) {
+        viewModelScope.launch {
+            stitchSettingsManager.setImageSpacingColor(color)
+        }
+    }
 }
 
 data class SettingsUiState(
@@ -314,5 +326,6 @@ data class SettingsUiState(
     val selectedColorScheme: String = "dynamic", // 选中的颜色方案名称
     val customPrimaryColor: String = "", // 自定义主色
     val customSecondaryColor: String = "", // 自定义次色
-    val customTertiaryColor: String = "" // 自定义第三色
+    val customTertiaryColor: String = "", // 自定义第三色
+    val imageSpacingColor: String = "#FF000000" // 图片间隔填充颜色
 )

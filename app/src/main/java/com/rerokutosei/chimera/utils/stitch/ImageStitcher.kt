@@ -24,6 +24,7 @@ import android.net.Uri
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.data.local.StitchSettingsManager
 import com.rerokutosei.chimera.ui.main.WidthScale
+import com.rerokutosei.chimera.utils.color.ColorUtils
 import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.image.BitmapLoader
 import com.rerokutosei.chimera.utils.stitch.engine.KotlinStitchingEngine
@@ -138,9 +139,16 @@ class ImageStitcher(private val context: Context) {
             val engine = KotlinStitchingEngine(context)
             val quality = imageSettingsManager.getOutputImageQualityFlow().first()
             val format = imageSettingsManager.getOutputImageFormatFlow().first()
+            val spacingColorHex = stitchSettingsManager.getImageSpacingColorFlow().first()
+            val spacingColor = try {
+                android.graphics.Color.parseColor(spacingColorHex)
+            } catch (_: Exception) {
+                android.graphics.Color.BLACK
+            }
 
             val options = StitchingOptions(
                 spacing = imageSpacing,
+                spacingColor = spacingColor,
                 isOverlayEnabled = false,
                 widthScale = widthScale,
                 orientation = orientation,

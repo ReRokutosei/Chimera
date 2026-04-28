@@ -196,7 +196,8 @@ fun MainScreen(
                     onUpdateOverlayMode = { viewModel.updateOverlayMode(it) },
                     onUpdateWidthScale = { viewModel.updateWidthScale(it) },
                     onUpdateOverlayArea = { viewModel.updateOverlayArea(it) },
-                    onUpdateImageSpacing = { viewModel.updateImageSpacing(it) }
+                    onUpdateImageSpacing = { viewModel.updateImageSpacing(it) },
+                    onUpdateImageSpacingColor = { viewModel.updateImageSpacingColor(it) }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))

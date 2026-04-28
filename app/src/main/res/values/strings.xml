@@ -93,6 +93,12 @@
     <string name="default_picker_info">Your device uses this picker by default</string>
     <string name="image_output_settings">Image Output Settings</string>
     <string name="output_format">Output Image Format</string>
+    <string name="spacing_fill_color">Image Space Fill Color</string>
+    <string name="black">Black</string>
+    <string name="white">White</string>
+    <string name="light_red">Light Red</string>
+    <string name="light_green">Light Green</string>
+    <string name="light_blue">Light Blue</string>
     <string name="output_quality">Output Image Quality</string>
     <string name="back">Back</string>
     <string name="other_settings">Other</string>

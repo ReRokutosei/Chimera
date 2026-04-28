@@ -62,6 +62,7 @@ class StitchSettingsManager private constructor(private val context: Context) {
         val OVERLAY_AREA = intPreferencesKey("overlay_area")
         val OVERLAY_MODE = stringPreferencesKey("overlay_mode")
         val IMAGE_SPACING = intPreferencesKey("image_spacing")
+        val IMAGE_SPACING_COLOR = stringPreferencesKey("image_spacing_color")
         val MULTI_THREAD_ENABLED = booleanPreferencesKey("multi_thread_enabled")
     }
     
@@ -205,6 +206,32 @@ class StitchSettingsManager private constructor(private val context: Context) {
     suspend fun setImageSpacing(spacing: Int) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.IMAGE_SPACING] = spacing
+        }
+    }
+
+    /**
+     * 获取图片间隔填充颜色（十六进制字符串）
+     */
+    fun getImageSpacingColorFlow(): Flow<String> {
+        return context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }
+            .map { preferences ->
+                preferences[PreferencesKeys.IMAGE_SPACING_COLOR] ?: "#FF000000"
+            }
+    }
+
+    /**
+     * 设置图片间隔填充颜色
+     */
+    suspend fun setImageSpacingColor(color: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.IMAGE_SPACING_COLOR] = color
         }
     }
 

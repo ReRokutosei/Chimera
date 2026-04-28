@@ -75,6 +75,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             val overlayArea = stitchSettingsManager.getOverlayAreaFlow().first()
             val widthScale = stitchSettingsManager.getWidthScaleFlow().first()
             val imageSpacing = stitchSettingsManager.getImageSpacingFlow().first()
+            val imageSpacingColor = stitchSettingsManager.getImageSpacingColorFlow().first()
             val autoClearImages = imageSettingsManager.getAutoClearImagesFlow().first()
             
             _uiState.value = _uiState.value.copy(
@@ -83,6 +84,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 overlayArea = overlayArea,
                 widthScale = widthScale,
                 imageSpacing = imageSpacing,
+                imageSpacingColor = imageSpacingColor,
                 autoClearImages = autoClearImages
             )
 
@@ -99,6 +101,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             imageSettingsManager.getOutputImageFormatFlow().collectLatest {
                 validateResolution()
+            }
+        }
+        viewModelScope.launch {
+            stitchSettingsManager.getImageSpacingColorFlow().collectLatest { color ->
+                _uiState.value = _uiState.value.copy(imageSpacingColor = color)
             }
         }
     }
@@ -205,6 +212,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
 
         validateResolution()
+    }
+
+    fun updateImageSpacingColor(color: String) {
+        _uiState.value = _uiState.value.copy(imageSpacingColor = color)
+        viewModelScope.launch {
+            stitchSettingsManager.setImageSpacingColor(color)
+        }
     }
     
     fun setErrorMessage(message: String?) {
@@ -431,6 +445,7 @@ data class MainUiState(
     val errorMessage: String? = null,
     val toastMessage: String? = null,
     val imageSpacing: Int = 0,  // 添加图片间隔参数
+    val imageSpacingColor: String = "#FF000000", // 图片间隔填充颜色
     val autoClearImages: Boolean = true, // 是否自动清理已选图片
     val currentSortMode: ImageSortMode? = null
 )

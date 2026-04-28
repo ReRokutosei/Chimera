@@ -154,9 +154,9 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
                 isDither = true
             }
             
-            // 黑色画笔用于绘制黑色区域
-            val blackPaint = Paint().apply { 
-                this.color = Color.BLACK
+            // 画笔用于绘制间隔区域
+            val spacingPaint = Paint().apply { 
+                this.color = options.spacingColor
                 style = Paint.Style.FILL
                 isAntiAlias = true
             }
@@ -185,7 +185,7 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
                             currentY.toFloat(), 
                             totalWidth.toFloat(), 
                             (currentY + overlayHeight).toFloat(), 
-                            blackPaint
+                            spacingPaint
                         )
                         
                         // 从当前图片中裁剪出叠加区域并绘制到结果图片
@@ -227,7 +227,7 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
                             0f, 
                             (currentX + overlayWidth).toFloat(), 
                             totalHeight.toFloat(), 
-                            blackPaint
+                            spacingPaint
                         )
 
                         val overlayBitmap = Bitmap.createBitmap(
@@ -254,7 +254,7 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
             
             canvas.setBitmap(null)
             paint.reset()
-            blackPaint.reset()
+            spacingPaint.reset()
             
             resultBitmap = result
             return result

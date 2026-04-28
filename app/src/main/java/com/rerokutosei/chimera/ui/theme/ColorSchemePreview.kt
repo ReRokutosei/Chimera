@@ -18,11 +18,16 @@
 
 package com.rerokutosei.chimera.ui.theme
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.material.icons.rounded.Check
@@ -166,6 +171,34 @@ private fun DrawScope.drawDynamicColorScheme(
         )
     } else {
         rainbowColors(canvasSize, isDarkTheme)
+    }
+}
+
+@Composable
+fun RainbowColorCircle(
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    isDark: Boolean = isSystemInDarkTheme(),
+    modifier: Modifier = Modifier
+) {
+    val containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
+    val contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+    val borderColor = MaterialTheme.colorScheme.outline
+
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier.size(40.dp),
+        shape = CircleShape,
+        contentPadding = PaddingValues(0.dp),
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = containerColor,
+            contentColor = contentColor
+        ),
+        border = if (isSelected) null else BorderStroke(1.dp, borderColor)
+    ) {
+        Canvas(modifier = Modifier.size(28.dp)) {
+            rainbowColors(size, isDark)
+        }
     }
 }
 

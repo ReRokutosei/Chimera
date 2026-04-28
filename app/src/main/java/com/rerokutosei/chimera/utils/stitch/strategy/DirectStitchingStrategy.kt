@@ -70,9 +70,9 @@ class DirectStitchingStrategy(
         return try {
             withContext(Dispatchers.Default) {
                 if (isVertical) {
-                    stitchVertically(processedBitmaps, options.spacing)
+                    stitchVertically(processedBitmaps, options.spacing, options.spacingColor)
                 } else {
-                    stitchHorizontally(processedBitmaps, options.spacing)
+                    stitchHorizontally(processedBitmaps, options.spacing, options.spacingColor)
                 }
             }.also { bitmap ->
                 resultBitmap = bitmap
@@ -91,18 +91,20 @@ class DirectStitchingStrategy(
      * 垂直拼接图片
      * @param bitmaps 要拼接的位图列表
      * @param spacing 图片间隔（像素）
+     * @param spacingColor 间隔填充颜色
      */
-    private fun stitchVertically(bitmaps: List<Bitmap>, spacing: Int): Bitmap? {
-        return stitchImages(bitmaps, spacing, true)
+    private fun stitchVertically(bitmaps: List<Bitmap>, spacing: Int, spacingColor: Int = Color.BLACK): Bitmap? {
+        return stitchImages(bitmaps, spacing, true, spacingColor)
     }
     
     /**
      * 水平拼接图片
      * @param bitmaps 要拼接的位图列表
      * @param spacing 图片间隔（像素）
+     * @param spacingColor 间隔填充颜色
      */
-    private fun stitchHorizontally(bitmaps: List<Bitmap>, spacing: Int): Bitmap? {
-        return stitchImages(bitmaps, spacing, false)
+    private fun stitchHorizontally(bitmaps: List<Bitmap>, spacing: Int, spacingColor: Int = Color.BLACK): Bitmap? {
+        return stitchImages(bitmaps, spacing, false, spacingColor)
     }
     
     /**
@@ -110,8 +112,9 @@ class DirectStitchingStrategy(
      * @param bitmaps 要拼接的位图列表
      * @param spacing 图片间隔（像素）
      * @param isVertical 是否为垂直拼接
+     * @param spacingColor 间隔填充颜色
      */
-    private fun stitchImages(bitmaps: List<Bitmap>, spacing: Int, isVertical: Boolean): Bitmap? {
+    private fun stitchImages(bitmaps: List<Bitmap>, spacing: Int, isVertical: Boolean, spacingColor: Int = Color.BLACK): Bitmap? {
         logManager.debug(TAG, "开始${if (isVertical) "垂直" else "水平"}拼接，图片数量: ${bitmaps.size}，间隔: $spacing")
         
         val (totalMajor, totalMinor) = if (isVertical) {
@@ -157,9 +160,9 @@ class DirectStitchingStrategy(
                 isDither = true
             }
 
-            // 创建黑色画笔用于绘制间隔
-            val blackPaint = Paint().apply {
-                color = Color.BLACK
+            // 创建画笔用于绘制间隔
+            val spacingPaint = Paint().apply {
+                color = spacingColor
                 style = Paint.Style.FILL
             }
 
@@ -182,12 +185,12 @@ class DirectStitchingStrategy(
                         if (isVertical) {
                             currentMajor += bitmap.height
                             logManager.debug(TAG, "绘制间隔：位置(0, $currentMajor), 尺寸(${totalMinor}x${spacing})")
-                            canvas.drawRect(0f, currentMajor.toFloat(), totalMinor.toFloat(), (currentMajor + spacing).toFloat(), blackPaint)
+                            canvas.drawRect(0f, currentMajor.toFloat(), totalMinor.toFloat(), (currentMajor + spacing).toFloat(), spacingPaint)
                             currentMajor += spacing
                         } else {
                             currentMajor += bitmap.width
                             logManager.debug(TAG, "绘制间隔：位置($currentMajor, 0), 尺寸(${spacing}x${totalMinor})")
-                            canvas.drawRect(currentMajor.toFloat(), 0f, (currentMajor + spacing).toFloat(), totalMinor.toFloat(), blackPaint)
+                            canvas.drawRect(currentMajor.toFloat(), 0f, (currentMajor + spacing).toFloat(), totalMinor.toFloat(), spacingPaint)
                             currentMajor += spacing
                         }
                     } else {
@@ -197,7 +200,7 @@ class DirectStitchingStrategy(
             } finally {
                 canvas.setBitmap(null)
                 paint.reset()
-                blackPaint.reset()
+                spacingPaint.reset()
             }
 
             logManager.debug(TAG, "${if (isVertical) "垂直" else "水平"}拼接完成，结果位图尺寸：${result.width}x${result.height}")

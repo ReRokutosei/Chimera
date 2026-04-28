@@ -18,25 +18,39 @@
 
 package com.rerokutosei.chimera.ui.main
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.rerokutosei.chimera.R
 import com.rerokutosei.chimera.ui.settings.getThumbShape
+import com.rerokutosei.chimera.ui.theme.SpacingColorPickerDialog
+import com.rerokutosei.chimera.ui.theme.shouldUseDarkTheme
+import com.rerokutosei.chimera.utils.color.ColorUtils
 import com.t8rin.fancyslider.fancy.FancySlider
 
 @Composable
@@ -49,7 +63,8 @@ fun ParameterSettingsCard(
     onUpdateOverlayMode: (OverlayMode) -> Unit,
     onUpdateWidthScale: (WidthScale) -> Unit,
     onUpdateOverlayArea: (Int) -> Unit,
-    onUpdateImageSpacing: (Int) -> Unit
+    onUpdateImageSpacing: (Int) -> Unit,
+    onUpdateImageSpacingColor: (String) -> Unit = {}
 ) {
     // 拼接参数设置
     Card(
@@ -265,9 +280,34 @@ fun ParameterSettingsCard(
                             fontSize = MaterialTheme.typography.labelLarge.fontSize * 0.95f
                         )
                     )
-                    Text(
-                        text = "${uiState.imageSpacing.toString().padStart(2, '0')}px"
-                    )
+                    var showColorPicker by remember { mutableStateOf(false) }
+                    val spacingColor = ColorUtils.parseColorSafely(uiState.imageSpacingColor, Color.Black)
+                    val isDark = shouldUseDarkTheme()
+                    val displayColor = if (isDark && spacingColor != Color.Black) ColorUtils.adjustColorForDarkTheme(spacingColor) else spacingColor
+                    Row(
+                        modifier = Modifier.clickable { showColorPicker = true },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(14.dp)
+                                .clip(CircleShape)
+                                .background(displayColor)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "${uiState.imageSpacing.toString().padStart(2, '0')}px"
+                        )
+                    }
+                    if (showColorPicker) {
+                        SpacingColorPickerDialog(
+                            initialColor = spacingColor,
+                            onColorSelected = { color ->
+                                onUpdateImageSpacingColor(ColorUtils.formatColorToHex(color))
+                            },
+                            onDismissRequest = { showColorPicker = false }
+                        )
+                    }
                 }
                 
                 // 图片间隔滑块

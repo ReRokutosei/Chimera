@@ -40,6 +40,7 @@ interface StitchingStrategy {
  */
 data class StitchingOptions(
     val spacing: Int = 0,
+    val spacingColor: Int = android.graphics.Color.BLACK,
     val isOverlayEnabled: Boolean = false,
     val overlayRatio: Int = 0,
     val widthScale: WidthScale = WidthScale.NONE,

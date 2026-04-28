@@ -80,6 +80,12 @@
     <string name="default_picker_info">您的设备默认使用此选择器</string>
     <string name="image_output_settings">图片输出设置</string>
     <string name="output_format">输出图片格式</string>
+    <string name="spacing_fill_color">图片间隔填充</string>
+    <string name="black">黑色</string>
+    <string name="white">白色</string>
+    <string name="light_red">浅红</string>
+    <string name="light_green">浅绿</string>
+    <string name="light_blue">浅蓝</string>
     <string name="output_quality">输出图片质量</string>
     <string name="back">返回</string>
     <string name="other_settings">其他</string>
