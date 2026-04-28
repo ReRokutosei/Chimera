@@ -40,14 +40,14 @@ import java.io.IOException
  * 拼接设置管理器
  */
 class StitchSettingsManager private constructor(private val context: Context) {
-    
+
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "stitch_settings")
-    
+
     companion object {
         @SuppressLint("StaticFieldLeak")
         @Volatile
         private var INSTANCE: StitchSettingsManager? = null
-        
+
         fun getInstance(context: Context): StitchSettingsManager {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: StitchSettingsManager(context.applicationContext).also { INSTANCE = it }
@@ -63,228 +63,59 @@ class StitchSettingsManager private constructor(private val context: Context) {
         val OVERLAY_MODE = stringPreferencesKey("overlay_mode")
         val IMAGE_SPACING = intPreferencesKey("image_spacing")
         val IMAGE_SPACING_COLOR = stringPreferencesKey("image_spacing_color")
-        val CUT_GRID = intPreferencesKey("cut_grid") // 2 或 3
+        val CUT_GRID = intPreferencesKey("cut_grid")
         val MULTI_THREAD_ENABLED = booleanPreferencesKey("multi_thread_enabled")
     }
-    
-    /**
-     * 获取拼接模式
-     */
+
+    private fun <T> DataStore<Preferences>.getPref(key: Preferences.Key<T>, default: T): Flow<T> {
+        return this.data
+            .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+            .map { it[key] ?: default }
+    }
+
+    private suspend fun <T> DataStore<Preferences>.setPref(key: Preferences.Key<T>, value: T) {
+        this.edit { it[key] = value }
+    }
+
     fun getStitchModeFlow(): Flow<StitchMode> {
-        return context.dataStore.data
-            .catch { exception ->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
-                }
-            }
-            .map { preferences ->
-                val modeString = preferences[PreferencesKeys.STITCH_MODE] ?: "DIRECT_VERTICAL"
-                when (modeString) {
-                    "DIRECT_HORIZONTAL" -> StitchMode.DIRECT_HORIZONTAL
-                    else -> StitchMode.DIRECT_VERTICAL
-                }
-            }
+        return context.dataStore.getPref(PreferencesKeys.STITCH_MODE, "DIRECT_VERTICAL")
+            .map { when (it) { "DIRECT_HORIZONTAL" -> StitchMode.DIRECT_HORIZONTAL; else -> StitchMode.DIRECT_VERTICAL } }
     }
-    
-    /**
-     * 设置拼接模式
-     */
+
     suspend fun setStitchMode(mode: StitchMode) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.STITCH_MODE] = mode.name
-        }
+        context.dataStore.setPref(PreferencesKeys.STITCH_MODE, mode.name)
     }
-    
-    /**
-     * 获取宽度缩放模式
-     */
+
     fun getWidthScaleFlow(): Flow<WidthScale> {
-        return context.dataStore.data
-            .catch { exception ->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
-                }
-            }
-            .map { preferences ->
-                val scaleString = preferences[PreferencesKeys.WIDTH_SCALE] ?: "MIN_WIDTH"
-                when (scaleString) {
-                    "MAX_WIDTH" -> WidthScale.MAX_WIDTH
-                    "MIN_WIDTH" -> WidthScale.MIN_WIDTH
-                    else -> WidthScale.NONE
-                }
-            }
+        return context.dataStore.getPref(PreferencesKeys.WIDTH_SCALE, "MIN_WIDTH")
+            .map { when (it) { "MAX_WIDTH" -> WidthScale.MAX_WIDTH; "MIN_WIDTH" -> WidthScale.MIN_WIDTH; else -> WidthScale.NONE } }
     }
-    
-    /**
-     * 设置宽度缩放模式
-     */
+
     suspend fun setWidthScale(scale: WidthScale) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.WIDTH_SCALE] = scale.name
-        }
+        context.dataStore.setPref(PreferencesKeys.WIDTH_SCALE, scale.name)
     }
-    
-    /**
-     * 获取被叠加区域占比
-     */
-    fun getOverlayAreaFlow(): Flow<Int> {
-        return context.dataStore.data
-            .catch { exception ->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
-                }
-            }
-            .map { preferences ->
-                preferences[PreferencesKeys.OVERLAY_AREA] ?: 10
-            }
-    }
-    
-    /**
-     * 获取叠加模式
-     */
+
+    fun getOverlayAreaFlow(): Flow<Int> = context.dataStore.getPref(PreferencesKeys.OVERLAY_AREA, 10)
+    suspend fun setOverlayArea(area: Int) = context.dataStore.setPref(PreferencesKeys.OVERLAY_AREA, area)
+
     fun getOverlayModeFlow(): Flow<OverlayMode> {
-        return context.dataStore.data
-            .catch { exception ->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
-                }
-            }
-            .map { preferences ->
-                val modeString = preferences[PreferencesKeys.OVERLAY_MODE] ?: "DISABLED"
-                when (modeString) {
-                    "ENABLED" -> OverlayMode.ENABLED
-                    else -> OverlayMode.DISABLED
-                }
-            }
+        return context.dataStore.getPref(PreferencesKeys.OVERLAY_MODE, "DISABLED")
+            .map { if (it == "ENABLED") OverlayMode.ENABLED else OverlayMode.DISABLED }
     }
 
-    /**
-     * 设置叠加模式
-     */
     suspend fun setOverlayMode(mode: OverlayMode) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.OVERLAY_MODE] = mode.name
-        }
+        context.dataStore.setPref(PreferencesKeys.OVERLAY_MODE, mode.name)
     }
 
-    /**
-     * 设置被叠加区域占比
-     */
-    suspend fun setOverlayArea(area: Int) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.OVERLAY_AREA] = area
-        }
-    }
-    
-    /**
-     * 获取图片间隔
-     */
-    fun getImageSpacingFlow(): Flow<Int> {
-        return context.dataStore.data
-            .catch { exception ->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
-                }
-            }
-            .map { preferences ->
-                preferences[PreferencesKeys.IMAGE_SPACING] ?: 0
-            }
-    }
-    
-    /**
-     * 设置图片间隔
-     */
-    suspend fun setImageSpacing(spacing: Int) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.IMAGE_SPACING] = spacing
-        }
-    }
+    fun getImageSpacingFlow(): Flow<Int> = context.dataStore.getPref(PreferencesKeys.IMAGE_SPACING, 0)
+    suspend fun setImageSpacing(spacing: Int) = context.dataStore.setPref(PreferencesKeys.IMAGE_SPACING, spacing)
 
-    /**
-     * 获取图片间隔填充颜色（十六进制字符串）
-     */
-    fun getImageSpacingColorFlow(): Flow<String> {
-        return context.dataStore.data
-            .catch { exception ->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
-                }
-            }
-            .map { preferences ->
-                preferences[PreferencesKeys.IMAGE_SPACING_COLOR] ?: "#FF000000"
-            }
-    }
+    fun getImageSpacingColorFlow(): Flow<String> = context.dataStore.getPref(PreferencesKeys.IMAGE_SPACING_COLOR, "#FF000000")
+    suspend fun setImageSpacingColor(color: String) = context.dataStore.setPref(PreferencesKeys.IMAGE_SPACING_COLOR, color)
 
-    /**
-     * 设置图片间隔填充颜色
-     */
-    suspend fun setImageSpacingColor(color: String) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.IMAGE_SPACING_COLOR] = color
-        }
-    }
+    fun getCutGridFlow(): Flow<Int> = context.dataStore.getPref(PreferencesKeys.CUT_GRID, 3)
+    suspend fun setCutGrid(grid: Int) = context.dataStore.setPref(PreferencesKeys.CUT_GRID, grid)
 
-    /**
-     * 获取切割格数（2=四宫格, 3=九宫格）
-     */
-    fun getCutGridFlow(): Flow<Int> {
-        return context.dataStore.data
-            .catch { exception ->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
-                }
-            }
-            .map { preferences ->
-                preferences[PreferencesKeys.CUT_GRID] ?: 3
-            }
-    }
-
-    /**
-     * 设置切割格数
-     */
-    suspend fun setCutGrid(grid: Int) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.CUT_GRID] = grid
-        }
-    }
-
-    /**
-     * 获取多线程加速计算设置
-     */
-    fun getMultiThreadEnabledFlow(): Flow<Boolean> {
-        return context.dataStore.data
-            .catch { exception ->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
-                }
-            }
-            .map { preferences ->
-                preferences[PreferencesKeys.MULTI_THREAD_ENABLED] ?: false
-            }
-    }
-    
-    /**
-     * 设置多线程加速计算
-     */
-    suspend fun setMultiThreadEnabled(enabled: Boolean) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.MULTI_THREAD_ENABLED] = enabled
-        }
-    }
+    fun getMultiThreadEnabledFlow(): Flow<Boolean> = context.dataStore.getPref(PreferencesKeys.MULTI_THREAD_ENABLED, false)
+    suspend fun setMultiThreadEnabled(enabled: Boolean) = context.dataStore.setPref(PreferencesKeys.MULTI_THREAD_ENABLED, enabled)
 }

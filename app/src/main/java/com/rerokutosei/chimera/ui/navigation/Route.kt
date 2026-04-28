@@ -18,18 +18,18 @@
 
 package com.rerokutosei.chimera.ui.navigation
 
-/**
- * 应用导航路由定义
- */
-sealed class Route(val route: String) {
-    object Main : Route("main")
-    object Settings : Route("settings")
-    object ImageViewer : Route("viewer")
+import kotlinx.serialization.Serializable
 
-    companion object {
-        /**
-         * 获取所有路由列表，用于导航图构建
-         */
-        val allRoutes = listOf(Main, Settings, ImageViewer)
-    }
+@Serializable
+sealed class Route {
+    @Serializable data object Main : Route()
+    @Serializable data object Settings : Route()
+    @Serializable data class ImageViewer(
+        val widthScale: String = "",
+        val stitchMode: String = "",
+        val imageSpacing: String = "",
+        val triggerStitch: String = "",
+        val isCutMode: String = "",
+        val cutGrid: String = ""
+    ) : Route()
 }

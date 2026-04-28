@@ -19,7 +19,6 @@
 package com.rerokutosei.chimera.ui.navigation
 
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -38,6 +37,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.data.local.StitchSettingsManager
 import com.rerokutosei.chimera.data.repository.ThemeRepository
@@ -67,7 +67,7 @@ fun AppNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Route.Main.route,
+        startDestination = Route.Main,
         enterTransition = {
             slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Start,
@@ -93,8 +93,7 @@ fun AppNavGraph(
             )
         }
     ) {
-        // 主屏幕
-        composable(Route.Main.route) {
+        composable<Route.Main> {
             val mainViewModel: MainViewModel = viewModel()
 
             val mainUiState by mainViewModel.uiState.collectAsStateWithLifecycle()
@@ -111,16 +110,14 @@ fun AppNavGraph(
             }
 
             val settingsViewModel: SettingsViewModel = viewModel()
-            
+
             MainScreen(
                 viewModel = mainViewModel,
                 settingsViewModel = settingsViewModel,
                 onNavigateToStitch = {
-                    // 传递图片URI列表和宽度缩放参数作为导航参数
                     val imageUris = mainUiState.selectedImages.map { it.uri }
-                    // 将URI保存到ViewModel中供ImageViewerScreen使用
                     mainViewModel.setPendingStitchUris(imageUris)
-                    
+
                     val widthScale = when (mainUiState.widthScale) {
                         WidthScale.MAX_WIDTH -> "MAX_WIDTH"
                         WidthScale.MIN_WIDTH -> "MIN_WIDTH"
@@ -130,54 +127,44 @@ fun AppNavGraph(
                         StitchMode.DIRECT_HORIZONTAL -> "DIRECT_HORIZONTAL"
                         StitchMode.DIRECT_VERTICAL -> "DIRECT_VERTICAL"
                     }
-                    val imageSpacing = mainUiState.imageSpacing
-                    // 直接跳转到ImageViewer，传递参数用于拼接，但不传递URI列表
-                    val route = Uri.Builder()
-                        .path(Route.ImageViewer.route)
-                        .appendQueryParameter("widthScale", widthScale)
-                        .appendQueryParameter("stitchMode", stitchMode)
-                        .appendQueryParameter("imageSpacing", imageSpacing.toString())
-                        .appendQueryParameter("triggerStitch", "true")
-                        .build()
-                        .toString()
-                    navController.navigate(route)
-                    },
+                    navController.navigate(
+                        Route.ImageViewer(
+                            widthScale = widthScale,
+                            stitchMode = stitchMode,
+                            imageSpacing = mainUiState.imageSpacing.toString(),
+                            triggerStitch = "true"
+                        )
+                    )
+                },
                 onNavigateToCut = {
                     val imageUris = mainUiState.selectedImages.map { it.uri }
                     mainViewModel.setPendingStitchUris(imageUris)
-                    val route = Uri.Builder()
-                        .path(Route.ImageViewer.route)
-                        .appendQueryParameter("isCutMode", "true")
-                        .appendQueryParameter("cutGrid", mainUiState.cutGrid.toString())
-                        .build()
-                        .toString()
-                    navController.navigate(route) {
-                        popUpTo(Route.Main.route) { inclusive = false }
+                    navController.navigate(Route.ImageViewer(isCutMode = "true", cutGrid = mainUiState.cutGrid.toString())) {
+                        popUpTo(Route.Main) { inclusive = false }
                     }
                 },
                 onNavigateToSettings = {
-                    navController.navigate(Route.Settings.route)
+                    navController.navigate(Route.Settings)
                 }
             )
         }
 
-        // 设置屏幕
-        composable(Route.Settings.route) {
+        composable<Route.Settings> {
             val mainViewModel: MainViewModel = viewModel()
             SettingsScreen(
                 mainViewModel = mainViewModel
             )
         }
 
-        // 图片查看屏幕
-        composable("${Route.ImageViewer.route}?widthScale={widthScale}&stitchMode={stitchMode}&imageSpacing={imageSpacing}&triggerStitch={triggerStitch}&isCutMode={isCutMode}&cutGrid={cutGrid}") { backStackEntry ->
-            val widthScaleParam = backStackEntry.arguments?.getString("widthScale")
-            val stitchModeParam = backStackEntry.arguments?.getString("stitchMode")
-            val imageSpacingParam = backStackEntry.arguments?.getString("imageSpacing")
-            val triggerStitchParam = backStackEntry.arguments?.getString("triggerStitch")
-            val isCutModeParam = backStackEntry.arguments?.getString("isCutMode")
-            val cutGridParam = backStackEntry.arguments?.getString("cutGrid")
-            
+        composable<Route.ImageViewer> { backStackEntry ->
+            val args = backStackEntry.toRoute<Route.ImageViewer>()
+            val widthScaleParam = args.widthScale.ifEmpty { null }
+            val stitchModeParam = args.stitchMode.ifEmpty { null }
+            val imageSpacingParam = args.imageSpacing.ifEmpty { null }
+            val triggerStitchParam = args.triggerStitch.ifEmpty { null }
+            val isCutModeParam = args.isCutMode.ifEmpty { null }
+            val cutGridParam = args.cutGrid.ifEmpty { null }
+
             val context = LocalContext.current
             val logManager = LogManager.getInstance(context)
             logManager.debug("NavGraph", "ImageViewer composable被调用，widthScaleParam: $widthScaleParam, stitchModeParam: $stitchModeParam, imageSpacingParam: $imageSpacingParam")
@@ -185,15 +172,13 @@ fun AppNavGraph(
             val stitchViewModel: StitchViewModel = viewModel()
             val imageViewerViewModel: ImageViewerViewModel = viewModel()
             val mainViewModel: MainViewModel = viewModel(
-                viewModelStoreOwner = remember(backStackEntry) { 
-                    navController.getBackStackEntry(Route.Main.route) 
+                viewModelStoreOwner = remember(backStackEntry) {
+                    navController.getBackStackEntry(Route.Main)
                 }
             )
-            
-            // 从MainViewModel获取待处理的图片URI
+
             val pendingStitchUris by mainViewModel.pendingStitchUris.collectAsState()
-            
-            // 切割模式处理
+
             LaunchedEffect(isCutModeParam, cutGridParam, pendingStitchUris) {
                 if (isCutModeParam == "true" && pendingStitchUris.isNotEmpty()) {
                     val grid = cutGridParam?.toIntOrNull() ?: 3
@@ -204,21 +189,18 @@ fun AppNavGraph(
                     )
                 }
             }
-            
-            // 使用状态变量存储拼接结果位图
+
             var stitchedBitmap by remember { mutableStateOf<Bitmap?>(null) }
             var stitchErrorMessage by remember { mutableStateOf<String?>(null) }
             var isStitching by remember { mutableStateOf(false) }
-            
-            // 只有在非切割模式下才进行拼接
+
             if (isCutModeParam != "true") {
-                // 只有在参数存在且尚未拼接时才进行拼接
                 LaunchedEffect(widthScaleParam, stitchModeParam, imageSpacingParam, triggerStitchParam, pendingStitchUris) {
                     logManager.debug("NavGraph", "LaunchedEffect触发，isStitching: $isStitching, stitchedBitmap: $stitchedBitmap, triggerStitchParam: $triggerStitchParam")
-                    
+
                     if (!isStitching && stitchedBitmap == null &&
                         triggerStitchParam == "true" && pendingStitchUris.isNotEmpty()) {
-                        
+
                         logManager.debug("NavGraph", "开始拼接流程")
                         isStitching = true
 
@@ -251,7 +233,7 @@ fun AppNavGraph(
                         logManager.debug("NavGraph", "调用stitchViewModel.stitchImages")
 
                         val overlayMode = mainViewModel.uiState.value.overlayMode
-                        
+
                         if (overlayMode == OverlayMode.ENABLED) {
                             val stitchSettingsManager = StitchSettingsManager.getInstance(context)
                             val overlayRatio: Int = stitchSettingsManager.getOverlayAreaFlow().first()
@@ -260,7 +242,7 @@ fun AppNavGraph(
                                 WidthScale.MAX_WIDTH -> WidthScale.MAX_WIDTH
                                 else -> WidthScale.MIN_WIDTH
                             }
-                            
+
                             stitchViewModel.stitchOverlay(
                                 overlayRatio = overlayRatio,
                                 widthScale = widthScale,
@@ -268,8 +250,8 @@ fun AppNavGraph(
                             )
                         } else {
                             stitchViewModel.stitchImages(
-                                orientation, 
-                                widthScale = widthScale, 
+                                orientation,
+                                widthScale = widthScale,
                                 imageSpacing = imageSpacing
                             )
                         }
@@ -287,7 +269,7 @@ fun AppNavGraph(
 
                                 val imageSettingsManager = ImageSettingsManager.getInstance(context)
                                 val shouldAutoClear = imageSettingsManager.getAutoClearImagesFlow().first()
-                                
+
                                 if (shouldAutoClear) {
                                     mainViewModel.clearImages()
                                 }
@@ -296,13 +278,11 @@ fun AppNavGraph(
                                 stitchErrorMessage = stitchState.message
                                 isStitching = false
                             }
-                            else -> {
-                                // 保持默认状态
-                            }
+                            else -> {}
                         }
                     }
                 }
-                
+
                 LaunchedEffect(stitchedBitmap, stitchErrorMessage, isStitching) {
                     imageViewerViewModel.setProcessing(isStitching)
                     if (stitchErrorMessage != null) {
@@ -312,7 +292,7 @@ fun AppNavGraph(
                     }
                 }
             }
-            
+
             ImageViewerScreen(
                 viewModel = imageViewerViewModel,
                 onBackClick = { navController.popBackStack() },
