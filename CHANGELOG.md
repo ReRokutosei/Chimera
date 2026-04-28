@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/ReRokutosei/Chimera/compare/v1.3.0...v1.4.0) (2026-04-28)
+
+
+### Features
+
+* 图片间隔填充色支持自定义 ([74a3019](https://github.com/ReRokutosei/Chimera/commit/74a3019b65a9b7ebab4da25d9697dc3975a35aa0))
+* 新增九/四宫格切割模式 ([13bdddb](https://github.com/ReRokutosei/Chimera/commit/13bdddb66cc8e2735c63bb0b3e5f0e614075e28f))
+
+
+### Bug Fixes
+
+* 解决 lint 报错 ([066df24](https://github.com/ReRokutosei/Chimera/commit/066df24eb0a1f88e92e4ce79cc6c1cf8051ec11d))
+* **deps:** update aboutlibraries to v14 ([#96](https://github.com/ReRokutosei/Chimera/issues/96)) ([0f6e72d](https://github.com/ReRokutosei/Chimera/commit/0f6e72de326bba96b55994c2416bcb2ff8033154))
+* **deps:** update animation to v1.11.0 ([#107](https://github.com/ReRokutosei/Chimera/issues/107)) ([9a127a0](https://github.com/ReRokutosei/Chimera/commit/9a127a01e6efe4f651955af799ad47674164dd97))
+* **deps:** update dependency androidx.benchmark:benchmark-macro-junit4 to v1.5.0-alpha04 ([#84](https://github.com/ReRokutosei/Chimera/issues/84)) ([e4ad7cc](https://github.com/ReRokutosei/Chimera/commit/e4ad7cc9a568cb57f2f29955f9a063a93ec718f7))
+* **deps:** update dependency androidx.benchmark:benchmark-macro-junit4 to v1.5.0-alpha05 ([#90](https://github.com/ReRokutosei/Chimera/issues/90)) ([d37b405](https://github.com/ReRokutosei/Chimera/commit/d37b40532464af60a34cd6b1843cfe0faac1547d))
+* **deps:** update dependency androidx.compose:compose-bom to v2026.03.01 ([#91](https://github.com/ReRokutosei/Chimera/issues/91)) ([6782e12](https://github.com/ReRokutosei/Chimera/commit/6782e1276c34cc216415f08842b9c10388d696b4))
+* **deps:** update dependency androidx.compose:compose-bom to v2026.04.01 ([#108](https://github.com/ReRokutosei/Chimera/issues/108)) ([e27fe3d](https://github.com/ReRokutosei/Chimera/commit/e27fe3d177a18dd4a23479ee01314467d2a0417d))
+* **deps:** update dependency androidx.compose.animation:animation to v1.10.6 ([#92](https://github.com/ReRokutosei/Chimera/issues/92)) ([0594a3b](https://github.com/ReRokutosei/Chimera/commit/0594a3b14df8eeaf3292201d26981593f3b7052b))
+* **deps:** update dependency androidx.compose.material3:material3 to v1.5.0-alpha16 ([#93](https://github.com/ReRokutosei/Chimera/issues/93)) ([6b58fbf](https://github.com/ReRokutosei/Chimera/commit/6b58fbf3231128de5c272036437b7d9024d56391))
+* **deps:** update dependency androidx.compose.material3:material3 to v1.5.0-alpha17 ([#97](https://github.com/ReRokutosei/Chimera/issues/97)) ([cf3873d](https://github.com/ReRokutosei/Chimera/commit/cf3873d9c6800a35b49880f79fef35c58674a188))
+* **deps:** update dependency androidx.compose.material3:material3 to v1.5.0-alpha18 ([#105](https://github.com/ReRokutosei/Chimera/issues/105)) ([521935a](https://github.com/ReRokutosei/Chimera/commit/521935ae10c500ddb6d3274a9d0687563d3906ec))
+* **deps:** update dependency androidx.compose.ui:ui to v1.10.6 ([#94](https://github.com/ReRokutosei/Chimera/issues/94)) ([a2989e0](https://github.com/ReRokutosei/Chimera/commit/a2989e0c3fafb2885655b3dd1108e5f87e40eebe))
+* **deps:** update dependency androidx.compose.ui:ui to v1.11.0 ([#109](https://github.com/ReRokutosei/Chimera/issues/109)) ([eddb255](https://github.com/ReRokutosei/Chimera/commit/eddb255a1d3ed40d10e73fa051a38ec8f989f54e))
+* **deps:** update dependency androidx.navigation:navigation-compose to v2.9.8 ([#106](https://github.com/ReRokutosei/Chimera/issues/106)) ([b1ef897](https://github.com/ReRokutosei/Chimera/commit/b1ef897bf4c5e79e6dee3812f3de9d2587ad7e7a))
+* **deps:** update dependency androidx.test:runner to v1.7.0 ([#85](https://github.com/ReRokutosei/Chimera/issues/85)) ([1cb1b13](https://github.com/ReRokutosei/Chimera/commit/1cb1b1395199f7fdad5c60b5fc96e7593220908c))
+* **deps:** update dependency androidx.test.ext:junit to v1.3.0 ([#86](https://github.com/ReRokutosei/Chimera/issues/86)) ([d8c2550](https://github.com/ReRokutosei/Chimera/commit/d8c255092ea2bd73afe64af7a8f9bd64f9373665))
+* **deps:** update dependency org.jetbrains.kotlinx:kotlinx-serialization-json to v1.11.0 ([#98](https://github.com/ReRokutosei/Chimera/issues/98)) ([d181766](https://github.com/ReRokutosei/Chimera/commit/d1817663b3dcb3e5ce256f9c5ab79e2fd6700b2f))
+* **deps:** update dependency sh.calvin.reorderable:reorderable to v3.1.0 ([#103](https://github.com/ReRokutosei/Chimera/issues/103)) ([e01a0dd](https://github.com/ReRokutosei/Chimera/commit/e01a0dd30d239cea0c3f4b6698d77f87b894832d))
+
 ## [1.3.0](https://github.com/ReRokutosei/Chimera/compare/v1.2.1-alpha.1...v1.3.0) (2026-03-18)
 
 
