@@ -34,6 +34,10 @@ Supporting JPEG, PNG, and WEBP, Chimera features a **fully offline design**, ena
 
 </div>
 
+> [!TIP]
+> 
+> For the Desktop version, visit https://github.com/ReRokutosei/ChimeraWeb
+
 ## 🌟 Core Features
 
 ### Image Selection Methods
