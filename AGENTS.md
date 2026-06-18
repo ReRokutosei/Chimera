@@ -10,7 +10,7 @@
 # Fix: extract context.getString(...) to composable-scoped val with stringResource(...)
 ```
 
-- `compileSdk` / `targetSdk` = 36, `minSdk` = 29, `applicationId` = `com.rerokutosei.chimera`
+- `compileSdk` / `targetSdk` = 37, `minSdk` = 29, `applicationId` = `com.rerokutosei.chimera`
 - Release build needs keystore env vars (`KEYSTORE_PATH`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`)
 - No tests (no test runner configured; do not add tests unless explicitly asked)
 - Kotlin serialization plugin (`kotlin("plugin.serialization")`) already applied; Navigation `2.9.8` supports `@Serializable` route types via `toRoute<>()`

@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.rerokutosei.chimera.baselineprofile"
-    compileSdk = 36
+    compileSdk = 37
     targetProjectPath = ":app"
 
     defaultConfig {

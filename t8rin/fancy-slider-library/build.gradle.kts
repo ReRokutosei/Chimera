@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.t8rin.fancyslider"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 29

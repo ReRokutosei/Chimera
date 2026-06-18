@@ -21,7 +21,7 @@ plugins {
 
 android {
     namespace = "com.rerokutosei.chimera"
-    compileSdk = 36
+    compileSdk = 37
 
     val appVersionName = project.findProperty("appVerName")?.toString() ?: "1.0.0"
     val isGeneratingBaselineProfile = gradle.startParameter.taskNames.any {
