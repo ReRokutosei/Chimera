@@ -28,7 +28,7 @@ benchmarkMacro = "1.5.0-alpha07"
 profileInstaller = "1.4.1"
 androidxTestRunner = "1.7.0"
 androidxTestExtJunit = "1.3.0"
-uiautomator = "2.3.0"
+uiautomator = "2.4.0"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
