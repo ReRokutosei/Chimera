@@ -29,6 +29,8 @@ import com.rerokutosei.chimera.utils.stitch.StitchOrientation
 import com.rerokutosei.chimera.utils.stitch.StitchResult
 import com.rerokutosei.chimera.utils.stitch.layout.LayoutMode
 import com.rerokutosei.chimera.utils.stitch.layout.OutputImageFormat
+import com.rerokutosei.chimera.utils.performance.ProcessingPerformance
+import com.rerokutosei.chimera.utils.performance.ProcessingStage
 import kotlinx.coroutines.CancellationException
 
 /**
@@ -85,7 +87,9 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
             }
             
             // 创建结果位图
-            val result = createBitmap(totalWidth, totalHeight, config)
+            val result = ProcessingPerformance.measure(ProcessingStage.ALLOCATION) {
+                createBitmap(totalWidth, totalHeight, config)
+            }
             allocatedBitmap = result
             logManager.debug(TAG, "创建结果位图成功，格式：$config")
             
@@ -103,7 +107,8 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
                 isAntiAlias = true
             }
 
-            when (options.orientation) {
+            ProcessingPerformance.measure(ProcessingStage.DRAW) {
+              when (options.orientation) {
                 StitchOrientation.VERTICAL -> {
                     // 绘制第一张图片（完整显示）
                     logManager.debug(TAG, "绘制第一张图片")
@@ -190,6 +195,7 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
                         currentX += overlayWidth
                     }
                 }
+              }
             }
 
             logManager.debug(TAG, "叠加拼接模式拼接完成")

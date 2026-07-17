@@ -31,6 +31,8 @@ import android.net.Uri
 import android.os.Build
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.utils.common.LogManager
+import com.rerokutosei.chimera.utils.performance.ProcessingPerformance
+import com.rerokutosei.chimera.utils.performance.ProcessingStage
 import java.io.InputStream
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -97,7 +99,8 @@ class BitmapLoader(private val context: Context) {
      * @param uri 图片的Uri
      * @return 返回预估的宽度和高度，如果失败则返回 null。
      */
-    fun getSampledDimensions(uri: Uri): Pair<Int, Int>? {
+    fun getSampledDimensions(uri: Uri): Pair<Int, Int>? =
+      ProcessingPerformance.measure(ProcessingStage.METADATA) {
         try {
             // 只获取图片原始尺寸和类型，不加载图片本身
             val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
@@ -126,7 +129,7 @@ class BitmapLoader(private val context: Context) {
             logManager.error(TAG, "预估采样后尺寸失败: $uri", e)
             return null
         }
-    }
+      }
     
     /**
      * 从Uri加载Bitmap，使用适当的缩放以避免内存问题
@@ -174,8 +177,10 @@ class BitmapLoader(private val context: Context) {
                 return null
             }
 
-            inputStream.use { stream ->
-                BitmapFactory.decodeStream(stream, null, options)
+            ProcessingPerformance.measure(ProcessingStage.METADATA) {
+              inputStream.use { stream ->
+                  BitmapFactory.decodeStream(stream, null, options)
+              }
             }
 
             logManager.debug(TAG, "图片尺寸信息: ${options.outWidth}x${options.outHeight}, MIME类型: ${options.outMimeType}")
@@ -185,7 +190,8 @@ class BitmapLoader(private val context: Context) {
 
             val estimatedSize = options.outWidth.toLong() * options.outHeight.toLong() * 4
 
-            val bitmap = if (estimatedSize > DEFAULT_REGION_DECODER_THRESHOLD) {
+            val bitmap = ProcessingPerformance.measure(ProcessingStage.DECODE) {
+              if (estimatedSize > DEFAULT_REGION_DECODER_THRESHOLD) {
                 logManager.debug(TAG, "使用 BitmapRegionDecoder 处理超大图片")
                 loadBitmapWithRegionDecoder(uri, options)
             } else {
@@ -224,9 +230,12 @@ class BitmapLoader(private val context: Context) {
                     logManager.error(TAG, "加载缩放后的图片时出错: $uri | ${e.message}", e)
                     null
                 }
+              }
             }
             
-            val correctedBitmap = applyExifOrientation(uri, bitmap)
+            val correctedBitmap = ProcessingPerformance.measure(ProcessingStage.EXIF) {
+                applyExifOrientation(uri, bitmap)
+            }
             if (correctedBitmap != bitmap && bitmap != null && !bitmap.isRecycled) {
                 bitmap.recycle()
             }

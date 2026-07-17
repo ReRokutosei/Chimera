@@ -32,6 +32,8 @@ import com.rerokutosei.chimera.utils.stitch.layout.LayoutOrientation
 import com.rerokutosei.chimera.utils.stitch.layout.LayoutScaleMode
 import com.rerokutosei.chimera.utils.stitch.layout.StitchLayout
 import com.rerokutosei.chimera.utils.stitch.layout.StitchLayoutCalculator
+import com.rerokutosei.chimera.utils.performance.ProcessingPerformance
+import com.rerokutosei.chimera.utils.performance.ProcessingStage
 
 abstract class BaseStitchingStrategy(
     context: Context,
@@ -53,7 +55,7 @@ abstract class BaseStitchingStrategy(
         widthScale: WidthScale,
         orientation: StitchOrientation,
         tag: String
-    ): List<Bitmap> {
+    ): List<Bitmap> = ProcessingPerformance.measure(ProcessingStage.SCALE) {
         val targetDimensions = StitchLayoutCalculator.scale(
             images = bitmaps.map { ImageDimensions(it.width, it.height) },
             orientation = orientation.toLayoutOrientation(),
@@ -94,8 +96,8 @@ abstract class BaseStitchingStrategy(
         mode: LayoutMode,
         spacing: Int = 0,
         overlayRatio: Int = 0
-    ): StitchLayout = requireNotNull(
-        StitchLayoutCalculator.calculate(
+    ): StitchLayout = ProcessingPerformance.measure(ProcessingStage.LAYOUT) {
+        requireNotNull(StitchLayoutCalculator.calculate(
             images = bitmaps.map { ImageDimensions(it.width, it.height) },
             options = LayoutOptions(
                 orientation = orientation.toLayoutOrientation(),
@@ -103,8 +105,8 @@ abstract class BaseStitchingStrategy(
                 spacing = spacing,
                 overlayRatio = overlayRatio
             )
-        )
-    )
+        ))
+    }
 
     protected fun recycleScaledIntermediates(
         originalBitmaps: List<Bitmap>,

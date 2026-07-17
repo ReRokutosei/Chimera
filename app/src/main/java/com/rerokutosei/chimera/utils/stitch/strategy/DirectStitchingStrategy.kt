@@ -29,6 +29,8 @@ import com.rerokutosei.chimera.utils.stitch.StitchOrientation
 import com.rerokutosei.chimera.utils.stitch.StitchResult
 import com.rerokutosei.chimera.utils.stitch.layout.LayoutMode
 import com.rerokutosei.chimera.utils.stitch.layout.OutputImageFormat
+import com.rerokutosei.chimera.utils.performance.ProcessingPerformance
+import com.rerokutosei.chimera.utils.performance.ProcessingStage
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -180,10 +182,12 @@ class DirectStitchingStrategy(
             else -> Bitmap.Config.RGB_565
         }
             
-        val result = if (isVertical) {
-            createBitmap(totalMinor, totalMajor, config)
-        } else {
-            createBitmap(totalMajor, totalMinor, config)
+        val result = ProcessingPerformance.measure(ProcessingStage.ALLOCATION) {
+            if (isVertical) {
+                createBitmap(totalMinor, totalMajor, config)
+            } else {
+                createBitmap(totalMajor, totalMinor, config)
+            }
         }
         return try {
             logManager.debug(TAG, "结果位图创建成功：${result.width}x${result.height}，格式：$config")
@@ -201,7 +205,8 @@ class DirectStitchingStrategy(
                 style = Paint.Style.FILL
             }
 
-            try {
+            ProcessingPerformance.measure(ProcessingStage.DRAW) {
+              try {
                 var currentMajor = 0
                 for ((index, bitmap) in bitmaps.withIndex()) {
                     val (x, y) = if (isVertical) {
@@ -238,10 +243,11 @@ class DirectStitchingStrategy(
                         currentMajor += if (isVertical) bitmap.height else bitmap.width
                     }
                 }
-            } finally {
-                canvas.setBitmap(null)
-                paint.reset()
-                spacingPaint.reset()
+              } finally {
+                  canvas.setBitmap(null)
+                  paint.reset()
+                  spacingPaint.reset()
+              }
             }
 
             logManager.debug(TAG, "${if (isVertical) "垂直" else "水平"}拼接完成，结果位图尺寸：${result.width}x${result.height}")

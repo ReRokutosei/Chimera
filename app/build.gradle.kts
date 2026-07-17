@@ -42,6 +42,8 @@ android {
         targetSdk = 36
         versionCode = appVersionCode
         versionName = appVersionName
+        testInstrumentationRunner = "androidx.benchmark.junit4.AndroidBenchmarkRunner"
+        testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
     }
     
     // 配置ABI分包
@@ -94,7 +96,17 @@ android {
                 signingConfigs.getByName("debug")
             }
         }
+
+        create("benchmark") {
+            initWith(getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
+            isMinifyEnabled = false
+            isShrinkResources = false
+        }
     }
+    testBuildType = "benchmark"
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
@@ -191,6 +203,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.ui)
     implementation(libs.androidx.profileinstaller)
+    implementation(libs.androidx.tracing)
     
     // AboutLibraries 核心库
     implementation(libs.aboutlibraries.core)
@@ -200,6 +213,10 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     testImplementation(libs.junit4)
+    androidTestImplementation(libs.androidx.benchmark.junit4)
+    add("benchmarkImplementation", libs.androidx.benchmark.common)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.runner)
 }
 
 detekt {

@@ -28,6 +28,8 @@ import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.domain.error.SaveFailure
 import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.stitch.layout.OutputImageFormat
+import com.rerokutosei.chimera.utils.performance.ProcessingPerformance
+import com.rerokutosei.chimera.utils.performance.ProcessingStage
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -73,7 +75,8 @@ class ImageSaver(private val context: Context) {
         bitmap: Bitmap,
         options: ImageSaveOptions,
         nameSuffix: String? = null
-    ): ImageSaveResult = withContext(Dispatchers.IO) {
+    ): ImageSaveResult = ProcessingPerformance.measureSuspend(ProcessingStage.ENCODE_SAVE) {
+      withContext(Dispatchers.IO) {
         var insertedUri: Uri? = null
         try {
             val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.getDefault()).format(Date())
@@ -111,6 +114,7 @@ class ImageSaver(private val context: Context) {
             insertedUri?.let(::deleteQuietly)
             ImageSaveResult.Failure(SaveFailure.WriteFailed(e))
         }
+      }
     }
 
     private fun failedSave(uri: Uri, failure: SaveFailure): ImageSaveResult.Failure {

@@ -29,6 +29,8 @@ import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.image.BitmapLoader
 import com.rerokutosei.chimera.utils.stitch.engine.KotlinStitchingEngine
 import com.rerokutosei.chimera.utils.stitch.layout.OutputImageFormat
+import com.rerokutosei.chimera.utils.performance.ProcessingPerformance
+import com.rerokutosei.chimera.utils.performance.ProcessingStage
 import com.rerokutosei.chimera.utils.stitch.strategy.StitchingOptions
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -65,7 +67,8 @@ class ImageStitcher(private val context: Context) {
         widthScale: WidthScale = WidthScale.NONE,
         imageSpacing: Int = 0,
         progressCallback: (progress: Int) -> Unit = {}
-    ): StitchResult = withContext(Dispatchers.IO) {
+    ): StitchResult = ProcessingPerformance.measureSuspend(ProcessingStage.TOTAL) {
+      withContext(Dispatchers.IO) {
         if (imageUris.isEmpty()) return@withContext StitchResult.ErrorResult(StitchFailure.NoImages)
         logManager.debug(TAG, "开始直接拼接 ${imageUris.size} 张图片.")
 
@@ -96,6 +99,7 @@ class ImageStitcher(private val context: Context) {
             logManager.error(TAG, "直接拼接过程中出错", e)
             StitchResult.ErrorResult(StitchFailure.Unexpected(e))
         }
+      }
     }
 
     /**
@@ -112,7 +116,8 @@ class ImageStitcher(private val context: Context) {
         widthScale: WidthScale = WidthScale.MIN_WIDTH,
         orientation: StitchOrientation = StitchOrientation.VERTICAL,
         progressCallback: (progress: Int) -> Unit = {}
-    ): StitchResult = withContext(Dispatchers.IO) {
+    ): StitchResult = ProcessingPerformance.measureSuspend(ProcessingStage.TOTAL) {
+      withContext(Dispatchers.IO) {
         if (imageUris.isEmpty()) return@withContext StitchResult.ErrorResult(StitchFailure.NoImages)
         logManager.debug(TAG, "开始叠加拼接 ${imageUris.size} 张图片.")
 
@@ -136,5 +141,6 @@ class ImageStitcher(private val context: Context) {
             logManager.error(TAG, "叠加拼接过程中出错", e)
             StitchResult.ErrorResult(StitchFailure.Unexpected(e))
         }
+      }
     }
 }
