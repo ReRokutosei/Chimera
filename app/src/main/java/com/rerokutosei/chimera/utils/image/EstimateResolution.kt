@@ -20,6 +20,7 @@ package com.rerokutosei.chimera.utils.image
 
 import android.net.Uri
 import android.util.LruCache
+import com.rerokutosei.chimera.domain.error.StitchFailure
 import com.rerokutosei.chimera.ui.main.OverlayMode
 import com.rerokutosei.chimera.ui.main.StitchMode
 import com.rerokutosei.chimera.ui.main.WidthScale
@@ -87,8 +88,7 @@ class EstimateResolution(private val bitmapLoader: BitmapLoader) {
                 )
             }
         } catch (e: Exception) {
-            // 发生错误时，默认为有效状态
-            return ResolutionValidationResult.Valid(0, 0)
+            return ResolutionValidationResult.Unavailable(StitchFailure.MetadataUnavailable(e))
         }
     }
 
@@ -174,4 +174,5 @@ sealed class ResolutionValidationResult {
     object NotNeeded : ResolutionValidationResult()
     data class Valid(val width: Long, val height: Long) : ResolutionValidationResult()
     data class Invalid(val width: Long, val height: Long, val formatName: String, val limit: Int) : ResolutionValidationResult()
+    data class Unavailable(val failure: StitchFailure.MetadataUnavailable) : ResolutionValidationResult()
 }

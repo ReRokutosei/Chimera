@@ -22,6 +22,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import com.rerokutosei.chimera.data.local.StitchSettingsManager
+import com.rerokutosei.chimera.domain.error.StitchFailure
 import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.image.BitmapLoader
 import com.rerokutosei.chimera.utils.stitch.StitchOrientation
@@ -31,6 +32,7 @@ import com.rerokutosei.chimera.utils.stitch.strategy.OverlayStitchingStrategy
 import com.rerokutosei.chimera.utils.stitch.strategy.StitchingOptions
 import com.rerokutosei.chimera.utils.stitch.strategy.StitchingStrategy
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -54,10 +56,11 @@ class KotlinStitchingEngine(
         progressCallback: (progress: Int) -> Unit
     ): StitchResult {
         return withContext(Dispatchers.IO) {
+            var bitmaps: List<Bitmap> = emptyList()
             try {
                 val multiThreadEnabled = stitchSettingsManager.getMultiThreadEnabledFlow().first()
 
-                val bitmaps: List<Bitmap> = if (multiThreadEnabled) {
+                bitmaps = if (multiThreadEnabled) {
                     logManager.debug("KotlinStitchingEngine", "多线程加速已开启，并行加载图片")
                     val deferredBitmaps = coroutineScope {
                         imageUris.map { uri ->
@@ -85,27 +88,33 @@ class KotlinStitchingEngine(
                 if (bitmaps.size != imageUris.size) {
                     logManager.error("KotlinStitchingEngine", "一张或多张图片加载失败")
                     bitmapLoader.recycleBitmaps(bitmaps)
-                    return@withContext StitchResult.ErrorResult("图片加载失败")
+                    return@withContext StitchResult.ErrorResult(StitchFailure.DecodeFailed)
                 }
 
                 val strategy = createStitcher(options.orientation, options.isOverlayEnabled)
 
                 val result = strategy.stitch(bitmaps, options)
                 progressCallback(80)
-                
-                if (result != null) {
-                    logManager.debug("KotlinStitchingEngine", "拼接完成，返回Bitmap进行预览")
-                    bitmapLoader.recycleBitmaps(bitmaps.filter { it != result })
-                    progressCallback(100)
-                    StitchResult.BitmapResult(result)
-                } else {
-                    logManager.error("KotlinStitchingEngine", "拼接失败")
-                    bitmapLoader.recycleBitmaps(bitmaps)
-                    StitchResult.ErrorResult("拼接失败")
+
+                when (result) {
+                    is StitchResult.BitmapResult -> {
+                        logManager.debug("KotlinStitchingEngine", "拼接完成，返回Bitmap进行预览")
+                        bitmapLoader.recycleBitmaps(bitmaps.filter { it !== result.bitmap })
+                        progressCallback(100)
+                        result
+                    }
+                    is StitchResult.ErrorResult -> {
+                        bitmapLoader.recycleBitmaps(bitmaps)
+                        result
+                    }
                 }
+            } catch (e: CancellationException) {
+                bitmapLoader.recycleBitmaps(bitmaps)
+                throw e
             } catch (e: Exception) {
+                bitmapLoader.recycleBitmaps(bitmaps)
                 logManager.error("KotlinStitchingEngine", "拼接过程出错", e)
-                StitchResult.ErrorResult("拼接过程出错: ${e.message}")
+                StitchResult.ErrorResult(StitchFailure.Unexpected(e))
             }
         }
     }

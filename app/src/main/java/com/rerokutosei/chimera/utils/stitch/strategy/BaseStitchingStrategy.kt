@@ -66,17 +66,25 @@ abstract class BaseStitchingStrategy(
             return bitmaps
         }
 
-        return bitmaps.mapIndexed { index, bitmap ->
-            val target = targetDimensions[index]
-            if (bitmap.width == target.width && bitmap.height == target.height) {
-                bitmap
-            } else {
-                val scaledBitmap = bitmap.scale(target.width, target.height, true)
-                logManager.debug(tag) {
-                    "图片缩放: ${bitmap.width}x${bitmap.height} -> ${scaledBitmap.width}x${scaledBitmap.height}"
+        val processedBitmaps = mutableListOf<Bitmap>()
+        try {
+            bitmaps.forEachIndexed { index, bitmap ->
+                val target = targetDimensions[index]
+                val processed = if (bitmap.width == target.width && bitmap.height == target.height) {
+                    bitmap
+                } else {
+                    bitmap.scale(target.width, target.height, true).also { scaledBitmap ->
+                        logManager.debug(tag) {
+                            "图片缩放: ${bitmap.width}x${bitmap.height} -> ${scaledBitmap.width}x${scaledBitmap.height}"
+                        }
+                    }
                 }
-                scaledBitmap
+                processedBitmaps += processed
             }
+            return processedBitmaps
+        } catch (failure: Throwable) {
+            recycleScaledIntermediates(bitmaps, processedBitmaps, tag = tag)
+            throw failure
         }
     }
 

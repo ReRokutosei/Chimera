@@ -24,8 +24,12 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import androidx.core.graphics.createBitmap
+import com.rerokutosei.chimera.domain.error.StitchFailure
 import com.rerokutosei.chimera.utils.stitch.StitchOrientation
+import com.rerokutosei.chimera.utils.stitch.StitchResult
 import com.rerokutosei.chimera.utils.stitch.layout.LayoutMode
+import com.rerokutosei.chimera.utils.stitch.layout.OutputImageFormat
+import kotlinx.coroutines.CancellationException
 
 /**
  * 叠加拼接策略实现
@@ -36,16 +40,17 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
         private const val TAG = "OverlayStitchingStrategy"
     }
     
-    override suspend fun stitch(bitmaps: List<Bitmap>, options: StitchingOptions): Bitmap? {
+    override suspend fun stitch(bitmaps: List<Bitmap>, options: StitchingOptions): StitchResult {
         if (bitmaps.isEmpty()) {
             logManager.error(TAG, "图片列表为空")
-            return null
+            return StitchResult.ErrorResult(StitchFailure.NoImages)
         }
 
-        val processedBitmaps = scaleBitmapsForLayout(bitmaps, options.widthScale, options.orientation, TAG)
-
+        var processedBitmaps = bitmaps
         var resultBitmap: Bitmap? = null
+        var allocatedBitmap: Bitmap? = null
         try {
+            processedBitmaps = scaleBitmapsForLayout(bitmaps, options.widthScale, options.orientation, TAG)
             val layout = calculateLayout(
                 bitmaps = processedBitmaps,
                 orientation = options.orientation,
@@ -59,7 +64,14 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
             val maxImageSize = memoryLimitCalculator.calculateMaxImageSize(options.highMemoryLimitEnabled)
             if (estimatedSize > maxImageSize || layout.width > Int.MAX_VALUE || layout.height > Int.MAX_VALUE) {
                 logManager.error(TAG, "拼接结果图片过大: ${estimatedSize / (1024 * 1024)}MB，超过限制: ${maxImageSize / (1024 * 1024)}MB")
-                return null
+                return StitchResult.ErrorResult(
+                    StitchFailure.ResultTooLarge(
+                        width = layout.width,
+                        height = layout.height,
+                        estimatedBytes = estimatedSize,
+                        maximumBytes = maxImageSize
+                    )
+                )
             }
             val totalWidth = layout.width.toInt()
             val totalHeight = layout.height.toInt()
@@ -68,12 +80,13 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
             // 如果输出格式为PNG或WEBP，使用ARGB_8888格式
             // 如果输出格式为JPEG，使用RGB_565格式
             val config = when (options.outputFormat) {
-                0, 2 -> Bitmap.Config.ARGB_8888 // PNG或WEBP
-                else -> Bitmap.Config.RGB_565 // JPEG
+                OutputImageFormat.PNG, OutputImageFormat.WEBP -> Bitmap.Config.ARGB_8888
+                OutputImageFormat.JPEG -> Bitmap.Config.RGB_565
             }
             
             // 创建结果位图
             val result = createBitmap(totalWidth, totalHeight, config)
+            allocatedBitmap = result
             logManager.debug(TAG, "创建结果位图成功，格式：$config")
             
             val canvas = Canvas(result)
@@ -186,11 +199,17 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
             spacingPaint.reset()
             
             resultBitmap = result
-            return result
+            return StitchResult.BitmapResult(result)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: OutOfMemoryError) {
+            logManager.error(TAG, "内存不足，无法创建叠加拼接结果", e)
+            return StitchResult.ErrorResult(StitchFailure.AllocationFailed(e))
         } catch (e: Exception) {
             logManager.error(TAG, "叠加拼接模式拼接出错", e)
-            return null
+            return StitchResult.ErrorResult(StitchFailure.Unexpected(e))
         } finally {
+            allocatedBitmap?.takeIf { it !== resultBitmap && !it.isRecycled }?.recycle()
             recycleScaledIntermediates(
                 originalBitmaps = bitmaps,
                 processedBitmaps = processedBitmaps,

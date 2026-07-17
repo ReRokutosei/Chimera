@@ -21,6 +21,8 @@ package com.rerokutosei.chimera.utils.stitch.strategy
 import android.graphics.Bitmap
 import com.rerokutosei.chimera.ui.main.WidthScale
 import com.rerokutosei.chimera.utils.stitch.StitchOrientation
+import com.rerokutosei.chimera.utils.stitch.StitchResult
+import com.rerokutosei.chimera.utils.stitch.layout.OutputImageFormat
 
 /**
  * 拼接策略接口
@@ -30,9 +32,9 @@ interface StitchingStrategy {
      * 执行图片拼接
      * @param bitmaps 要拼接的位图列表
      * @param options 拼接选项
-     * @return 拼接后的Bitmap，失败返回null
+     * @return 类型化的拼接结果
      */
-    suspend fun stitch(bitmaps: List<Bitmap>, options: StitchingOptions): Bitmap?
+    suspend fun stitch(bitmaps: List<Bitmap>, options: StitchingOptions): StitchResult
 }
 
 /**
@@ -45,6 +47,6 @@ data class StitchingOptions(
     val overlayRatio: Int = 0,
     val widthScale: WidthScale = WidthScale.NONE,
     val orientation: StitchOrientation = StitchOrientation.VERTICAL,
-    val outputFormat: Int = 1, // 0:PNG, 1:JPEG, 2:WEBP
+    val outputFormat: OutputImageFormat = OutputImageFormat.JPEG,
     val highMemoryLimitEnabled: Boolean = false
 )

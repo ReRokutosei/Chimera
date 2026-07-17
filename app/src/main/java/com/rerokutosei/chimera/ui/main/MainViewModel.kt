@@ -33,6 +33,7 @@ import com.rerokutosei.chimera.data.repository.ImageRepository
 import com.rerokutosei.chimera.utils.image.BitmapLoader
 import com.rerokutosei.chimera.utils.image.EstimateResolution
 import com.rerokutosei.chimera.utils.image.ResolutionValidationResult
+import com.rerokutosei.chimera.utils.common.LogManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -52,6 +53,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val imageSettingsManager = ImageSettingsManager.getInstance(application)
     private val bitmapLoader = BitmapLoader(application)
     private val estimateResolution = EstimateResolution(bitmapLoader)
+    private val logManager = LogManager.getInstance(application)
     
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
@@ -376,6 +378,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
                     _showResolutionErrorToast.value = getApplication<Application>().getString(R.string.resolution_limit_exceeded)
                 }
+                is ResolutionValidationResult.Unavailable -> {
+                    logManager.error(
+                        "MainViewModel",
+                        "无法读取图片元数据以估算分辨率",
+                        validationResult.failure.cause
+                    )
+                    _resolutionValidationState.value = ResolutionValidationState.Unavailable
+                }
             }
         }
     }
@@ -474,6 +484,7 @@ sealed class ResolutionValidationState {
     object InProgress : ResolutionValidationState()
     data class Valid(val width: Long, val height: Long) : ResolutionValidationState()
     data class Invalid(val width: Long, val height: Long, val formatName: String, val limit: Int) : ResolutionValidationState()
+    object Unavailable : ResolutionValidationState()
 }
 
 enum class StitchMode {

@@ -23,12 +23,14 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.rerokutosei.chimera.domain.error.StitchFailure
 import com.rerokutosei.chimera.ui.main.StitchMode
 import com.rerokutosei.chimera.ui.main.WidthScale
 import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.stitch.ImageStitcher
 import com.rerokutosei.chimera.utils.stitch.StitchOrientation
 import com.rerokutosei.chimera.utils.stitch.StitchResult
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -64,7 +66,7 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
                 if (urisToUse.isEmpty()) {
                     logManager.debug("StitchViewModel", "未选择任何图片")
                     _uiState.value = _uiState.value.copy(
-                        stitchState = StitchState.Error("未选择任何图片"),
+                        stitchState = StitchState.Error(StitchFailure.NoImages),
                         progress = 0
                     )
                     return@launch
@@ -94,17 +96,19 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
                         )
                     }
                     is StitchResult.ErrorResult -> {
-                        logManager.error("StitchViewModel", "拼接失败: ${result.errorMessage}")
+                        logFailure(result.failure)
                         _uiState.value = _uiState.value.copy(
-                            stitchState = StitchState.Error(result.errorMessage),
+                            stitchState = StitchState.Error(result.failure),
                             progress = 0
                         )
                     }
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logManager.error("StitchViewModel", "拼接过程出错", e)
                 _uiState.value = _uiState.value.copy(
-                    stitchState = StitchState.Error("拼接过程出错: ${e.message ?: "未知错误"}"),
+                    stitchState = StitchState.Error(StitchFailure.Unexpected(e)),
                     progress = 0
                 )
             }
@@ -135,7 +139,7 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
                 if (urisToUse.isEmpty()) {
                     logManager.debug("StitchViewModel", "未选择任何图片")
                     _uiState.value = _uiState.value.copy(
-                        stitchState = StitchState.Error("未选择任何图片"),
+                        stitchState = StitchState.Error(StitchFailure.NoImages),
                         progress = 0
                     )
                     return@launch
@@ -163,17 +167,19 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
                         )
                     }
                     is StitchResult.ErrorResult -> {
-                        logManager.error("StitchViewModel", "叠加拼接失败: ${result.errorMessage}")
+                        logFailure(result.failure)
                         _uiState.value = _uiState.value.copy(
-                            stitchState = StitchState.Error(result.errorMessage),
+                            stitchState = StitchState.Error(result.failure),
                             progress = 0
                         )
                     }
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logManager.error("StitchViewModel", "叠加拼接过程出错", e)
                 _uiState.value = _uiState.value.copy(
-                    stitchState = StitchState.Error("叠加拼接过程出错: ${e.message ?: "未知错误"}"),
+                    stitchState = StitchState.Error(StitchFailure.Unexpected(e)),
                     progress = 0
                 )
             }
@@ -201,6 +207,13 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
             currentBitmap.recycle()
         }
     }
+
+    private fun logFailure(failure: StitchFailure) {
+        val message = "拼接失败: ${failure::class.simpleName}"
+        failure.cause?.let { cause ->
+            logManager.error("StitchViewModel", message, cause)
+        } ?: logManager.error("StitchViewModel", message)
+    }
 }
 
 data class StitchUiState(
@@ -214,5 +227,5 @@ sealed class StitchState {
     object Idle : StitchState()
     object Processing : StitchState()
     data class Success(val result: Bitmap) : StitchState()
-    data class Error(val message: String) : StitchState()
+    data class Error(val failure: StitchFailure) : StitchState()
 }

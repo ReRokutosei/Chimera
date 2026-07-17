@@ -64,6 +64,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rerokutosei.chimera.R
+import com.rerokutosei.chimera.domain.error.StitchFailure
 import com.rerokutosei.chimera.ui.stitch.StitchState
 import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.image.BitmapLoader
@@ -98,7 +99,7 @@ fun ImageViewerScreen(
     val cutGridRows by viewModel.cutGridRows.collectAsStateWithLifecycle()
     val currentCutIndex by viewModel.currentCutIndex.collectAsStateWithLifecycle()
     val previewSource = (stitchState as? StitchState.Success)?.let { PreviewSource.FromBitmap(it.result) }
-    val errorMessage = (stitchState as? StitchState.Error)?.message
+    val errorMessage = (stitchState as? StitchState.Error)?.failure?.let { stitchFailureMessage(it) }
     val isProcessing = stitchState is StitchState.Processing
 
     var isSaving by remember { mutableStateOf(false) }
@@ -344,6 +345,16 @@ fun ImageViewerScreen(
             )
         }
     }
+}
+
+@Composable
+private fun stitchFailureMessage(failure: StitchFailure): String = when (failure) {
+    StitchFailure.NoImages -> stringResource(R.string.stitch_error_no_images)
+    StitchFailure.DecodeFailed -> stringResource(R.string.stitch_error_decode_failed)
+    is StitchFailure.MetadataUnavailable -> stringResource(R.string.stitch_error_metadata_unavailable)
+    is StitchFailure.ResultTooLarge -> stringResource(R.string.stitch_error_result_too_large)
+    is StitchFailure.AllocationFailed -> stringResource(R.string.stitch_error_allocation_failed)
+    is StitchFailure.Unexpected -> stringResource(R.string.stitch_error_unexpected)
 }
 
 @Composable

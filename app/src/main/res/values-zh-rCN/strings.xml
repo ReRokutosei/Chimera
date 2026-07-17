@@ -129,6 +129,13 @@
     <string name="select_two_or_more_images">请选择两张及其以上的图片</string>
     <string name="estimated_resolution">预计分辨率: %1$d × %2$d</string>
     <string name="resolution_limit_exceeded">分辨率超出限制！\n请在设置中选择PNG格式</string>
+    <string name="estimated_resolution_unavailable">无法估算分辨率</string>
+    <string name="stitch_error_no_images">未选择图片。</string>
+    <string name="stitch_error_decode_failed">一张或多张图片加载失败。</string>
+    <string name="stitch_error_metadata_unavailable">无法读取图片尺寸。</string>
+    <string name="stitch_error_result_too_large">拼接结果超出设备内存或输出格式限制。</string>
+    <string name="stitch_error_allocation_failed">内存不足，无法创建拼接结果。</string>
+    <string name="stitch_error_unexpected">拼接时发生意外错误，请查看日志了解详情。</string>
     
     <!-- ImageSharer -->
 

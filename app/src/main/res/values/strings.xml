@@ -142,6 +142,13 @@
     <string name="select_two_or_more_images">Please select two or more images</string>
     <string name="estimated_resolution">Estimated Resolution: %1$d × %2$d</string>
     <string name="resolution_limit_exceeded">Resolution exceeds limit!\nPlease select PNG format in settings</string>
+    <string name="estimated_resolution_unavailable">Resolution estimate unavailable</string>
+    <string name="stitch_error_no_images">No images were selected.</string>
+    <string name="stitch_error_decode_failed">One or more images could not be loaded.</string>
+    <string name="stitch_error_metadata_unavailable">Image dimensions could not be read.</string>
+    <string name="stitch_error_result_too_large">The stitched image is too large for this device or output format.</string>
+    <string name="stitch_error_allocation_failed">There is not enough memory to create the stitched image.</string>
+    <string name="stitch_error_unexpected">Stitching failed unexpectedly. Check the log for details.</string>
     
     <!-- ImageSharer -->
 

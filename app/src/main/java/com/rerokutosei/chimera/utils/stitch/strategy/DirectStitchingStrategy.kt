@@ -24,8 +24,12 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import androidx.core.graphics.createBitmap
+import com.rerokutosei.chimera.domain.error.StitchFailure
 import com.rerokutosei.chimera.utils.stitch.StitchOrientation
+import com.rerokutosei.chimera.utils.stitch.StitchResult
 import com.rerokutosei.chimera.utils.stitch.layout.LayoutMode
+import com.rerokutosei.chimera.utils.stitch.layout.OutputImageFormat
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -41,15 +45,15 @@ class DirectStitchingStrategy(
         private const val TAG = "DirectStitchingStrategy"
     }
     
-    override suspend fun stitch(bitmaps: List<Bitmap>, options: StitchingOptions): Bitmap? {
+    override suspend fun stitch(bitmaps: List<Bitmap>, options: StitchingOptions): StitchResult {
         logManager.debug(TAG, "开始拼接，图片数量: ${bitmaps.size}，方向: ${if (isVertical) "垂直" else "水平"}，宽度缩放: ${options.widthScale}")
 
         val orientation = if (isVertical) StitchOrientation.VERTICAL else StitchOrientation.HORIZONTAL
-        val processedBitmaps = scaleBitmapsForLayout(bitmaps, options.widthScale, orientation, TAG)
-        
+        var processedBitmaps = bitmaps
         var resultBitmap: Bitmap? = null
         return try {
-            withContext(Dispatchers.Default) {
+            processedBitmaps = scaleBitmapsForLayout(bitmaps, options.widthScale, orientation, TAG)
+            val result = withContext(Dispatchers.Default) {
                 if (isVertical) {
                     stitchVertically(
                         processedBitmaps,
@@ -67,9 +71,17 @@ class DirectStitchingStrategy(
                         options.highMemoryLimitEnabled
                     )
                 }
-            }.also { bitmap ->
-                resultBitmap = bitmap
             }
+            resultBitmap = (result as? StitchResult.BitmapResult)?.bitmap
+            result
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: OutOfMemoryError) {
+            logManager.error(TAG, "内存不足，无法创建拼接结果", e)
+            StitchResult.ErrorResult(StitchFailure.AllocationFailed(e))
+        } catch (e: Exception) {
+            logManager.error(TAG, "创建拼接结果时发生错误", e)
+            StitchResult.ErrorResult(StitchFailure.Unexpected(e))
         } finally {
             recycleScaledIntermediates(
                 originalBitmaps = bitmaps,
@@ -91,9 +103,9 @@ class DirectStitchingStrategy(
         bitmaps: List<Bitmap>,
         spacing: Int,
         spacingColor: Int = Color.BLACK,
-        outputFormat: Int,
+        outputFormat: OutputImageFormat,
         highMemoryLimitEnabled: Boolean
-    ): Bitmap? {
+    ): StitchResult {
         return stitchImages(bitmaps, spacing, true, spacingColor, outputFormat, highMemoryLimitEnabled)
     }
 
@@ -108,9 +120,9 @@ class DirectStitchingStrategy(
         bitmaps: List<Bitmap>,
         spacing: Int,
         spacingColor: Int = Color.BLACK,
-        outputFormat: Int,
+        outputFormat: OutputImageFormat,
         highMemoryLimitEnabled: Boolean
-    ): Bitmap? {
+    ): StitchResult {
         return stitchImages(bitmaps, spacing, false, spacingColor, outputFormat, highMemoryLimitEnabled)
     }
 
@@ -127,9 +139,9 @@ class DirectStitchingStrategy(
         spacing: Int,
         isVertical: Boolean,
         spacingColor: Int = Color.BLACK,
-        outputFormat: Int,
+        outputFormat: OutputImageFormat,
         highMemoryLimitEnabled: Boolean
-    ): Bitmap? {
+    ): StitchResult {
         logManager.debug(TAG, "开始${if (isVertical) "垂直" else "水平"}拼接，图片数量: ${bitmaps.size}，间隔: $spacing")
         
         val orientation = if (isVertical) StitchOrientation.VERTICAL else StitchOrientation.HORIZONTAL
@@ -145,28 +157,35 @@ class DirectStitchingStrategy(
         
         if (estimatedSize > maxImageSize || totalMajorLong > Int.MAX_VALUE || totalMinorLong > Int.MAX_VALUE) {
             logManager.error(TAG, "拼接结果图片过大: ${estimatedSize / (1024 * 1024)}MB，超过限制: ${maxImageSize / (1024 * 1024)}MB")
-            return null
+            return StitchResult.ErrorResult(
+                StitchFailure.ResultTooLarge(
+                    width = layout.width,
+                    height = layout.height,
+                    estimatedBytes = estimatedSize,
+                    maximumBytes = maxImageSize
+                )
+            )
         }
 
         val totalMajor = totalMajorLong.toInt()
         val totalMinor = totalMinorLong.toInt()
 
         logManager.debug(TAG, "创建结果位图：${if (isVertical) totalMinor else totalMajor}x${if (isVertical) totalMajor else totalMinor}")
-        return try {
-            // 根据用户设置的输出图片格式和图片透明度需求选择合适的格式
-            // 如果输出格式为PNG或WEBP，且图片中至少有一张使用了ARGB_8888格式时，结果图片才会使用ARGB_8888格式
-            // 如果输出格式为JPEG，一律不使用ARGB_8888格式
-            val hasAlpha = bitmaps.any { it.config == Bitmap.Config.ARGB_8888 }
-            val config = when {
-                (outputFormat == 0 || outputFormat == 2) && hasAlpha -> Bitmap.Config.ARGB_8888 // PNG或WEBP且有透明度
-                else -> Bitmap.Config.RGB_565 // JPEG或无透明度需求
-            }
+        // 根据用户设置的输出图片格式和图片透明度需求选择合适的格式
+        // 如果输出格式为PNG或WEBP，且图片中至少有一张使用了ARGB_8888格式时，结果图片才会使用ARGB_8888格式
+        // 如果输出格式为JPEG，一律不使用ARGB_8888格式
+        val hasAlpha = bitmaps.any { it.config == Bitmap.Config.ARGB_8888 }
+        val config = when {
+            (outputFormat == OutputImageFormat.PNG || outputFormat == OutputImageFormat.WEBP) && hasAlpha -> Bitmap.Config.ARGB_8888
+            else -> Bitmap.Config.RGB_565
+        }
             
-            val result = if (isVertical) {
-                createBitmap(totalMinor, totalMajor, config)
-            } else {
-                createBitmap(totalMajor, totalMinor, config)
-            }
+        val result = if (isVertical) {
+            createBitmap(totalMinor, totalMajor, config)
+        } else {
+            createBitmap(totalMajor, totalMinor, config)
+        }
+        return try {
             logManager.debug(TAG, "结果位图创建成功：${result.width}x${result.height}，格式：$config")
 
             val canvas = Canvas(result)
@@ -227,13 +246,12 @@ class DirectStitchingStrategy(
 
             logManager.debug(TAG, "${if (isVertical) "垂直" else "水平"}拼接完成，结果位图尺寸：${result.width}x${result.height}")
             logManager.debug(TAG, "结果位图内存大小: ${result.allocationByteCount} bytes")
-            result
-        } catch (e: OutOfMemoryError) {
-            logManager.error(TAG, "内存不足，无法创建结果位图", e)
-            null
-        } catch (e: Exception) {
-            logManager.error(TAG, "创建结果位图时发生错误", e)
-            null
+            StitchResult.BitmapResult(result)
+        } catch (failure: Throwable) {
+            if (!result.isRecycled) {
+                result.recycle()
+            }
+            throw failure
         }
     }
 }

@@ -19,6 +19,7 @@
 package com.rerokutosei.chimera.utils.stitch
 
 import android.graphics.Bitmap
+import com.rerokutosei.chimera.domain.error.StitchFailure
 
 /**
  * 拼接结果封装类
@@ -32,5 +33,5 @@ sealed class StitchResult {
     /**
      * 错误结果
      */
-    data class ErrorResult(val errorMessage: String) : StitchResult()
+    data class ErrorResult(val failure: StitchFailure) : StitchResult()
 }

@@ -132,6 +132,14 @@ fun EstimatedResolutionCard(
                         }
                     }
                 }
+
+                is ResolutionValidationState.Unavailable -> {
+                    Text(
+                        text = stringResource(R.string.estimated_resolution_unavailable),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
             }
         }
     }
