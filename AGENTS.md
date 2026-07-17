@@ -26,15 +26,18 @@
 - Navigation: type-safe via `@Serializable sealed class Route` in `ui/navigation/Route.kt` — routes: `Main`, `Settings`, `ImageViewer(...)`
 - State: `ViewModel` + `MutableStateFlow` + DataStore Preferences; no Room, no network
 - Four ViewModels: `MainViewModel`, `SettingsViewModel`, `StitchViewModel` (stitch/cut orchestration), `ImageViewerViewModel`
-- App theme: `ChimeraTheme` with `shouldUseDarkTheme()` composable in `ui/theme/Theme.kt`
+- App theme: `AppTheme` with `shouldUseDarkTheme()` composable in `ui/theme/Theme.kt`
+- Compose `Flow`/`StateFlow` values are collected with `collectAsStateWithLifecycle()`; `lifecycle-runtime-compose` is an explicit dependency
 
 ## Stitch engine (single Kotlin engine)
 
 - `ImageStitcher` (`utils/stitch/`) is the entry point — `StitchViewModel` calls its `stitchImages()` / `stitchOverlay()`.
-- Layering: `ImageStitcher` → `KotlinStitchingEngine` → `StitcherFactory` → a `StitchingStrategy` (`DirectStitchingStrategy` / `OverlayStitchingStrategy`, both extend `BaseStitchingStrategy`).
+- Layering: `ImageStitcher` → `KotlinStitchingEngine` → a `StitchingStrategy` selected by a private engine helper (`DirectStitchingStrategy` / `OverlayStitchingStrategy`, both extend `BaseStitchingStrategy`).
 - `StitchResult` is a sealed class: `BitmapResult(bitmap)` / `ErrorResult(message)`.
-- `StitchingOptions` (defined in `strategy/StitchingStrategy.kt`) carries spacing, spacing color, overlay ratio, width scale, orientation, quality, output format.
-- NOTE: `StitchingEngine` is an interface with a single implementation (`KotlinStitchingEngine`) — legacy from an abandoned dual-engine (C++/Kotlin) design; the C++ engine is gone. It is never referenced by interface type.
+- `StitchingOptions` (defined in `strategy/StitchingStrategy.kt`) carries spacing, spacing color, overlay settings, width scale, orientation, output format, and the high-memory-limit flag.
+- `ImageStitcher` owns one `BitmapLoader` and reuses a `KotlinStitchingEngine`; the loader is injected into the engine so bitmap tracking and recycling stay coherent.
+- The abandoned C++/Kotlin dual-engine abstractions are fully removed: there is no `StitchingEngine` interface or `StitcherFactory`.
+- Settings needed by strategies are read through suspend flows in `ImageStitcher` and passed in `StitchingOptions`; strategies and `MemoryLimitCalculator` must not use `runBlocking` for DataStore access.
 
 ## Package Layout
 
@@ -52,16 +55,15 @@ ui/settings/      — SettingsScreen, SettingsViewModel, ImageOutputSettings, Di
                     OpenSourceLicenses, PrivacyPolicy, ComButton
 ui/viewer/        — ImageViewerScreen, ImageViewerViewModel, ImageResultPreviewer,
                     AdaptiveDisplay, PreviewSource
-ui/theme/         — Theme (ChimeraTheme, shouldUseDarkTheme), Type, CustomColorPickerDialog,
+ui/theme/         — Theme (AppTheme, shouldUseDarkTheme), Type, CustomColorPickerDialog,
                     SpacingColorPickerDialog, ColorSchemePreview
 ui/navigation/    — NavGraph, Route
 ui/stitch/        — StitchViewModel (drives ImageStitcher)
-utils/stitch/         — ImageStitcher, StitchResult, StitcherFactory (+ StitchOrientation enum)
-utils/stitch/engine/  — StitchingEngine (legacy iface), KotlinStitchingEngine
+utils/stitch/         — ImageStitcher, StitchResult (+ StitchOrientation enum)
+utils/stitch/engine/  — KotlinStitchingEngine
 utils/stitch/strategy/— StitchingStrategy + StitchingOptions, BaseStitchingStrategy,
                         DirectStitchingStrategy, OverlayStitchingStrategy
-utils/image/      — BitmapLoader, ImageSaver, ImageSharer, ImageSplitter, EstimateResolution,
-                    Media2ImageInfoConverter
+utils/image/      — BitmapLoader, ImageSaver, ImageSharer, ImageSplitter, EstimateResolution
 utils/color/      — ColorUtils
 utils/common/     — LogManager, MemoryLimitCalculator, ToastUtil, LinkTextUtil
 ```
@@ -72,8 +74,11 @@ utils/common/     — LogManager, MemoryLimitCalculator, ToastUtil, LinkTextUtil
 - `CustomSegmentedButtonRow` in `ui/main/CustomSegmentedButton.kt` is reused for mode/grid selection
 - ParameterSettingsCard is hidden in cut mode; its state auto-preserves when switching back to stitch mode
 - `PreviewSource.FromBitmapWithGrid(bitmap, cols, rows)` for cut grid preview
+- Cut preview keeps only the current page and adjacent pages cached; recycle evicted bitmaps through `BitmapLoader`
+- Cut-save decoding belongs on `Dispatchers.IO`; bitmap splitting belongs on `Dispatchers.Default`
 - Spacing fill color stored as hex string (e.g. `"#FF000000"`) in DataStore
 - StitchSettingsManager uses generic `getPref<T>()` / `setPref<T>()` helpers for DataStore access
+- Use `LogManager.debug(tag) { ... }` for interpolated messages in loops or other hot paths
 
 ## DataStore Keys (StitchSettingsManager)
 
