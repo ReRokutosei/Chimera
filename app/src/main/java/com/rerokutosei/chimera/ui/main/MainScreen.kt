@@ -45,7 +45,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,6 +57,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rerokutosei.chimera.R
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.data.model.ImageListDirectionMode
@@ -79,8 +79,8 @@ fun MainScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val uiState by viewModel.uiState.collectAsState()
-    val isDataLoaded by viewModel.isDataLoaded.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isDataLoaded by viewModel.isDataLoaded.collectAsStateWithLifecycle()
     var isPageEntered by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -93,15 +93,15 @@ fun MainScreen(
     // 获取设置项状态
     val imageSettingsManager = ImageSettingsManager.getInstance(context)
     val themeSettingsManager = ThemeRepository.getInstance(context)
-    val useSafPicker by imageSettingsManager.getUseSafPickerFlow().collectAsState(initial = false)
-    val useEmbeddedPicker by imageSettingsManager.getUseEmbeddedPickerFlow().collectAsState(initial = false)
-    val sliderThumbShape by imageSettingsManager.getSliderThumbShapeFlow().collectAsState(initial = 0)
+    val useSafPicker by imageSettingsManager.getUseSafPickerFlow().collectAsStateWithLifecycle(initialValue = false)
+    val useEmbeddedPicker by imageSettingsManager.getUseEmbeddedPickerFlow().collectAsStateWithLifecycle(initialValue = false)
+    val sliderThumbShape by imageSettingsManager.getSliderThumbShapeFlow().collectAsStateWithLifecycle(initialValue = 0)
     val imageListDirection by imageSettingsManager.getImageListDirectionFlow()
-        .collectAsState(initial = ImageListDirectionMode.HORIZONTAL)
+        .collectAsStateWithLifecycle(initialValue = ImageListDirectionMode.HORIZONTAL)
     
     // 添加尺寸验证状态
-    val resolutionValidationState by viewModel.resolutionValidationState.collectAsState()
-    val showResolutionErrorToast by viewModel.showResolutionErrorToast.collectAsState()
+    val resolutionValidationState by viewModel.resolutionValidationState.collectAsStateWithLifecycle()
+    val showResolutionErrorToast by viewModel.showResolutionErrorToast.collectAsStateWithLifecycle()
     
     // Embedded Picker状态
     var showEmbeddedPicker by remember { mutableStateOf(false) }

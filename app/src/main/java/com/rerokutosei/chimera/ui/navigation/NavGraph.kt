@@ -26,7 +26,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -100,8 +99,8 @@ fun AppNavGraph(
 
             val context = LocalContext.current
             val themeSettingsManager = remember { ThemeRepository.getInstance(context) }
-            val darkTheme by themeSettingsManager.getDarkThemeFlow().collectAsState(initial = false)
-            val followSystemTheme by themeSettingsManager.getFollowSystemThemeFlow().collectAsState(initial = true)
+            val darkTheme by themeSettingsManager.getDarkThemeFlow().collectAsStateWithLifecycle(initialValue = false)
+            val followSystemTheme by themeSettingsManager.getFollowSystemThemeFlow().collectAsStateWithLifecycle(initialValue = true)
 
             val isSystemInDarkThemeVal = isSystemInDarkTheme()
             val effectiveDarkTheme = when {
@@ -177,7 +176,7 @@ fun AppNavGraph(
                 }
             )
 
-            val pendingStitchUris by mainViewModel.pendingStitchUris.collectAsState()
+            val pendingStitchUris by mainViewModel.pendingStitchUris.collectAsStateWithLifecycle()
 
             LaunchedEffect(isCutModeParam, cutGridParam, pendingStitchUris) {
                 if (isCutModeParam == "true" && pendingStitchUris.isNotEmpty()) {

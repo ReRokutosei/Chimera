@@ -34,7 +34,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.skydoves.colorpicker.compose.AlphaSlider
 import com.github.skydoves.colorpicker.compose.AlphaTile
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
@@ -71,7 +71,8 @@ fun CustomColorPickerDialog(
     var selectedColor by remember { mutableStateOf(Color.Red) }
     val context = LocalContext.current
     val themeSettingsManager = ThemeRepository.getInstance(context)
-    val isDarkTheme by themeSettingsManager.getThemeModeFlow().collectAsState(initial = com.rerokutosei.chimera.data.model.ThemeMode.AUTO)
+    val isDarkTheme by themeSettingsManager.getThemeModeFlow()
+        .collectAsStateWithLifecycle(initialValue = com.rerokutosei.chimera.data.model.ThemeMode.AUTO)
     val isCurrentlyDark = when (isDarkTheme) {
         com.rerokutosei.chimera.data.model.ThemeMode.AUTO -> isSystemInDarkTheme()
         com.rerokutosei.chimera.data.model.ThemeMode.DARK -> true

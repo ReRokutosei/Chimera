@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.rerokutosei.chimera.data.local.PreloadManager
 import com.rerokutosei.chimera.data.local.UserPreferencesManager
@@ -81,8 +81,8 @@ class MainActivity : ComponentActivity() {
             val logManager = remember { LogManager.getInstance(context) }
 
             val useDarkTheme = shouldUseDarkTheme()
-            val dynamicColor by themeSettingsManager.getDynamicColorFlow().collectAsState(initial = true)
-            val logLevel by themeSettingsManager.getLogLevelFlow().collectAsState(initial = 1)
+            val dynamicColor by themeSettingsManager.getDynamicColorFlow().collectAsStateWithLifecycle(initialValue = true)
+            val logLevel by themeSettingsManager.getLogLevelFlow().collectAsStateWithLifecycle(initialValue = 1)
 
             logManager.setLogLevel(logLevel)
 

@@ -41,7 +41,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +52,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rerokutosei.chimera.R
 import com.t8rin.embeddedpicker.data.AndroidMediaRetriever
 import com.t8rin.embeddedpicker.domain.model.AllowedMedia
@@ -117,8 +117,8 @@ private fun EmbeddedPickerContent(
         }
     }
     
-    val albumsState by viewModel.albumsState.collectAsState()
-    val mediaState by viewModel.mediaState.collectAsState()
+    val albumsState by viewModel.albumsState.collectAsStateWithLifecycle()
+    val mediaState by viewModel.mediaState.collectAsStateWithLifecycle()
     val isLoading = albumsState.isLoading || mediaState.isLoading
     val hasContent = albumsState.albums.isNotEmpty() || mediaState.media.isNotEmpty()
     
