@@ -45,5 +45,6 @@ data class StitchingOptions(
     val overlayRatio: Int = 0,
     val widthScale: WidthScale = WidthScale.NONE,
     val orientation: StitchOrientation = StitchOrientation.VERTICAL,
-    val outputFormat: Int = 1 // 0:PNG, 1:JPEG, 2:WEBP
+    val outputFormat: Int = 1, // 0:PNG, 1:JPEG, 2:WEBP
+    val highMemoryLimitEnabled: Boolean = false
 )

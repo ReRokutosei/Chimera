@@ -25,6 +25,7 @@ import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.data.local.StitchSettingsManager
 import com.rerokutosei.chimera.ui.main.WidthScale
 import com.rerokutosei.chimera.utils.common.LogManager
+import com.rerokutosei.chimera.utils.image.BitmapLoader
 import com.rerokutosei.chimera.utils.stitch.engine.KotlinStitchingEngine
 import com.rerokutosei.chimera.utils.stitch.strategy.StitchingOptions
 import kotlinx.coroutines.Dispatchers
@@ -43,6 +44,8 @@ class ImageStitcher(private val context: Context) {
     private val logManager = LogManager.getInstance(context)
     private val stitchSettingsManager = StitchSettingsManager.getInstance(context)
     private val imageSettingsManager = ImageSettingsManager.getInstance(context)
+    private val bitmapLoader = BitmapLoader(context)
+    private val engine = KotlinStitchingEngine(context, bitmapLoader)
 
     /**
      * 拼接图片
@@ -64,8 +67,8 @@ class ImageStitcher(private val context: Context) {
         logManager.debug(TAG, "开始直接拼接 ${imageUris.size} 张图片.")
 
         try {
-            val engine = KotlinStitchingEngine(context)
             val format = imageSettingsManager.getOutputImageFormatFlow().first()
+            val highMemoryLimitEnabled = imageSettingsManager.getHighMemoryLimitFlow().first()
             val spacingColorHex = stitchSettingsManager.getImageSpacingColorFlow().first()
             val spacingColor = try {
                 android.graphics.Color.parseColor(spacingColorHex)
@@ -79,10 +82,11 @@ class ImageStitcher(private val context: Context) {
                 isOverlayEnabled = false,
                 widthScale = widthScale,
                 orientation = orientation,
-                outputFormat = format
+                outputFormat = format,
+                highMemoryLimitEnabled = highMemoryLimitEnabled
             )
 
-            engine.stitchImages(context, imageUris, options, progressCallback)
+            engine.stitchImages(imageUris, options, progressCallback)
         } catch (e: Exception) {
             logManager.error(TAG, "直接拼接过程中出错", e)
             StitchResult.ErrorResult("拼接失败: ${e.message}")
@@ -108,18 +112,19 @@ class ImageStitcher(private val context: Context) {
         logManager.debug(TAG, "开始叠加拼接 ${imageUris.size} 张图片.")
 
         try {
-            val engine = KotlinStitchingEngine(context)
             val format = imageSettingsManager.getOutputImageFormatFlow().first()
+            val highMemoryLimitEnabled = imageSettingsManager.getHighMemoryLimitFlow().first()
 
             val options = StitchingOptions(
                 isOverlayEnabled = true,
                 overlayRatio = overlayRatio,
                 widthScale = widthScale,
                 orientation = orientation,
-                outputFormat = format
+                outputFormat = format,
+                highMemoryLimitEnabled = highMemoryLimitEnabled
             )
 
-            engine.stitchImages(context, imageUris, options, progressCallback)
+            engine.stitchImages(imageUris, options, progressCallback)
         } catch (e: Exception) {
             logManager.error(TAG, "叠加拼接过程中出错", e)
             StitchResult.ErrorResult("叠加拼接失败: ${e.message}")

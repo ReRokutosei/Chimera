@@ -23,12 +23,14 @@ import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
@@ -46,15 +48,17 @@ fun AdaptiveImageDisplay(
     val context = LocalContext.current
     val imageSettingsManager = ImageSettingsManager.getInstance(context)
     val logManager = LogManager.getInstance(context)
+    val highMemoryLimitEnabled by imageSettingsManager.getHighMemoryLimitFlow()
+        .collectAsStateWithLifecycle(initialValue = false)
     val memoryLimitCalculator = remember {
-        MemoryLimitCalculator(context, imageSettingsManager, logManager, "AdaptiveImageDisplay")
+        MemoryLimitCalculator(context, logManager, "AdaptiveImageDisplay")
     }
     
     val largeImagePreviewer = remember { 
         LargeImagePreviewer(context, memoryLimitCalculator, logManager)
     }
     
-    if (largeImagePreviewer.shouldUseTiledLoading(bitmap)) {
+    if (largeImagePreviewer.shouldUseTiledLoading(bitmap, highMemoryLimitEnabled)) {
         logManager.debug("AdaptiveImageDisplay", "使用分块加载显示大图: ${bitmap.width}x${bitmap.height}")
         AndroidView(
             factory = { ctx ->
@@ -95,8 +99,8 @@ private class LargeImagePreviewer(
     /**
      * 检查图片是否过大需要使用分块加载
      */
-    fun shouldUseTiledLoading(bitmap: Bitmap): Boolean {
-        val maxDisplaySize = memoryLimitCalculator.calculateMaxImageSize()
+    fun shouldUseTiledLoading(bitmap: Bitmap, highMemoryLimitEnabled: Boolean): Boolean {
+        val maxDisplaySize = memoryLimitCalculator.calculateMaxImageSize(highMemoryLimitEnabled)
         val bitmapSize = bitmap.allocationByteCount.toLong()
         
         // 果图像尺寸或体积过大(超过预设值)，不管什么情况，都使用分块加载方式显示

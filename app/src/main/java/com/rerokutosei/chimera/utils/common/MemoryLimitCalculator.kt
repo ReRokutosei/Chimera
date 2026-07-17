@@ -20,9 +20,6 @@ package com.rerokutosei.chimera.utils.common
 
 import android.app.ActivityManager
 import android.content.Context
-import com.rerokutosei.chimera.data.local.ImageSettingsManager
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 
 /**
  * 内存限制计算器
@@ -30,7 +27,6 @@ import kotlinx.coroutines.runBlocking
  */
 class MemoryLimitCalculator(
     private val context: Context,
-    private val imageSettingsManager: ImageSettingsManager,
     private val logManager: LogManager,
     private val tag: String
 ) {
@@ -41,22 +37,12 @@ class MemoryLimitCalculator(
     }
     
     /**
-     * 根据设备内存和用户设置计算最大图片大小限制
+     * 根据设备内存和已读取的用户设置计算最大图片大小限制
      */
-    fun calculateMaxImageSize(): Long {
-        // 使用ActivityManager获取内存信息
+    fun calculateMaxImageSize(isHighMemoryLimitEnabled: Boolean): Long {
         val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val memoryInfo = ActivityManager.MemoryInfo()
         activityManager.getMemoryInfo(memoryInfo)
-
-        val isHighMemoryLimitEnabled = try {
-            runBlocking {
-                imageSettingsManager.getHighMemoryLimitFlow().first()
-            }
-        } catch (e: Exception) {
-            logManager.error(tag, "获取highMemoryLimit设置失败", e)
-            false
-        }
 
         val ratio = if (isHighMemoryLimitEnabled) {
             HIGH_MEMORY_LIMIT_RATIO

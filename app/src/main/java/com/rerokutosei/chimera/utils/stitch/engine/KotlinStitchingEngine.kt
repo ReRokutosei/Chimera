@@ -40,14 +40,15 @@ import kotlinx.coroutines.withContext
 /**
  * Kotlin拼接引擎实现
  */
-class KotlinStitchingEngine(private val context: Context) {
+class KotlinStitchingEngine(
+    private val context: Context,
+    private val bitmapLoader: BitmapLoader
+) {
 
-    private val bitmapLoader = BitmapLoader(context)
     private val stitchSettingsManager = StitchSettingsManager.getInstance(context)
     private val logManager = LogManager.getInstance(context)
 
     suspend fun stitchImages(
-        context: Context,
         imageUris: List<Uri>,
         options: StitchingOptions,
         progressCallback: (progress: Int) -> Unit

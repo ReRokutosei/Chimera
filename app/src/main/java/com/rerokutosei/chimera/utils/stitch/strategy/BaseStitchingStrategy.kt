@@ -21,7 +21,6 @@ package com.rerokutosei.chimera.utils.stitch.strategy
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.core.graphics.scale
-import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.common.MemoryLimitCalculator
 
@@ -31,12 +30,10 @@ abstract class BaseStitchingStrategy(
 ) : StitchingStrategy {
 
     protected val logManager: LogManager = LogManager.getInstance(context)
-    protected val imageSettingsManager: ImageSettingsManager = ImageSettingsManager.getInstance(context)
 
     protected val memoryLimitCalculator by lazy {
         MemoryLimitCalculator(
             context,
-            imageSettingsManager,
             logManager,
             tag
         )
@@ -123,7 +120,9 @@ abstract class BaseStitchingStrategy(
             } else {
                 val (newWidth, newHeight) = calculateDimensions(bitmap, targetSize)
                 val scaledBitmap = bitmap.scale(newWidth, newHeight, true)
-                logManager.debug(tag, "图片缩放: ${bitmap.width}x${bitmap.height} -> ${scaledBitmap.width}x${scaledBitmap.height}")
+                logManager.debug(tag) {
+                    "图片缩放: ${bitmap.width}x${bitmap.height} -> ${scaledBitmap.width}x${scaledBitmap.height}"
+                }
                 scaledBitmap
             }
         }
@@ -143,7 +142,7 @@ abstract class BaseStitchingStrategy(
                 val width = bitmap.width
                 val height = bitmap.height
                 bitmap.recycle()
-                logManager.debug(tag, "回收缩放中间位图: ${width}x${height}")
+                logManager.debug(tag) { "回收缩放中间位图: ${width}x${height}" }
             }
         }
     }

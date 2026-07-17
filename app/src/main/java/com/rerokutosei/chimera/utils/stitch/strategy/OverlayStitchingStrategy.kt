@@ -37,8 +37,6 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
         private const val TAG = "OverlayStitchingStrategy"
     }
     
-    private val MAX_IMAGE_SIZE by lazy { memoryLimitCalculator.calculateMaxImageSize() }
-    
     override suspend fun stitch(bitmaps: List<Bitmap>, options: StitchingOptions): Bitmap? {
         if (bitmaps.isEmpty()) {
             logManager.error(TAG, "图片列表为空")
@@ -129,8 +127,9 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
 
             // 检查内存限制（最大支持32MB的图片）
             val estimatedSize = totalWidth.toLong() * totalHeight.toLong() * 4 // ARGB_8888
-            if (estimatedSize > MAX_IMAGE_SIZE) {
-                logManager.error(TAG, "拼接结果图片过大: ${estimatedSize / (1024 * 1024)}MB，超过限制: ${MAX_IMAGE_SIZE / (1024 * 1024)}MB")
+            val maxImageSize = memoryLimitCalculator.calculateMaxImageSize(options.highMemoryLimitEnabled)
+            if (estimatedSize > maxImageSize) {
+                logManager.error(TAG, "拼接结果图片过大: ${estimatedSize / (1024 * 1024)}MB，超过限制: ${maxImageSize / (1024 * 1024)}MB")
                 return null
             }
 
@@ -172,7 +171,7 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
                     // 绘制后续图片的叠加区域
                     var currentY = firstImageHeight
                     for (i in 1 until processedBitmaps.size) {
-                        logManager.debug(TAG, "处理第${i+1}张图片的叠加区域")
+                        logManager.debug(TAG) { "处理第${i + 1}张图片的叠加区域" }
 
                         val overlayHeight = overlaySteps[i - 1]
                         // 计算叠加区域在当前图片中的位置（底部）
@@ -215,7 +214,7 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
 
                     var currentX = firstImageWidth
                     for (i in 1 until processedBitmaps.size) {
-                        logManager.debug(TAG, "处理第${i+1}张图片的叠加区域")
+                        logManager.debug(TAG) { "处理第${i + 1}张图片的叠加区域" }
 
                         val overlayWidth = overlaySteps[i - 1]
                         // 计算叠加区域在当前图片中的位置（右侧）

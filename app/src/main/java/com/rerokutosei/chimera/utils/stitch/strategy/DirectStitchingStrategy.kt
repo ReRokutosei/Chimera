@@ -130,7 +130,7 @@ class DirectStitchingStrategy(
 
         // 检查内存限制
         val estimatedSize = totalMajor.toLong() * totalMinor.toLong() * 4 // ARGB_8888
-        val maxImageSize = memoryLimitCalculator.calculateMaxImageSize()
+        val maxImageSize = memoryLimitCalculator.calculateMaxImageSize(options.highMemoryLimitEnabled)
         
         if (estimatedSize > maxImageSize) {
             logManager.error(TAG, "拼接结果图片过大: ${estimatedSize / (1024 * 1024)}MB，超过限制: ${maxImageSize / (1024 * 1024)}MB")
@@ -179,19 +179,25 @@ class DirectStitchingStrategy(
                         currentMajor to yPos
                     }
                     
-                    logManager.debug(TAG, "绘制图片 $index：位置($x, $y), 尺寸(${bitmap.width}x${bitmap.height})")
+                    logManager.debug(TAG) {
+                        "绘制图片 $index：位置($x, $y), 尺寸(${bitmap.width}x${bitmap.height})"
+                    }
                     canvas.drawBitmap(bitmap, x.toFloat(), y.toFloat(), paint)
                     
                     // 如果不是最后一张图片且有间隔，则绘制黑色间隔
                     if (index < bitmaps.size - 1 && spacing > 0) {
                         if (isVertical) {
                             currentMajor += bitmap.height
-                            logManager.debug(TAG, "绘制间隔：位置(0, $currentMajor), 尺寸(${totalMinor}x${spacing})")
+                            logManager.debug(TAG) {
+                                "绘制间隔：位置(0, $currentMajor), 尺寸(${totalMinor}x${spacing})"
+                            }
                             canvas.drawRect(0f, currentMajor.toFloat(), totalMinor.toFloat(), (currentMajor + spacing).toFloat(), spacingPaint)
                             currentMajor += spacing
                         } else {
                             currentMajor += bitmap.width
-                            logManager.debug(TAG, "绘制间隔：位置($currentMajor, 0), 尺寸(${spacing}x${totalMinor})")
+                            logManager.debug(TAG) {
+                                "绘制间隔：位置($currentMajor, 0), 尺寸(${spacing}x${totalMinor})"
+                            }
                             canvas.drawRect(currentMajor.toFloat(), 0f, (currentMajor + spacing).toFloat(), totalMinor.toFloat(), spacingPaint)
                             currentMajor += spacing
                         }

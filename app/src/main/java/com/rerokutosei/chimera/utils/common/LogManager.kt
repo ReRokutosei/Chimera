@@ -103,6 +103,14 @@ class LogManager private constructor(context: Context) {
             writeLogToFile("DEBUG", tag, message)
         }
     }
+
+    inline fun debug(tag: String, message: () -> String) {
+        if (isDebugEnabled()) {
+            debug(tag, message())
+        }
+    }
+
+    fun isDebugEnabled(): Boolean = currentLogLevel <= LOG_LEVEL_DEBUG
     
     /**
      * 记录信息日志
