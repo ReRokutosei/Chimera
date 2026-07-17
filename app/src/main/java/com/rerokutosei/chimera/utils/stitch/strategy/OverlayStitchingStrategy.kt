@@ -137,8 +137,7 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
             // 根据用户设置的输出图片格式选择合适的格式
             // 如果输出格式为PNG或WEBP，使用ARGB_8888格式
             // 如果输出格式为JPEG，使用RGB_565格式
-            val outputFormat = getCurrentOutputFormat()
-            val config = when (outputFormat) {
+            val config = when (options.outputFormat) {
                 0, 2 -> Bitmap.Config.ARGB_8888 // PNG或WEBP
                 else -> Bitmap.Config.RGB_565 // JPEG
             }

@@ -24,9 +24,7 @@ import android.net.Uri
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.data.local.StitchSettingsManager
 import com.rerokutosei.chimera.ui.main.WidthScale
-import com.rerokutosei.chimera.utils.color.ColorUtils
 import com.rerokutosei.chimera.utils.common.LogManager
-import com.rerokutosei.chimera.utils.image.BitmapLoader
 import com.rerokutosei.chimera.utils.stitch.engine.KotlinStitchingEngine
 import com.rerokutosei.chimera.utils.stitch.strategy.StitchingOptions
 import kotlinx.coroutines.Dispatchers
@@ -42,79 +40,9 @@ class ImageStitcher(private val context: Context) {
         private const val TAG = "ImageStitcher"
     }
 
-    private val bitmapLoader = BitmapLoader(context)
     private val logManager = LogManager.getInstance(context)
     private val stitchSettingsManager = StitchSettingsManager.getInstance(context)
     private val imageSettingsManager = ImageSettingsManager.getInstance(context)
-
-    /**
-     * 预估拼接结果尺寸
-     * @param images 图片列表
-     * @param orientation 拼接方向
-     * @param widthScale 宽度缩放模式
-     * @param imageSpacing 图片间隔（像素）
-     * @return 预估的尺寸（宽度和高度）
-     */
-    fun estimateResultSize(
-        images: List<Bitmap>,
-        orientation: StitchOrientation,
-        widthScale: WidthScale,
-        imageSpacing: Int
-    ): Pair<Int, Int> {
-        if (images.isEmpty()) return Pair(0, 0)
-
-        // 根据宽度缩放模式和拼接方向计算处理后的图片尺寸
-        val processedSizes = when (widthScale) {
-            WidthScale.NONE -> images.map { Pair(it.width, it.height) }
-            WidthScale.MAX_WIDTH -> {
-                if (orientation == StitchOrientation.VERTICAL) {
-                    val maxWidth = images.maxOf { it.width }
-                    images.map { bitmap ->
-                        if (bitmap.width == maxWidth) Pair(bitmap.width, bitmap.height)
-                        else {
-                            val scale = maxWidth.toFloat() / bitmap.width.toFloat()
-                            Pair(maxWidth, (bitmap.height * scale).toInt())
-                        }
-                    }
-                } else {
-                    val maxHeight = images.maxOf { it.height }
-                    images.map { bitmap ->
-                        if (bitmap.height == maxHeight) Pair(bitmap.width, bitmap.height)
-                        else {
-                            val scale = maxHeight.toFloat() / bitmap.height.toFloat()
-                            Pair((bitmap.width * scale).toInt(), maxHeight)
-                        }
-                    }
-                }
-            }
-            WidthScale.MIN_WIDTH -> {
-                if (orientation == StitchOrientation.VERTICAL) {
-                    val minWidth = images.minOf { it.width }
-                    images.map { bitmap ->
-                        if (bitmap.width == minWidth) Pair(bitmap.width, bitmap.height)
-                        else {
-                            val scale = minWidth.toFloat() / bitmap.width.toFloat()
-                            Pair(minWidth, (bitmap.height * scale).toInt())
-                        }
-                    }
-                } else {
-                    val minHeight = images.minOf { it.height }
-                    images.map { bitmap ->
-                        if (bitmap.height == minHeight) Pair(bitmap.width, bitmap.height)
-                        else {
-                            val scale = minHeight.toFloat() / bitmap.height.toFloat()
-                            Pair((bitmap.width * scale).toInt(), minHeight)
-                        }
-                    }
-                }
-            }
-        }
-
-        return when (orientation) {
-            StitchOrientation.VERTICAL -> Pair(processedSizes.maxOf { it.first }, processedSizes.sumOf { it.second } + (processedSizes.size - 1) * imageSpacing)
-            StitchOrientation.HORIZONTAL -> Pair(processedSizes.sumOf { it.first } + (processedSizes.size - 1) * imageSpacing, processedSizes.maxOf { it.second })
-        }
-    }
 
     /**
      * 拼接图片
@@ -137,7 +65,6 @@ class ImageStitcher(private val context: Context) {
 
         try {
             val engine = KotlinStitchingEngine(context)
-            val quality = imageSettingsManager.getOutputImageQualityFlow().first()
             val format = imageSettingsManager.getOutputImageFormatFlow().first()
             val spacingColorHex = stitchSettingsManager.getImageSpacingColorFlow().first()
             val spacingColor = try {
@@ -152,7 +79,6 @@ class ImageStitcher(private val context: Context) {
                 isOverlayEnabled = false,
                 widthScale = widthScale,
                 orientation = orientation,
-                quality = quality,
                 outputFormat = format
             )
 
@@ -183,7 +109,6 @@ class ImageStitcher(private val context: Context) {
 
         try {
             val engine = KotlinStitchingEngine(context)
-            val quality = imageSettingsManager.getOutputImageQualityFlow().first()
             val format = imageSettingsManager.getOutputImageFormatFlow().first()
 
             val options = StitchingOptions(
@@ -191,7 +116,6 @@ class ImageStitcher(private val context: Context) {
                 overlayRatio = overlayRatio,
                 widthScale = widthScale,
                 orientation = orientation,
-                quality = quality,
                 outputFormat = format
             )
 
@@ -200,10 +124,6 @@ class ImageStitcher(private val context: Context) {
             logManager.error(TAG, "叠加拼接过程中出错", e)
             StitchResult.ErrorResult("叠加拼接失败: ${e.message}")
         }
-    }
-
-    fun clearCache() {
-        bitmapLoader.clearCache()
     }
 }
 

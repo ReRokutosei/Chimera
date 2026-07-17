@@ -70,9 +70,9 @@ class DirectStitchingStrategy(
         return try {
             withContext(Dispatchers.Default) {
                 if (isVertical) {
-                    stitchVertically(processedBitmaps, options.spacing, options.spacingColor)
+                    stitchVertically(processedBitmaps, options.spacing, options.spacingColor, options.outputFormat)
                 } else {
-                    stitchHorizontally(processedBitmaps, options.spacing, options.spacingColor)
+                    stitchHorizontally(processedBitmaps, options.spacing, options.spacingColor, options.outputFormat)
                 }
             }.also { bitmap ->
                 resultBitmap = bitmap
@@ -92,29 +92,32 @@ class DirectStitchingStrategy(
      * @param bitmaps 要拼接的位图列表
      * @param spacing 图片间隔（像素）
      * @param spacingColor 间隔填充颜色
+     * @param outputFormat 输出图片格式
      */
-    private fun stitchVertically(bitmaps: List<Bitmap>, spacing: Int, spacingColor: Int = Color.BLACK): Bitmap? {
-        return stitchImages(bitmaps, spacing, true, spacingColor)
+    private fun stitchVertically(bitmaps: List<Bitmap>, spacing: Int, spacingColor: Int = Color.BLACK, outputFormat: Int): Bitmap? {
+        return stitchImages(bitmaps, spacing, true, spacingColor, outputFormat)
     }
-    
+
     /**
      * 水平拼接图片
      * @param bitmaps 要拼接的位图列表
      * @param spacing 图片间隔（像素）
      * @param spacingColor 间隔填充颜色
+     * @param outputFormat 输出图片格式
      */
-    private fun stitchHorizontally(bitmaps: List<Bitmap>, spacing: Int, spacingColor: Int = Color.BLACK): Bitmap? {
-        return stitchImages(bitmaps, spacing, false, spacingColor)
+    private fun stitchHorizontally(bitmaps: List<Bitmap>, spacing: Int, spacingColor: Int = Color.BLACK, outputFormat: Int): Bitmap? {
+        return stitchImages(bitmaps, spacing, false, spacingColor, outputFormat)
     }
-    
+
     /**
      * 通用拼接方法
      * @param bitmaps 要拼接的位图列表
      * @param spacing 图片间隔（像素）
      * @param isVertical 是否为垂直拼接
      * @param spacingColor 间隔填充颜色
+     * @param outputFormat 输出图片格式
      */
-    private fun stitchImages(bitmaps: List<Bitmap>, spacing: Int, isVertical: Boolean, spacingColor: Int = Color.BLACK): Bitmap? {
+    private fun stitchImages(bitmaps: List<Bitmap>, spacing: Int, isVertical: Boolean, spacingColor: Int = Color.BLACK, outputFormat: Int): Bitmap? {
         logManager.debug(TAG, "开始${if (isVertical) "垂直" else "水平"}拼接，图片数量: ${bitmaps.size}，间隔: $spacing")
         
         val (totalMajor, totalMinor) = if (isVertical) {
@@ -139,7 +142,6 @@ class DirectStitchingStrategy(
             // 根据用户设置的输出图片格式和图片透明度需求选择合适的格式
             // 如果输出格式为PNG或WEBP，且图片中至少有一张使用了ARGB_8888格式时，结果图片才会使用ARGB_8888格式
             // 如果输出格式为JPEG，一律不使用ARGB_8888格式
-            val outputFormat = getCurrentOutputFormat()
             val hasAlpha = bitmaps.any { it.config == Bitmap.Config.ARGB_8888 }
             val config = when {
                 (outputFormat == 0 || outputFormat == 2) && hasAlpha -> Bitmap.Config.ARGB_8888 // PNG或WEBP且有透明度

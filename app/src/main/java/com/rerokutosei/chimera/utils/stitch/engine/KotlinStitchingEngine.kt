@@ -21,13 +21,15 @@ package com.rerokutosei.chimera.utils.stitch.engine
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
-import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.data.local.StitchSettingsManager
 import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.image.BitmapLoader
+import com.rerokutosei.chimera.utils.stitch.StitchOrientation
 import com.rerokutosei.chimera.utils.stitch.StitchResult
-import com.rerokutosei.chimera.utils.stitch.StitcherFactory
+import com.rerokutosei.chimera.utils.stitch.strategy.DirectStitchingStrategy
+import com.rerokutosei.chimera.utils.stitch.strategy.OverlayStitchingStrategy
 import com.rerokutosei.chimera.utils.stitch.strategy.StitchingOptions
+import com.rerokutosei.chimera.utils.stitch.strategy.StitchingStrategy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -38,14 +40,13 @@ import kotlinx.coroutines.withContext
 /**
  * Kotlin拼接引擎实现
  */
-class KotlinStitchingEngine(private val context: Context) : StitchingEngine {
-    
+class KotlinStitchingEngine(private val context: Context) {
+
     private val bitmapLoader = BitmapLoader(context)
     private val stitchSettingsManager = StitchSettingsManager.getInstance(context)
-    private val imageSettingsManager = ImageSettingsManager.getInstance(context)
     private val logManager = LogManager.getInstance(context)
-    
-    override suspend fun stitchImages(
+
+    suspend fun stitchImages(
         context: Context,
         imageUris: List<Uri>,
         options: StitchingOptions,
@@ -86,9 +87,7 @@ class KotlinStitchingEngine(private val context: Context) : StitchingEngine {
                     return@withContext StitchResult.ErrorResult("图片加载失败")
                 }
 
-                val stitcherFactory = StitcherFactory(context)
-                val isOverlay = options.isOverlayEnabled
-                val strategy = stitcherFactory.createStitcher(options.orientation, isOverlay)
+                val strategy = createStitcher(options.orientation, options.isOverlayEnabled)
 
                 val result = strategy.stitch(bitmaps, options)
                 progressCallback(80)
@@ -107,6 +106,17 @@ class KotlinStitchingEngine(private val context: Context) : StitchingEngine {
                 logManager.error("KotlinStitchingEngine", "拼接过程出错", e)
                 StitchResult.ErrorResult("拼接过程出错: ${e.message}")
             }
+        }
+    }
+
+    /**
+     * 根据拼接方向和叠加开关创建对应的拼接策略
+     */
+    private fun createStitcher(orientation: StitchOrientation, isOverlay: Boolean): StitchingStrategy {
+        return when {
+            isOverlay -> OverlayStitchingStrategy(context)
+            orientation == StitchOrientation.VERTICAL -> DirectStitchingStrategy(isVertical = true, context = context)
+            else -> DirectStitchingStrategy(isVertical = false, context = context)
         }
     }
 }

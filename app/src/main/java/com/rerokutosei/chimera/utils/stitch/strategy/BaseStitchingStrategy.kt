@@ -24,8 +24,6 @@ import androidx.core.graphics.scale
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.common.MemoryLimitCalculator
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 
 abstract class BaseStitchingStrategy(
     context: Context,
@@ -129,10 +127,6 @@ abstract class BaseStitchingStrategy(
                 scaledBitmap
             }
         }
-    }
-
-    protected fun getCurrentOutputFormat(): Int = runBlocking {
-        imageSettingsManager.getOutputImageFormatFlow().first()
     }
 
     protected fun recycleScaledIntermediates(
