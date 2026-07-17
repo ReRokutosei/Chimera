@@ -22,6 +22,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
@@ -178,5 +179,12 @@ sealed interface ImageSaveResult {
 private fun OutputImageFormat.toCompressFormat(): Bitmap.CompressFormat = when (this) {
     OutputImageFormat.PNG -> Bitmap.CompressFormat.PNG
     OutputImageFormat.JPEG -> Bitmap.CompressFormat.JPEG
-    OutputImageFormat.WEBP -> Bitmap.CompressFormat.WEBP
+    OutputImageFormat.WEBP -> {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            Bitmap.CompressFormat.WEBP_LOSSY
+        } else {
+            @Suppress("DEPRECATION")
+            Bitmap.CompressFormat.WEBP
+        }
+    }
 }

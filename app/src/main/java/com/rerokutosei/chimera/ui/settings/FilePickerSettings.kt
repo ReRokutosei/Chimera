@@ -88,12 +88,7 @@ fun FilePickerSettingsSection(
 
     // 自动清理已选图片开关
     ListItem(
-        headlineContent = {
-            Text(
-                text = stringResource(R.string.auto_clear_selected),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        },
+
         supportingContent = {
             Text(
                 text = stringResource(R.string.clear_after_stitching),
@@ -110,15 +105,15 @@ fun FilePickerSettingsSection(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { viewModel.setAutoClearImages(!uiState.autoClearImages) }
-    )
+    ) {
+        Text(
+            text = stringResource(R.string.auto_clear_selected),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 
     ListItem(
-        headlineContent = {
-            Text(
-                text = stringResource(R.string.image_list_direction),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        },
+
         supportingContent = {
             Column(
                 modifier = Modifier
@@ -162,16 +157,16 @@ fun FilePickerSettingsSection(
                 }
             }
         }
-    )
+    ) {
+        Text(
+            text = stringResource(R.string.image_list_direction),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 
     // 使用存储访问框架选择器
     ListItem(
-        headlineContent = {
-            Text(
-                text = stringResource(R.string.use_saf_picker),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        },
+
         supportingContent = {
             Text(
                 text = stringResource(R.string.use_saf_without_permission),
@@ -188,18 +183,17 @@ fun FilePickerSettingsSection(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { viewModel.setUseSafPicker(!uiState.useSafPicker) }
-    )
+    ) {
+        Text(
+            text = stringResource(R.string.use_saf_picker),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 
     // 使用Embedded Picker
     // 对于SDK 29-32的设备，Embedded Picker是默认且必需的选项
     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S) {
         ListItem(
-            headlineContent = {
-                Text(
-                    text = stringResource(R.string.embedded_picker),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            },
             supportingContent = {
                 Text(
                     text = stringResource(R.string.embedded_picker_sub),
@@ -244,16 +238,15 @@ fun FilePickerSettingsSection(
                         viewModel.setUseEmbeddedPicker(false)
                     }
                 }
-        )
+        ) {
+            Text(
+                text = stringResource(R.string.embedded_picker),
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
     } else {
         // 对于SDK 29-32设备，显示为默认启用状态
         ListItem(
-            headlineContent = {
-                Text(
-                    text = stringResource(R.string.embedded_picker),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            },
             supportingContent = {
                 Text(
                     text = stringResource(R.string.default_picker_info),
@@ -269,7 +262,12 @@ fun FilePickerSettingsSection(
                 )
             },
             modifier = Modifier.fillMaxWidth()
-        )
+        ) {
+            Text(
+                text = stringResource(R.string.embedded_picker),
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
     }
 
     HorizontalDivider(

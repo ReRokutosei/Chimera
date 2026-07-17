@@ -125,53 +125,53 @@ fun ThemeModeSettings(
 ) {
     // 主题模式设置
     ListItem(
-        headlineContent = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.theme_mode),
-                    style = MaterialTheme.typography.bodyLarge
-                )
 
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // 自动模式按钮
-                    ThemeModeIconButton(
-                        selected = uiState.themeMode == ThemeMode.AUTO,
-                        onClick = { viewModel.setThemeMode(ThemeMode.AUTO) },
-                        selectedIcon = if (isSystemInDarkTheme()) Icons.Rounded.BrightnessMedium else Icons.Rounded.BrightnessHigh,
-                        unselectedIcon = Icons.Rounded.BrightnessAuto,
-                        contentDescription = stringResource(R.string.auto_mode)
-                    )
-
-                    // 浅色模式按钮
-                    ThemeModeIconButton(
-                        selected = uiState.themeMode == ThemeMode.LIGHT,
-                        onClick = { viewModel.setThemeMode(ThemeMode.LIGHT) },
-                        selectedIcon = Icons.Rounded.Flare,
-                        unselectedIcon = Icons.Rounded.LightMode,
-                        contentDescription = stringResource(R.string.light_mode)
-                    )
-
-                    // 深色模式按钮
-                    ThemeModeIconButton(
-                        selected = uiState.themeMode == ThemeMode.DARK,
-                        onClick = { viewModel.setThemeMode(ThemeMode.DARK) },
-                        selectedIcon = Icons.Rounded.DarkMode,
-                        unselectedIcon = Icons.Rounded.Bedtime,
-                        contentDescription = stringResource(R.string.dark_mode)
-                    )
-                }
-            }
-        },
         supportingContent = null,
         modifier = Modifier.fillMaxWidth()
-    )
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.theme_mode),
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // 自动模式按钮
+                ThemeModeIconButton(
+                    selected = uiState.themeMode == ThemeMode.AUTO,
+                    onClick = { viewModel.setThemeMode(ThemeMode.AUTO) },
+                    selectedIcon = if (isSystemInDarkTheme()) Icons.Rounded.BrightnessMedium else Icons.Rounded.BrightnessHigh,
+                    unselectedIcon = Icons.Rounded.BrightnessAuto,
+                    contentDescription = stringResource(R.string.auto_mode)
+                )
+
+                // 浅色模式按钮
+                ThemeModeIconButton(
+                    selected = uiState.themeMode == ThemeMode.LIGHT,
+                    onClick = { viewModel.setThemeMode(ThemeMode.LIGHT) },
+                    selectedIcon = Icons.Rounded.Flare,
+                    unselectedIcon = Icons.Rounded.LightMode,
+                    contentDescription = stringResource(R.string.light_mode)
+                )
+
+                // 深色模式按钮
+                ThemeModeIconButton(
+                    selected = uiState.themeMode == ThemeMode.DARK,
+                    onClick = { viewModel.setThemeMode(ThemeMode.DARK) },
+                    selectedIcon = Icons.Rounded.DarkMode,
+                    unselectedIcon = Icons.Rounded.Bedtime,
+                    contentDescription = stringResource(R.string.dark_mode)
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -185,12 +185,7 @@ fun ThemeColorSettings(
 
     // 主题颜色设置
     ListItem(
-        headlineContent = {
-            Text(
-                text = stringResource(R.string.theme_color),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        },
+
         supportingContent = {
             var showCustomColorPicker by remember { mutableStateOf(false) }
 
@@ -355,7 +350,12 @@ fun ThemeColorSettings(
             }
         },
         modifier = Modifier.fillMaxWidth()
-    )
+    ) {
+        Text(
+            text = stringResource(R.string.theme_color),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 }
 
 /**
@@ -378,12 +378,7 @@ fun SliderHandleIconSettings(
     val surface = MaterialTheme.colorScheme.surface
     val outline = MaterialTheme.colorScheme.outline
     ListItem(
-        headlineContent = {
-            Text(
-                text = stringResource(R.string.slider_handle_icon),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        },
+
         supportingContent = {
             Row(
                 modifier = Modifier
@@ -449,7 +444,12 @@ fun SliderHandleIconSettings(
         },
         modifier = Modifier
             .fillMaxWidth()
-    )
+    ) {
+        Text(
+            text = stringResource(R.string.slider_handle_icon),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 
     HorizontalDivider(
         modifier = Modifier

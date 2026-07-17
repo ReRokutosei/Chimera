@@ -81,28 +81,26 @@ fun AboutSection(
     }
 
     ListItem(
-        headlineContent = {
-            Text(
-                text = stringResource(R.string.version) + LocalContext.current.packageManager
-                    .getPackageInfo(LocalContext.current.packageName, 0).versionName,
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-    )
+    ) {
+        Text(
+            text = stringResource(R.string.version) + LocalContext.current.packageManager
+                .getPackageInfo(LocalContext.current.packageName, 0).versionName,
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 
     // 添加开源许可证项
     var showLicensesDialog by remember { mutableStateOf(false) }
     ListItem(
-        headlineContent = {
-            Text(
-                text = stringResource(R.string.open_source_licenses),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        },
         modifier = Modifier
             .fillMaxWidth()
             .clickable { showLicensesDialog = true }
-    )
+    ) {
+        Text(
+            text = stringResource(R.string.open_source_licenses),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 
     // 开源许可证
     if (showLicensesDialog) {
@@ -114,16 +112,15 @@ fun AboutSection(
     // 隐私政策和免责声明项
     var showPrivacyPolicyDialog by remember { mutableStateOf(false) }
     ListItem(
-        headlineContent = {
-            Text(
-                text = stringResource(R.string.privacy_policy_and_disclaimer),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        },
         modifier = Modifier
             .fillMaxWidth()
             .clickable { showPrivacyPolicyDialog = true }
-    )
+    ) {
+        Text(
+            text = stringResource(R.string.privacy_policy_and_disclaimer),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 
     if (showPrivacyPolicyDialog) {
         PrivacyPolicyDialog(

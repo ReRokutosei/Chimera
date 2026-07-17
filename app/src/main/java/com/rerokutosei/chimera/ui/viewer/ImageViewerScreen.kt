@@ -268,7 +268,7 @@ fun ImageViewerScreen(
                 } else if (previewSource != null) {
                     logManager.debug("ImageViewerScreen", "显示预览, source: $previewSource")
                     ImageResultPreviewer(
-                        source = previewSource!!,
+                        source = previewSource,
                         modifier = Modifier.fillMaxSize()
                     )
                 } else if (errorMessage == null) {

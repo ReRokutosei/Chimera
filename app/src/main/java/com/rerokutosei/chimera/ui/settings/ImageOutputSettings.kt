@@ -84,12 +84,6 @@ fun ImageOutputSettingsSection(
 
     // 输出图片格式选择
     ListItem(
-        headlineContent = {
-            Text(
-                text = stringResource(R.string.output_format),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        },
         supportingContent = {
             Row(
                 modifier = Modifier
@@ -122,7 +116,12 @@ fun ImageOutputSettingsSection(
                 )
             }
         }
-    )
+    ) {
+        Text(
+            text = stringResource(R.string.output_format),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 
     // 图片间隔填充颜色
     val isDark = when (uiState.themeMode) {
@@ -139,12 +138,6 @@ fun ImageOutputSettingsSection(
     )
 
     ListItem(
-        headlineContent = {
-            Text(
-                text = stringResource(R.string.spacing_fill_color),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        },
         supportingContent = {
             var showColorPicker by remember { mutableStateOf(false) }
             val currentColor = ColorUtils.parseColorSafely(uiState.imageSpacingColor, Color.Black)
@@ -187,28 +180,16 @@ fun ImageOutputSettingsSection(
                 )
             }
         }
-    )
+    ) {
+        Text(
+            text = stringResource(R.string.spacing_fill_color),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 
     // 输出图片质量滑块 (仅在 JPEG 或 WEBP 格式时显示)
     if (uiState.outputImageFormat == 1 || uiState.outputImageFormat == 2) {
         ListItem(
-            headlineContent = {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.output_quality),
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = "${uiState.outputImageQuality}%",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(end = 16.dp)
-                    )
-                }
-            },
             supportingContent = {
                 FancySlider(
                     value = uiState.outputImageQuality.toFloat(),
@@ -225,7 +206,23 @@ fun ImageOutputSettingsSection(
                     drawContainer = false
                 )
             }
-        )
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.output_quality),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = "${uiState.outputImageQuality}%",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(end = 16.dp)
+                )
+            }
+        }
     }
 
     HorizontalDivider(

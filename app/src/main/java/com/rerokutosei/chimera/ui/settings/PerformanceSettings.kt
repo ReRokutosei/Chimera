@@ -63,12 +63,6 @@ fun PerformanceSettingsSection(
 
     // 多线程加速计算
     ListItem(
-        headlineContent = {
-            Text(
-                text = stringResource(R.string.multithreading),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        },
         supportingContent = {
             Text(
                 text = stringResource(R.string.multithreading_desc),
@@ -85,16 +79,15 @@ fun PerformanceSettingsSection(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { viewModel.setMultiThreadEnabled(!uiState.multiThreadEnabled) }
-    )
+    ) {
+        Text(
+            text = stringResource(R.string.multithreading),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 
     // 提高内存阈值
     ListItem(
-        headlineContent = {
-            Text(
-                text = stringResource(R.string.high_memory_threshold),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        },
         supportingContent = {
             Text(
                 text = stringResource(R.string.high_memory_threshold_desc),
@@ -111,7 +104,12 @@ fun PerformanceSettingsSection(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { viewModel.setHighMemoryLimit(!uiState.highMemoryLimit) }
-    )
+    ) {
+        Text(
+            text = stringResource(R.string.high_memory_threshold),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 
     HorizontalDivider(
         modifier = Modifier

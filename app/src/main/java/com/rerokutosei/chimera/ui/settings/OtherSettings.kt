@@ -67,12 +67,6 @@ fun OtherSettingsSection(
 
     // 日志等级选择
     ListItem(
-        headlineContent = {
-            Text(
-                text = stringResource(R.string.log_level),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        },
         trailingContent = {
             var showLogLevelMenu by remember { mutableStateOf(false) }
             val selectedLogLevel = when (uiState.logLevel) {
@@ -131,7 +125,12 @@ fun OtherSettingsSection(
                 }
             }
         }
-    )
+    ) {
+        Text(
+            text = stringResource(R.string.log_level),
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 
     HorizontalDivider(
         modifier = Modifier

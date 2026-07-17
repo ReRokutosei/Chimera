@@ -20,6 +20,7 @@ package com.rerokutosei.chimera.utils.image
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.os.Build
 import androidx.core.content.FileProvider
 import com.rerokutosei.chimera.R
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
@@ -58,7 +59,14 @@ class ImageSharer(private val context: Context) {
 
             val (extension, compressFormat) = when (formatCode) {
                 1 -> Pair("jpg", Bitmap.CompressFormat.JPEG)
-                2 -> Pair("webp", Bitmap.CompressFormat.WEBP)
+                2 -> Pair("webp",
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                Bitmap.CompressFormat.WEBP_LOSSY
+            } else {
+                @Suppress("DEPRECATION")
+                Bitmap.CompressFormat.WEBP
+            }
+        )
                 else -> Pair("png", Bitmap.CompressFormat.PNG)
             }
 
