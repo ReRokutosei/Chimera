@@ -48,8 +48,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,12 +62,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rerokutosei.chimera.R
 import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.image.BitmapLoader
 import com.rerokutosei.chimera.utils.image.ImageSaver
 import com.rerokutosei.chimera.utils.image.ImageSharer
 import com.rerokutosei.chimera.utils.image.ImageSplitter
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -88,14 +90,14 @@ fun ImageViewerScreen(
     val coroutineScope = rememberCoroutineScope()
     val bitmapLoader = remember { BitmapLoader(context) }
 
-    val previewSource by viewModel.previewSource.collectAsState()
-    val errorMessage by viewModel.error.collectAsState()
-    val isProcessing by viewModel.isProcessing.collectAsState()
-    val isCutMode by viewModel.isCutMode.collectAsState()
-    val cutImageUris by viewModel.cutImageUris.collectAsState()
-    val cutGridCols by viewModel.cutGridCols.collectAsState()
-    val cutGridRows by viewModel.cutGridRows.collectAsState()
-    val currentCutIndex by viewModel.currentCutIndex.collectAsState()
+    val previewSource by viewModel.previewSource.collectAsStateWithLifecycle()
+    val errorMessage by viewModel.error.collectAsStateWithLifecycle()
+    val isProcessing by viewModel.isProcessing.collectAsStateWithLifecycle()
+    val isCutMode by viewModel.isCutMode.collectAsStateWithLifecycle()
+    val cutImageUris by viewModel.cutImageUris.collectAsStateWithLifecycle()
+    val cutGridCols by viewModel.cutGridCols.collectAsStateWithLifecycle()
+    val cutGridRows by viewModel.cutGridRows.collectAsStateWithLifecycle()
+    val currentCutIndex by viewModel.currentCutIndex.collectAsStateWithLifecycle()
 
     var isSaving by remember { mutableStateOf(false) }
     var saveMessage by remember { mutableStateOf<String?>(null) }
@@ -111,11 +113,29 @@ fun ImageViewerScreen(
     }
 
     if (isCutMode && cutImageUris.isNotEmpty()) {
-        val pagerState = rememberPagerState(pageCount = { cutImageUris.size })
+        val pagerState = rememberPagerState(
+            initialPage = currentCutIndex.coerceIn(cutImageUris.indices),
+            pageCount = { cutImageUris.size }
+        )
+
+        DisposableEffect(cutBitmaps) {
+            onDispose {
+                bitmapLoader.recycleBitmaps(cutBitmaps.value.values.toList())
+                cutBitmaps.value = emptyMap()
+            }
+        }
 
         LaunchedEffect(pagerState.currentPage) {
             viewModel.setCurrentCutIndex(pagerState.currentPage)
             val idx = pagerState.currentPage
+            val retainedIndices = (idx - 1..idx + 1).filter { it in cutImageUris.indices }.toSet()
+            val retainedBitmaps = cutBitmaps.value.filterKeys { it in retainedIndices }
+            val evictedBitmaps = cutBitmaps.value.filterKeys { it !in retainedIndices }.values.toList()
+            cutBitmaps.value = retainedBitmaps
+            bitmapLoader.recycleBitmaps(
+                evictedBitmaps
+            )
+
             if (!cutBitmaps.value.containsKey(idx)) {
                 val bitmap = withContext(Dispatchers.IO) {
                     bitmapLoader.loadBitmapFromUri(cutImageUris[idx])
@@ -183,27 +203,44 @@ fun ImageViewerScreen(
                         isSaving = true
                         coroutineScope.launch {
                             var allSuccess = true
-                            var totalPieces = 0
-                            for ((idx, uri) in cutImageUris.withIndex()) {
-                                val sourceBitmap = bitmapLoader.loadBitmapFromUri(uri)
-                                if (sourceBitmap != null) {
-                                    val pieces = ImageSplitter.splitBitmap(sourceBitmap, cutGridCols, cutGridRows)
-                                    totalPieces += pieces.size
-                                    for ((pieceIdx, piece) in pieces.withIndex()) {
-                                        imageSaver.saveToGallery(
-                                            piece,
-                                            onSaved = {},
-                                            onError = { allSuccess = false }
-                                        )
+                            try {
+                                for ((idx, uri) in cutImageUris.withIndex()) {
+                                    val sourceBitmap = withContext(Dispatchers.IO) {
+                                        bitmapLoader.loadBitmapFromUri(uri)
                                     }
-                                    if (sourceBitmap != cutBitmaps.value[idx]) {
-                                        sourceBitmap.recycle()
+                                    if (sourceBitmap != null) {
+                                        val isCached = sourceBitmap === cutBitmaps.value[idx]
+                                        var pieces = emptyList<android.graphics.Bitmap>()
+                                        try {
+                                            pieces = withContext(Dispatchers.Default) {
+                                                ImageSplitter.splitBitmap(sourceBitmap, cutGridCols, cutGridRows)
+                                            }
+                                            for (piece in pieces) {
+                                                imageSaver.saveToGallery(
+                                                    piece,
+                                                    onSaved = {},
+                                                    onError = { allSuccess = false }
+                                                )
+                                            }
+                                        } catch (e: CancellationException) {
+                                            throw e
+                                        } catch (_: Exception) {
+                                            allSuccess = false
+                                        } finally {
+                                            pieces.forEach { piece ->
+                                                if (!piece.isRecycled) piece.recycle()
+                                            }
+                                            if (!isCached && !sourceBitmap.isRecycled) {
+                                                bitmapLoader.recycleBitmaps(listOf(sourceBitmap))
+                                            }
+                                        }
+                                    } else {
+                                        allSuccess = false
                                     }
-                                } else {
-                                    allSuccess = false
                                 }
+                            } finally {
+                                isSaving = false
                             }
-                            isSaving = false
                             saveMessage = if (allSuccess) {
                                 if (cutGridCols == 2) cutCompleted4 else cutCompleted9
                             } else {
@@ -282,7 +319,6 @@ fun ImageViewerScreen(
                             is PreviewSource.FromBitmap -> imageSharer.shareBitmap(source.bitmap, shareText)
                             else -> {}
                         }
-                        viewModel.releaseTempFile()
                     }
                 },
                 onSaveClick = { source ->
@@ -291,7 +327,6 @@ fun ImageViewerScreen(
                         val onResult: (Uri?) -> Unit = { uri ->
                             saveMessage = if (uri != null) saveSuccessText else saveFailedText
                             isSaving = false
-                            if (uri != null) viewModel.releaseTempFile()
                         }
                         val onError: (Exception) -> Unit = { e ->
                             saveMessage = "$saveFailedText: ${e.message}"

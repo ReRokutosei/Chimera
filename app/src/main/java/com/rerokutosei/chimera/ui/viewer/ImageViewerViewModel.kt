@@ -112,10 +112,6 @@ class ImageViewerViewModel(application: Application) : AndroidViewModel(applicat
         _previewSource.value = null
     }
 
-    fun releaseTempFile() {
-        // 拼接结果直接以 Bitmap 预览，无临时文件需要释放
-    }
-
     private fun clearBitmap() {
         (_previewSource.value as? PreviewSource.FromBitmap)?.bitmap?.let {
             if (!it.isRecycled) {
