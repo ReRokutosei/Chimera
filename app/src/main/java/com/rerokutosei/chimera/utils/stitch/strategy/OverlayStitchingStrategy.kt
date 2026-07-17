@@ -52,7 +52,13 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
         var resultBitmap: Bitmap? = null
         var allocatedBitmap: Bitmap? = null
         try {
-            processedBitmaps = scaleBitmapsForLayout(bitmaps, options.widthScale, options.orientation, TAG)
+            processedBitmaps = scaleBitmapsForLayout(
+                bitmaps,
+                options.widthScale,
+                options.orientation,
+                options.multiThreadEnabled,
+                TAG
+            )
             val layout = calculateLayout(
                 bitmaps = processedBitmaps,
                 orientation = options.orientation,

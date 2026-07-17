@@ -63,7 +63,8 @@ class StitchProcessingBenchmark {
             widthScale = WidthScale.MIN_WIDTH,
             orientation = StitchOrientation.VERTICAL,
             outputFormat = OutputImageFormat.JPEG,
-            highMemoryLimitEnabled = true
+            highMemoryLimitEnabled = true,
+            multiThreadEnabled = true
         )
         try {
             benchmarkRule.measureRepeated {
@@ -113,6 +114,32 @@ class StitchProcessingBenchmark {
                     )
                 )
             }
+            reportStageBreakdown("direct-min-parallel") {
+                DirectStitchingStrategy(true, context).stitch(
+                    source,
+                    StitchingOptions(
+                        widthScale = WidthScale.MIN_WIDTH,
+                        orientation = StitchOrientation.VERTICAL,
+                        outputFormat = OutputImageFormat.JPEG,
+                        highMemoryLimitEnabled = true,
+                        multiThreadEnabled = true
+                    )
+                )
+            }
+            reportStageBreakdown("overlay-min-parallel") {
+                OverlayStitchingStrategy(context).stitch(
+                    source,
+                    StitchingOptions(
+                        isOverlayEnabled = true,
+                        overlayRatio = 20,
+                        widthScale = WidthScale.MIN_WIDTH,
+                        orientation = StitchOrientation.VERTICAL,
+                        outputFormat = OutputImageFormat.JPEG,
+                        highMemoryLimitEnabled = true,
+                        multiThreadEnabled = true
+                    )
+                )
+            }
         } finally {
             ProcessingPerformance.observer = null
             source.forEach(Bitmap::recycle)
@@ -130,7 +157,8 @@ class StitchProcessingBenchmark {
             widthScale = scale,
             orientation = orientation,
             outputFormat = OutputImageFormat.JPEG,
-            highMemoryLimitEnabled = true
+            highMemoryLimitEnabled = true,
+            multiThreadEnabled = true
         )
         try {
             benchmarkRule.measureRepeated {

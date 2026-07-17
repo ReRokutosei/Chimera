@@ -54,7 +54,13 @@ class DirectStitchingStrategy(
         var processedBitmaps = bitmaps
         var resultBitmap: Bitmap? = null
         return try {
-            processedBitmaps = scaleBitmapsForLayout(bitmaps, options.widthScale, orientation, TAG)
+            processedBitmaps = scaleBitmapsForLayout(
+                bitmaps,
+                options.widthScale,
+                orientation,
+                options.multiThreadEnabled,
+                TAG
+            )
             val result = withContext(Dispatchers.Default) {
                 if (isVertical) {
                     stitchVertically(

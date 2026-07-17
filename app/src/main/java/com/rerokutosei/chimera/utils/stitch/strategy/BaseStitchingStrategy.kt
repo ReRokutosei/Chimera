@@ -34,6 +34,10 @@ import com.rerokutosei.chimera.utils.stitch.layout.StitchLayout
 import com.rerokutosei.chimera.utils.stitch.layout.StitchLayoutCalculator
 import com.rerokutosei.chimera.utils.performance.ProcessingPerformance
 import com.rerokutosei.chimera.utils.performance.ProcessingStage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 
 abstract class BaseStitchingStrategy(
     context: Context,
@@ -50,12 +54,13 @@ abstract class BaseStitchingStrategy(
         )
     }
 
-    protected fun scaleBitmapsForLayout(
+    protected suspend fun scaleBitmapsForLayout(
         bitmaps: List<Bitmap>,
         widthScale: WidthScale,
         orientation: StitchOrientation,
+        multiThreadEnabled: Boolean,
         tag: String
-    ): List<Bitmap> = ProcessingPerformance.measure(ProcessingStage.SCALE) {
+    ): List<Bitmap> = ProcessingPerformance.measureSuspend(ProcessingStage.SCALE) {
         val targetDimensions = StitchLayoutCalculator.scale(
             images = bitmaps.map { ImageDimensions(it.width, it.height) },
             orientation = orientation.toLayoutOrientation(),
@@ -65,12 +70,13 @@ abstract class BaseStitchingStrategy(
                 bitmaps[index].width == targetDimensions[index].width &&
                     bitmaps[index].height == targetDimensions[index].height
             }) {
-            return bitmaps
+            return@measureSuspend bitmaps
         }
 
-        val processedBitmaps = mutableListOf<Bitmap>()
+        val processedBitmaps = arrayOfNulls<Bitmap>(bitmaps.size)
         try {
-            bitmaps.forEachIndexed { index, bitmap ->
+            val scaleAtIndex: (Int) -> Unit = { index ->
+                val bitmap = bitmaps[index]
                 val target = targetDimensions[index]
                 val processed = if (bitmap.width == target.width && bitmap.height == target.height) {
                     bitmap
@@ -81,11 +87,26 @@ abstract class BaseStitchingStrategy(
                         }
                     }
                 }
-                processedBitmaps += processed
+                processedBitmaps[index] = processed
             }
-            return processedBitmaps
+
+            if (multiThreadEnabled && bitmaps.size > 1) {
+                coroutineScope {
+                    val workerCount = minOf(SCALING_PARALLELISM, bitmaps.size)
+                    List(workerCount) { workerIndex ->
+                        async(SCALING_DISPATCHER) {
+                            for (index in workerIndex until bitmaps.size step workerCount) {
+                                scaleAtIndex(index)
+                            }
+                        }
+                    }.awaitAll()
+                }
+            } else {
+                bitmaps.indices.forEach(scaleAtIndex)
+            }
+            processedBitmaps.map(::requireNotNull)
         } catch (failure: Throwable) {
-            recycleScaledIntermediates(bitmaps, processedBitmaps, tag = tag)
+            recycleScaledIntermediates(bitmaps, processedBitmaps.filterNotNull(), tag = tag)
             throw failure
         }
     }
@@ -127,6 +148,9 @@ abstract class BaseStitchingStrategy(
         }
     }
 }
+
+private val SCALING_PARALLELISM = Runtime.getRuntime().availableProcessors().coerceIn(2, 4)
+private val SCALING_DISPATCHER = Dispatchers.Default.limitedParallelism(SCALING_PARALLELISM)
 
 private fun StitchOrientation.toLayoutOrientation(): LayoutOrientation = when (this) {
     StitchOrientation.VERTICAL -> LayoutOrientation.VERTICAL

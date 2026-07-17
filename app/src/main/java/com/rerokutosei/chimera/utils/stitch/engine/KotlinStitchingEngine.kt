@@ -93,7 +93,10 @@ class KotlinStitchingEngine(
 
                 val strategy = createStitcher(options.orientation, options.isOverlayEnabled)
 
-                val result = strategy.stitch(bitmaps, options)
+                val result = strategy.stitch(
+                    bitmaps,
+                    options.copy(multiThreadEnabled = multiThreadEnabled)
+                )
                 progressCallback(80)
 
                 when (result) {

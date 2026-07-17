@@ -48,5 +48,6 @@ data class StitchingOptions(
     val widthScale: WidthScale = WidthScale.NONE,
     val orientation: StitchOrientation = StitchOrientation.VERTICAL,
     val outputFormat: OutputImageFormat = OutputImageFormat.JPEG,
-    val highMemoryLimitEnabled: Boolean = false
+    val highMemoryLimitEnabled: Boolean = false,
+    val multiThreadEnabled: Boolean = false
 )
