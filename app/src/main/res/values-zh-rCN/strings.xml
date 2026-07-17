@@ -180,6 +180,15 @@
     <string name="cutting_result">切割示意</string>
     <string name="cut_completed_4">四宫格切割已完成，请打开手机相册查看</string>
     <string name="cut_completed_9">九宫格切割已完成，请打开手机相册查看</string>
+    <string name="cut_error_no_images">没有可切割的图片。</string>
+    <string name="cut_error_decode_failed">切图时无法加载图片。</string>
+    <string name="cut_error_invalid_grid">所选切图网格无效。</string>
+    <string name="cut_error_split_failed">图片切割失败，请查看日志了解详情。</string>
+    <string name="cut_error_unexpected">切图时发生意外错误，请查看日志了解详情。</string>
+    <string name="save_error_storage_unavailable">相册存储当前不可用。</string>
+    <string name="save_error_encoding_failed">图片编码失败。</string>
+    <string name="save_error_write_failed">无法将图片写入相册。</string>
+    <string name="save_error_unexpected">保存时发生意外错误，请查看日志了解详情。</string>
     
     <!-- Help Content -->
     <string name="help_card_title_mode_direct">✨ 普通拼接</string>

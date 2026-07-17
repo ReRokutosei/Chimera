@@ -27,6 +27,7 @@ sealed interface CutFailure {
     data object DecodeFailed : CutFailure
     data object InvalidGrid : CutFailure
     data class SplitFailed(override val cause: Throwable) : CutFailure
+    data class Unexpected(override val cause: Throwable) : CutFailure
 }
 
 sealed interface SaveFailure {

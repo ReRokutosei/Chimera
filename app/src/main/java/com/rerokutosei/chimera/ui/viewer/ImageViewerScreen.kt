@@ -19,7 +19,6 @@
 package com.rerokutosei.chimera.ui.viewer
 
 import android.content.Context
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -64,14 +63,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rerokutosei.chimera.R
+import com.rerokutosei.chimera.domain.error.CutFailure
+import com.rerokutosei.chimera.domain.error.SaveFailure
 import com.rerokutosei.chimera.domain.error.StitchFailure
 import com.rerokutosei.chimera.ui.stitch.StitchState
 import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.image.BitmapLoader
+import com.rerokutosei.chimera.utils.image.ImageSaveResult
 import com.rerokutosei.chimera.utils.image.ImageSaver
 import com.rerokutosei.chimera.utils.image.ImageSharer
-import com.rerokutosei.chimera.utils.image.ImageSplitter
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -98,6 +98,7 @@ fun ImageViewerScreen(
     val cutGridCols by viewModel.cutGridCols.collectAsStateWithLifecycle()
     val cutGridRows by viewModel.cutGridRows.collectAsStateWithLifecycle()
     val currentCutIndex by viewModel.currentCutIndex.collectAsStateWithLifecycle()
+    val cutSaveState by viewModel.cutSaveState.collectAsStateWithLifecycle()
     val previewSource = (stitchState as? StitchState.Success)?.let { PreviewSource.FromBitmap(it.result) }
     val errorMessage = (stitchState as? StitchState.Error)?.failure?.let { stitchFailureMessage(it) }
     val isProcessing = stitchState is StitchState.Processing
@@ -107,8 +108,6 @@ fun ImageViewerScreen(
     val shareText = stringResource(R.string.share_stitched_image)
     val saveSuccessText = stringResource(R.string.image_saved_to_album)
     val saveFailedText = stringResource(R.string.save_failed)
-    val cutCompleted4 = stringResource(R.string.cut_completed_4)
-    val cutCompleted9 = stringResource(R.string.cut_completed_9)
 
     // 切割模式：加载当前页面图片
     val cutBitmaps = remember(cutImageUris) {
@@ -192,8 +191,17 @@ fun ImageViewerScreen(
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            saveMessage?.let {
-                SaveResultDialog(it) { saveMessage = null }
+            val cutSaveMessage = when (val state = cutSaveState) {
+                CutSaveState.Idle, CutSaveState.Saving -> null
+                is CutSaveState.Success -> if (cutGridCols == 2) {
+                    stringResource(R.string.cut_completed_4)
+                } else {
+                    stringResource(R.string.cut_completed_9)
+                }
+                is CutSaveState.Failure -> cutSaveIssueMessage(state.issue)
+            }
+            cutSaveMessage?.let {
+                SaveResultDialog(it, viewModel::clearCutSaveState)
             }
 
             // 切割模式：只显示水平居中的保存按钮
@@ -202,68 +210,20 @@ fun ImageViewerScreen(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Button(
-                    onClick = {
-                        isSaving = true
-                        coroutineScope.launch {
-                            var allSuccess = true
-                            try {
-                                for ((idx, uri) in cutImageUris.withIndex()) {
-                                    val sourceBitmap = withContext(Dispatchers.IO) {
-                                        bitmapLoader.loadBitmapFromUri(uri)
-                                    }
-                                    if (sourceBitmap != null) {
-                                        val isCached = sourceBitmap === cutBitmaps.value[idx]
-                                        var pieces = emptyList<android.graphics.Bitmap>()
-                                        try {
-                                            pieces = withContext(Dispatchers.Default) {
-                                                ImageSplitter.splitBitmap(sourceBitmap, cutGridCols, cutGridRows)
-                                            }
-                                            for (piece in pieces) {
-                                                imageSaver.saveToGallery(
-                                                    piece,
-                                                    onSaved = {},
-                                                    onError = { allSuccess = false }
-                                                )
-                                            }
-                                        } catch (e: CancellationException) {
-                                            throw e
-                                        } catch (_: Exception) {
-                                            allSuccess = false
-                                        } finally {
-                                            pieces.forEach { piece ->
-                                                if (!piece.isRecycled) piece.recycle()
-                                            }
-                                            if (!isCached && !sourceBitmap.isRecycled) {
-                                                bitmapLoader.recycleBitmaps(listOf(sourceBitmap))
-                                            }
-                                        }
-                                    } else {
-                                        allSuccess = false
-                                    }
-                                }
-                            } finally {
-                                isSaving = false
-                            }
-                            saveMessage = if (allSuccess) {
-                                if (cutGridCols == 2) cutCompleted4 else cutCompleted9
-                            } else {
-                                saveFailedText
-                            }
-                        }
-                    },
+                    onClick = viewModel::saveCutImages,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = Color.White
                     ),
-                    enabled = !isSaving
+                    enabled = cutSaveState !is CutSaveState.Saving
                 ) {
-                    if (isSaving) {
+                    if (cutSaveState is CutSaveState.Saving) {
                         CircularProgressIndicator(modifier = Modifier.size(16.dp), color = Color.White)
                     } else {
                         Icon(imageVector = Icons.Default.Save, contentDescription = null)
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(if (isSaving) stringResource(R.string.saving) else stringResource(R.string.save))
+                    Text(if (cutSaveState is CutSaveState.Saving) stringResource(R.string.saving) else stringResource(R.string.save))
                 }
             }
         }
@@ -327,18 +287,18 @@ fun ImageViewerScreen(
                 onSaveClick = { source ->
                     isSaving = true
                     coroutineScope.launch {
-                        val onResult: (Uri?) -> Unit = { uri ->
-                            saveMessage = if (uri != null) saveSuccessText else saveFailedText
+                        try {
+                            when (source) {
+                                is PreviewSource.FromBitmap -> {
+                                    saveMessage = when (imageSaver.saveToGallery(source.bitmap)) {
+                                        is ImageSaveResult.Success -> saveSuccessText
+                                        is ImageSaveResult.Failure -> saveFailedText
+                                    }
+                                }
+                                else -> {}
+                            }
+                        } finally {
                             isSaving = false
-                        }
-                        val onError: (Exception) -> Unit = { e ->
-                            saveMessage = "$saveFailedText: ${e.message}"
-                            isSaving = false
-                        }
-
-                        when (source) {
-                            is PreviewSource.FromBitmap -> imageSaver.saveToGallery(source.bitmap, onResult, onError)
-                            else -> {}
                         }
                     }
                 }
@@ -355,6 +315,23 @@ private fun stitchFailureMessage(failure: StitchFailure): String = when (failure
     is StitchFailure.ResultTooLarge -> stringResource(R.string.stitch_error_result_too_large)
     is StitchFailure.AllocationFailed -> stringResource(R.string.stitch_error_allocation_failed)
     is StitchFailure.Unexpected -> stringResource(R.string.stitch_error_unexpected)
+}
+
+@Composable
+private fun cutSaveIssueMessage(issue: CutSaveIssue): String = when (issue) {
+    is CutSaveIssue.Cut -> when (issue.failure) {
+        CutFailure.NoImages -> stringResource(R.string.cut_error_no_images)
+        CutFailure.DecodeFailed -> stringResource(R.string.cut_error_decode_failed)
+        CutFailure.InvalidGrid -> stringResource(R.string.cut_error_invalid_grid)
+        is CutFailure.SplitFailed -> stringResource(R.string.cut_error_split_failed)
+        is CutFailure.Unexpected -> stringResource(R.string.cut_error_unexpected)
+    }
+    is CutSaveIssue.Save -> when (issue.failure) {
+        SaveFailure.StorageUnavailable -> stringResource(R.string.save_error_storage_unavailable)
+        SaveFailure.EncodingFailed -> stringResource(R.string.save_error_encoding_failed)
+        is SaveFailure.WriteFailed -> stringResource(R.string.save_error_write_failed)
+        is SaveFailure.Unexpected -> stringResource(R.string.save_error_unexpected)
+    }
 }
 
 @Composable

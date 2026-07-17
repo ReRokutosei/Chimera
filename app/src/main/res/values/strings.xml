@@ -181,6 +181,15 @@
     <string name="cutting_result">Cutting Result</string>
     <string name="cut_completed_4">4-cell cutting completed. Please check your gallery.</string>
     <string name="cut_completed_9">9-cell cutting completed. Please check your gallery.</string>
+    <string name="cut_error_no_images">No images are available to cut.</string>
+    <string name="cut_error_decode_failed">An image could not be loaded for cutting.</string>
+    <string name="cut_error_invalid_grid">The selected cut grid is invalid.</string>
+    <string name="cut_error_split_failed">An image could not be cut. Check the log for details.</string>
+    <string name="cut_error_unexpected">Cutting failed unexpectedly. Check the log for details.</string>
+    <string name="save_error_storage_unavailable">Gallery storage is unavailable.</string>
+    <string name="save_error_encoding_failed">The image could not be encoded.</string>
+    <string name="save_error_write_failed">The image could not be written to the gallery.</string>
+    <string name="save_error_unexpected">Saving failed unexpectedly. Check the log for details.</string>
 
     <!-- Help Content -->
     <string name="help_card_title_mode_direct">✨ Normal Stitching</string>

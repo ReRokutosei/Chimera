@@ -25,7 +25,10 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
+import com.rerokutosei.chimera.domain.error.SaveFailure
 import com.rerokutosei.chimera.utils.common.LogManager
+import com.rerokutosei.chimera.utils.stitch.layout.OutputImageFormat
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -48,98 +51,113 @@ class ImageSaver(private val context: Context) {
     /**
      * 将Bitmap保存到设备相册
      */
-    suspend fun saveToGallery(
-        bitmap: Bitmap,
-        onSaved: (Uri?) -> Unit,
-        onError: (Exception) -> Unit
-    ) = withContext(Dispatchers.IO) {
-        try {
-            logManager.debug(TAG, "开始保存Bitmap到相册")
+    suspend fun loadOptions(): ImageSaveOptions = withContext(Dispatchers.IO) {
+        ImageSaveOptions(
+            format = OutputImageFormat.fromCode(imageSettingsManager.getOutputImageFormatFlow().first()),
+            quality = imageSettingsManager.getOutputImageQualityFlow().first()
+        )
+    }
 
-            val format = imageSettingsManager.getOutputImageFormatFlow().first()
-            val quality = imageSettingsManager.getOutputImageQualityFlow().first()
-
-            logManager.debug(TAG, "输出格式: $format, 质量: $quality")
-
-            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-            val fileName = "Chimera_$timeStamp.${getImageExtension(format)}"
-
-            logManager.debug(TAG, "生成文件名: $fileName")
-
-            val uri = saveImage(bitmap, fileName, format, quality)
-
-            if (uri != null) {
-                logManager.debug(TAG, "Bitmap保存成功: $uri")
-                withContext(Dispatchers.Main) {
-                    onSaved(uri)
-                }
-            } else {
-                logManager.error(TAG, "Bitmap保存失败")
-                withContext(Dispatchers.Main) {
-                    onError(Exception("保存失败"))
-                }
-            }
+    suspend fun saveToGallery(bitmap: Bitmap): ImageSaveResult {
+        return try {
+            saveToGallery(bitmap, loadOptions())
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
-            logManager.error(TAG, "保存Bitmap时出错", e)
-            withContext(Dispatchers.Main) {
-                onError(e)
-            }
+            logManager.error(TAG, "读取图片保存设置失败", e)
+            ImageSaveResult.Failure(SaveFailure.Unexpected(e))
         }
     }
 
-    /**
-     * 保存Bitmap到指定文件名
-     */
-    private fun saveImage(bitmap: Bitmap, fileName: String, format: Int, quality: Int): Uri? {
+    suspend fun saveToGallery(
+        bitmap: Bitmap,
+        options: ImageSaveOptions,
+        nameSuffix: String? = null
+    ): ImageSaveResult = withContext(Dispatchers.IO) {
+        var insertedUri: Uri? = null
         try {
+            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.getDefault()).format(Date())
+            val suffix = nameSuffix?.let { "_$it" }.orEmpty()
+            val fileName = "Chimera_${timeStamp}$suffix.${getImageExtension(options.format)}"
             val contentValues = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-                put(MediaStore.MediaColumns.MIME_TYPE, getMimeType(format))
+                put(MediaStore.MediaColumns.MIME_TYPE, getMimeType(options.format))
                 put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Chimera")
+                put(MediaStore.MediaColumns.IS_PENDING, 1)
             }
 
             val resolver = context.contentResolver
             val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                ?: return@withContext ImageSaveResult.Failure(SaveFailure.StorageUnavailable)
+            insertedUri = uri
+            val outputStream = resolver.openOutputStream(uri)
+                ?: return@withContext failedSave(uri, SaveFailure.WriteFailed(IllegalStateException("MediaStore returned no output stream")))
 
-            if (uri != null) {
-                resolver.openOutputStream(uri)?.use { outputStream ->
-                    val compressFormat = when (format) {
-                        0 -> Bitmap.CompressFormat.PNG
-                        1 -> Bitmap.CompressFormat.JPEG
-                        2 -> Bitmap.CompressFormat.WEBP
-                        else -> Bitmap.CompressFormat.JPEG
-                    }
-                    bitmap.compress(compressFormat, quality, outputStream)
-                }
-                return uri
+            val encoded = outputStream.use { stream ->
+                bitmap.compress(options.format.toCompressFormat(), options.quality, stream)
             }
+            if (!encoded) {
+                return@withContext failedSave(uri, SaveFailure.EncodingFailed)
+            }
+
+            resolver.update(uri, ContentValues().apply { put(MediaStore.MediaColumns.IS_PENDING, 0) }, null, null)
+            logManager.debug(TAG, "Bitmap保存成功: $uri")
+            ImageSaveResult.Success(uri)
+        } catch (e: CancellationException) {
+            insertedUri?.let(::deleteQuietly)
+            throw e
         } catch (e: Exception) {
             logManager.error(TAG, "保存Bitmap到MediaStore失败", e)
+            insertedUri?.let(::deleteQuietly)
+            ImageSaveResult.Failure(SaveFailure.WriteFailed(e))
         }
-        return null
+    }
+
+    private fun failedSave(uri: Uri, failure: SaveFailure): ImageSaveResult.Failure {
+        deleteQuietly(uri)
+        return ImageSaveResult.Failure(failure)
+    }
+
+    private fun deleteQuietly(uri: Uri) {
+        runCatching { context.contentResolver.delete(uri, null, null) }
+            .onFailure { logManager.error(TAG, "清理未完成的相册条目失败: $uri", it) }
     }
 
     /**
      * 根据格式获取文件扩展名
      */
-    private fun getImageExtension(format: Int): String {
+    private fun getImageExtension(format: OutputImageFormat): String {
         return when (format) {
-            0 -> "png"
-            1 -> "jpg"
-            2 -> "webp"
-            else -> "jpg"
+            OutputImageFormat.PNG -> "png"
+            OutputImageFormat.JPEG -> "jpg"
+            OutputImageFormat.WEBP -> "webp"
         }
     }
 
     /**
      * 根据格式获取MIME类型
      */
-    private fun getMimeType(format: Int): String {
+    private fun getMimeType(format: OutputImageFormat): String {
         return when (format) {
-            0 -> "image/png"
-            1 -> "image/jpeg"
-            2 -> "image/webp"
-            else -> "image/jpeg"
+            OutputImageFormat.PNG -> "image/png"
+            OutputImageFormat.JPEG -> "image/jpeg"
+            OutputImageFormat.WEBP -> "image/webp"
         }
     }
+}
+
+data class ImageSaveOptions(
+    val format: OutputImageFormat,
+    val quality: Int
+)
+
+sealed interface ImageSaveResult {
+    data class Success(val uri: Uri) : ImageSaveResult
+    data class Failure(val failure: SaveFailure) : ImageSaveResult
+}
+
+private fun OutputImageFormat.toCompressFormat(): Bitmap.CompressFormat = when (this) {
+    OutputImageFormat.PNG -> Bitmap.CompressFormat.PNG
+    OutputImageFormat.JPEG -> Bitmap.CompressFormat.JPEG
+    OutputImageFormat.WEBP -> Bitmap.CompressFormat.WEBP
 }
