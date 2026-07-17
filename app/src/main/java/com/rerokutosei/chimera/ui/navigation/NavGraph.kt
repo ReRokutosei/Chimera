@@ -18,7 +18,6 @@
 
 package com.rerokutosei.chimera.ui.navigation
 
-import android.graphics.Bitmap
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -27,9 +26,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -177,6 +174,7 @@ fun AppNavGraph(
             )
 
             val pendingStitchUris by mainViewModel.pendingStitchUris.collectAsStateWithLifecycle()
+            val stitchUiState by stitchViewModel.uiState.collectAsStateWithLifecycle()
 
             LaunchedEffect(isCutModeParam, cutGridParam, pendingStitchUris) {
                 if (isCutModeParam == "true" && pendingStitchUris.isNotEmpty()) {
@@ -189,19 +187,14 @@ fun AppNavGraph(
                 }
             }
 
-            var stitchedBitmap by remember { mutableStateOf<Bitmap?>(null) }
-            var stitchErrorMessage by remember { mutableStateOf<String?>(null) }
-            var isStitching by remember { mutableStateOf(false) }
-
             if (isCutModeParam != "true") {
                 LaunchedEffect(widthScaleParam, stitchModeParam, imageSpacingParam, triggerStitchParam, pendingStitchUris) {
-                    logManager.debug("NavGraph", "LaunchedEffect触发，isStitching: $isStitching, stitchedBitmap: $stitchedBitmap, triggerStitchParam: $triggerStitchParam")
+                    logManager.debug("NavGraph", "LaunchedEffect触发，stitchState: ${stitchUiState.stitchState}, triggerStitchParam: $triggerStitchParam")
 
-                    if (!isStitching && stitchedBitmap == null &&
+                    if (stitchUiState.stitchState is StitchState.Idle &&
                         triggerStitchParam == "true" && pendingStitchUris.isNotEmpty()) {
 
                         logManager.debug("NavGraph", "开始拼接流程")
-                        isStitching = true
 
                         val uris = pendingStitchUris
                         logManager.debug("NavGraph", "从ViewModel获取到${uris.size}个图片URI")
@@ -259,41 +252,19 @@ fun AppNavGraph(
                     }
                 }
 
-                LaunchedEffect(stitchViewModel.uiState) {
-                    stitchViewModel.uiState.collect { uiState ->
-                        when (val stitchState = uiState.stitchState) {
-                            is StitchState.Success -> {
-                                stitchedBitmap = stitchState.result
-                                isStitching = false
-
-                                val imageSettingsManager = ImageSettingsManager.getInstance(context)
-                                val shouldAutoClear = imageSettingsManager.getAutoClearImagesFlow().first()
-
-                                if (shouldAutoClear) {
-                                    mainViewModel.clearImages()
-                                }
-                            }
-                            is StitchState.Error -> {
-                                stitchErrorMessage = stitchState.message
-                                isStitching = false
-                            }
-                            else -> {}
+                LaunchedEffect(stitchUiState.stitchState) {
+                    if (stitchUiState.stitchState is StitchState.Success) {
+                        val imageSettingsManager = ImageSettingsManager.getInstance(context)
+                        if (imageSettingsManager.getAutoClearImagesFlow().first()) {
+                            mainViewModel.clearImages()
                         }
-                    }
-                }
-
-                LaunchedEffect(stitchedBitmap, stitchErrorMessage, isStitching) {
-                    imageViewerViewModel.setProcessing(isStitching)
-                    if (stitchErrorMessage != null) {
-                        imageViewerViewModel.setError(stitchErrorMessage!!)
-                    } else if (stitchedBitmap != null) {
-                        imageViewerViewModel.setStitchResult(stitchedBitmap!!)
                     }
                 }
             }
 
             ImageViewerScreen(
                 viewModel = imageViewerViewModel,
+                stitchState = stitchUiState.stitchState,
                 onBackClick = { navController.popBackStack() },
             )
         }

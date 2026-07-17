@@ -19,25 +19,14 @@
 package com.rerokutosei.chimera.ui.viewer
 
 import android.app.Application
-import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import com.rerokutosei.chimera.utils.common.LogManager
-import com.rerokutosei.chimera.utils.stitch.StitchResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class ImageViewerViewModel(application: Application) : AndroidViewModel(application) {
     private val logManager = LogManager.getInstance(application)
-
-    private val _previewSource = MutableStateFlow<PreviewSource?>(null)
-    val previewSource = _previewSource.asStateFlow()
-
-    private val _error = MutableStateFlow<String?>(null)
-    val error = _error.asStateFlow()
-
-    private val _isProcessing = MutableStateFlow(false)
-    val isProcessing = _isProcessing.asStateFlow()
 
     // 切割模式状态
     private val _isCutMode = MutableStateFlow(false)
@@ -66,64 +55,14 @@ class ImageViewerViewModel(application: Application) : AndroidViewModel(applicat
         _cutGridCols.value = gridCols
         _cutGridRows.value = gridRows
         _currentCutIndex.value = startIndex
-        _isProcessing.value = false
-        _error.value = null
     }
 
     fun setCurrentCutIndex(index: Int) {
         _currentCutIndex.value = index
     }
 
-    fun setStitchResult(result: Any) {
-        _isProcessing.value = false
-        when (result) {
-            is Bitmap -> {
-                logManager.debug("ImageViewerViewModel", "设置新的位图结果.")
-                clearBitmap()
-                _isCutMode.value = false
-                _previewSource.value = PreviewSource.FromBitmap(result)
-            }
-            is StitchResult.BitmapResult -> {
-                logManager.debug("ImageViewerViewModel", "设置Bitmap结果.")
-                clearBitmap()
-                _isCutMode.value = false
-                _previewSource.value = PreviewSource.FromBitmap(result.bitmap)
-            }
-            else -> {
-                setError("未知的拼接结果类型: ${result::class.java.name}")
-            }
-        }
-    }
-
-    fun setProcessing(processing: Boolean = true) {
-        if (processing) {
-            _isProcessing.value = true
-            _error.value = null
-            _previewSource.value = null
-        } else {
-            _isProcessing.value = false
-        }
-    }
-
-    fun setError(message: String) {
-        logManager.error("ImageViewerViewModel", "设置错误状态: $message")
-        _isProcessing.value = false
-        _error.value = message
-        _previewSource.value = null
-    }
-
-    private fun clearBitmap() {
-        (_previewSource.value as? PreviewSource.FromBitmap)?.bitmap?.let {
-            if (!it.isRecycled) {
-                logManager.debug("ImageViewerViewModel", "回收位图.")
-                it.recycle()
-            }
-        }
-    }
-
     override fun onCleared() {
         super.onCleared()
         logManager.debug("ImageViewerViewModel", "ViewModel已清除.")
-        clearBitmap()
     }
 }

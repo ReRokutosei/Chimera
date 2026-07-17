@@ -49,6 +49,7 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
         imageSpacing: Int = 0
     ) {
         viewModelScope.launch {
+            recycleCurrentResult()
             logManager.debug("StitchViewModel", "stitchImages方法被调用")
             _uiState.value = _uiState.value.copy(
                 stitchState = StitchState.Processing,
@@ -120,6 +121,7 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
         orientation: StitchOrientation = StitchOrientation.VERTICAL
     ) {
         viewModelScope.launch {
+            recycleCurrentResult()
             logManager.debug("StitchViewModel", "stitchOverlay方法被调用")
             _uiState.value = _uiState.value.copy(
                 stitchState = StitchState.Processing,
@@ -188,14 +190,16 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
 
     override fun onCleared() {
         super.onCleared()
-        if (_uiState.value.stitchState is StitchState.Success) {
-            val currentBitmap = (_uiState.value.stitchState as StitchState.Success).result
-            if (!currentBitmap.isRecycled) {
-                logManager.debug("StitchViewModel", "ViewModel清除时回收位图: ${currentBitmap.width}x${currentBitmap.height}")
-                currentBitmap.recycle()
-            }
-        }
+        recycleCurrentResult()
         logManager.debug("StitchViewModel", "ViewModel已清除")
+    }
+
+    private fun recycleCurrentResult() {
+        val currentBitmap = (_uiState.value.stitchState as? StitchState.Success)?.result ?: return
+        if (!currentBitmap.isRecycled) {
+            logManager.debug("StitchViewModel", "回收拼接结果位图: ${currentBitmap.width}x${currentBitmap.height}")
+            currentBitmap.recycle()
+        }
     }
 }
 

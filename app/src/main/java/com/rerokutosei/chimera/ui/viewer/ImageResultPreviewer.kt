@@ -23,6 +23,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -75,6 +76,11 @@ fun ImageResultPreviewer(
                 }
                 canvas.setBitmap(null)
                 copy
+            }
+            DisposableEffect(displayBitmap) {
+                onDispose {
+                    if (!displayBitmap.isRecycled) displayBitmap.recycle()
+                }
             }
             AdaptiveImageDisplay(bitmap = displayBitmap, modifier = modifier)
         }

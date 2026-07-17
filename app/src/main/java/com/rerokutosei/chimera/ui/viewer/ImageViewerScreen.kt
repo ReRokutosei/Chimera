@@ -64,6 +64,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rerokutosei.chimera.R
+import com.rerokutosei.chimera.ui.stitch.StitchState
 import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.image.BitmapLoader
 import com.rerokutosei.chimera.utils.image.ImageSaver
@@ -81,6 +82,7 @@ import java.io.IOException
 fun ImageViewerScreen(
     modifier: Modifier = Modifier,
     viewModel: ImageViewerViewModel = viewModel(),
+    stitchState: StitchState = StitchState.Idle,
     onBackClick: () -> Unit
 ) {
     val context = LocalContext.current
@@ -90,14 +92,14 @@ fun ImageViewerScreen(
     val coroutineScope = rememberCoroutineScope()
     val bitmapLoader = remember { BitmapLoader(context) }
 
-    val previewSource by viewModel.previewSource.collectAsStateWithLifecycle()
-    val errorMessage by viewModel.error.collectAsStateWithLifecycle()
-    val isProcessing by viewModel.isProcessing.collectAsStateWithLifecycle()
     val isCutMode by viewModel.isCutMode.collectAsStateWithLifecycle()
     val cutImageUris by viewModel.cutImageUris.collectAsStateWithLifecycle()
     val cutGridCols by viewModel.cutGridCols.collectAsStateWithLifecycle()
     val cutGridRows by viewModel.cutGridRows.collectAsStateWithLifecycle()
     val currentCutIndex by viewModel.currentCutIndex.collectAsStateWithLifecycle()
+    val previewSource = (stitchState as? StitchState.Success)?.let { PreviewSource.FromBitmap(it.result) }
+    val errorMessage = (stitchState as? StitchState.Error)?.message
+    val isProcessing = stitchState is StitchState.Processing
 
     var isSaving by remember { mutableStateOf(false) }
     var saveMessage by remember { mutableStateOf<String?>(null) }
