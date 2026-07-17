@@ -131,11 +131,3 @@ class ImageStitcher(private val context: Context) {
         }
     }
 }
-
-/**
- * 拼接方向枚举
- */
-enum class StitchOrientation {
-    VERTICAL,    // 垂直拼接
-    HORIZONTAL   // 水平拼接
-}

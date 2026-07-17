@@ -24,9 +24,8 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import androidx.core.graphics.createBitmap
-import com.rerokutosei.chimera.ui.main.WidthScale
 import com.rerokutosei.chimera.utils.stitch.StitchOrientation
-import kotlin.math.min
+import com.rerokutosei.chimera.utils.stitch.layout.LayoutMode
 
 /**
  * 叠加拼接策略实现
@@ -43,95 +42,27 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
             return null
         }
 
-        val processedBitmaps = when (options.orientation) {
-            StitchOrientation.VERTICAL -> {
-                when (options.widthScale) {
-                    WidthScale.MAX_WIDTH -> {
-                        logManager.debug(TAG, "纵向叠加 - 缩放到最大宽度")
-                        scaleToMaxWidth(bitmaps, TAG)
-                    }
-                    else -> {
-                        logManager.debug(TAG, "纵向叠加 - 缩放到最小宽度")
-                        scaleToMinWidth(bitmaps, TAG)
-                    }
-                }
-            }
-            StitchOrientation.HORIZONTAL -> {
-                when (options.widthScale) {
-                    WidthScale.MAX_WIDTH -> {
-                        logManager.debug(TAG, "横向叠加 - 缩放到最大高度")
-                        scaleToMaxHeight(bitmaps, TAG)
-                    }
-                    else -> {
-                        logManager.debug(TAG, "横向叠加 - 缩放到最小高度")
-                        scaleToMinHeight(bitmaps, TAG)
-                    }
-                }
-            }
-        }
+        val processedBitmaps = scaleBitmapsForLayout(bitmaps, options.widthScale, options.orientation, TAG)
 
         var resultBitmap: Bitmap? = null
         try {
-            val (totalWidth, totalHeight, overlaySteps) = when (options.orientation) {
-                StitchOrientation.VERTICAL -> {
-                    // 计算第一张图片的高度（完整显示）
-                    val firstImageHeight = processedBitmaps[0].height
-
-                    // 计算每张图片的叠加区域高度（基于第一张图片的高度和比例）
-                    // 将overlayRatio从分母转换为分子，即用户设置的百分比
-                    val preferredOverlayHeight = (firstImageHeight * options.overlayRatio / 100).coerceAtLeast(1)
-                    val overlayHeights = processedBitmaps.drop(1).mapIndexed { index, bitmap ->
-                        val safeOverlayHeight = min(preferredOverlayHeight, bitmap.height.coerceAtLeast(1))
-                        if (safeOverlayHeight != preferredOverlayHeight) {
-                            logManager.warn(
-                                TAG,
-                                "第${index + 2}张图片叠加高度被限制: $preferredOverlayHeight -> $safeOverlayHeight"
-                            )
-                        }
-                        safeOverlayHeight
-                    }
-                    logManager.debug(TAG, "第一张图片高度: $firstImageHeight, 期望叠加高度: $preferredOverlayHeight")
-
-                    // 计算总高度：第一张图片完整高度 + 后续每张图片的叠加区域高度
-                    val height = firstImageHeight + overlayHeights.sum()
-                    val width = processedBitmaps.maxOf { it.width }
-                    logManager.debug(TAG, "纵向叠加结果尺寸: ${width}x${height}")
-                    Triple(width, height, overlayHeights)
-                }
-                StitchOrientation.HORIZONTAL -> {
-                    // 计算第一张图片的宽度（完整显示）
-                    val firstImageWidth = processedBitmaps[0].width
-
-                    // 计算每张图片的叠加区域宽度（基于第一张图片的宽度和比例）
-                    // 将overlayRatio从分母转换为分子，即用户设置的百分比
-                    val preferredOverlayWidth = (firstImageWidth * options.overlayRatio / 100).coerceAtLeast(1)
-                    val overlayWidths = processedBitmaps.drop(1).mapIndexed { index, bitmap ->
-                        val safeOverlayWidth = min(preferredOverlayWidth, bitmap.width.coerceAtLeast(1))
-                        if (safeOverlayWidth != preferredOverlayWidth) {
-                            logManager.warn(
-                                TAG,
-                                "第${index + 2}张图片叠加宽度被限制: $preferredOverlayWidth -> $safeOverlayWidth"
-                            )
-                        }
-                        safeOverlayWidth
-                    }
-                    logManager.debug(TAG, "第一张图片宽度: $firstImageWidth, 期望叠加宽度: $preferredOverlayWidth")
-
-                    // 计算总宽度：第一张图片完整宽度 + 后续每张图片的叠加区域宽度
-                    val width = firstImageWidth + overlayWidths.sum()
-                    val height = processedBitmaps.maxOf { it.height }
-                    logManager.debug(TAG, "横向叠加结果尺寸: ${width}x${height}")
-                    Triple(width, height, overlayWidths)
-                }
-            }
+            val layout = calculateLayout(
+                bitmaps = processedBitmaps,
+                orientation = options.orientation,
+                mode = LayoutMode.OVERLAY,
+                overlayRatio = options.overlayRatio
+            )
+            val overlaySteps = layout.overlaySteps
 
             // 检查内存限制（最大支持32MB的图片）
-            val estimatedSize = totalWidth.toLong() * totalHeight.toLong() * 4 // ARGB_8888
+            val estimatedSize = layout.width * layout.height * 4 // ARGB_8888
             val maxImageSize = memoryLimitCalculator.calculateMaxImageSize(options.highMemoryLimitEnabled)
-            if (estimatedSize > maxImageSize) {
+            if (estimatedSize > maxImageSize || layout.width > Int.MAX_VALUE || layout.height > Int.MAX_VALUE) {
                 logManager.error(TAG, "拼接结果图片过大: ${estimatedSize / (1024 * 1024)}MB，超过限制: ${maxImageSize / (1024 * 1024)}MB")
                 return null
             }
+            val totalWidth = layout.width.toInt()
+            val totalHeight = layout.height.toInt()
 
             // 根据用户设置的输出图片格式选择合适的格式
             // 如果输出格式为PNG或WEBP，使用ARGB_8888格式

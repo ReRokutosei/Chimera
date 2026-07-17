@@ -21,8 +21,17 @@ package com.rerokutosei.chimera.utils.stitch.strategy
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.core.graphics.scale
+import com.rerokutosei.chimera.ui.main.WidthScale
 import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.common.MemoryLimitCalculator
+import com.rerokutosei.chimera.utils.stitch.StitchOrientation
+import com.rerokutosei.chimera.utils.stitch.layout.ImageDimensions
+import com.rerokutosei.chimera.utils.stitch.layout.LayoutMode
+import com.rerokutosei.chimera.utils.stitch.layout.LayoutOptions
+import com.rerokutosei.chimera.utils.stitch.layout.LayoutOrientation
+import com.rerokutosei.chimera.utils.stitch.layout.LayoutScaleMode
+import com.rerokutosei.chimera.utils.stitch.layout.StitchLayout
+import com.rerokutosei.chimera.utils.stitch.layout.StitchLayoutCalculator
 
 abstract class BaseStitchingStrategy(
     context: Context,
@@ -39,87 +48,30 @@ abstract class BaseStitchingStrategy(
         )
     }
 
-    protected fun scaleToMaxWidth(bitmaps: List<Bitmap>, tag: String): List<Bitmap> {
-        if (bitmaps.isEmpty()) return bitmaps
-        val maxWidth = bitmaps.maxOf { it.width }
-        logManager.debug(tag, "缩放到最大宽度: $maxWidth")
-        return scaleBitmaps(
-            bitmaps,
-            maxWidth,
-            { bitmap, targetSize -> bitmap.width == targetSize },
-            { bitmap, targetSize ->
-                val scale = targetSize.toFloat() / bitmap.width.toFloat()
-                val newHeight = (bitmap.height * scale).toInt()
-                Pair(targetSize, newHeight)
-            },
-            tag
-        )
-    }
-
-    protected fun scaleToMinWidth(bitmaps: List<Bitmap>, tag: String): List<Bitmap> {
-        if (bitmaps.isEmpty()) return bitmaps
-        val minWidth = bitmaps.minOf { it.width }
-        logManager.debug(tag, "缩放到最小宽度: $minWidth")
-        return scaleBitmaps(
-            bitmaps,
-            minWidth,
-            { bitmap, targetSize -> bitmap.width == targetSize },
-            { bitmap, targetSize ->
-                val scale = targetSize.toFloat() / bitmap.width.toFloat()
-                val newHeight = (bitmap.height * scale).toInt()
-                Pair(targetSize, newHeight)
-            },
-            tag
-        )
-    }
-
-    protected fun scaleToMaxHeight(bitmaps: List<Bitmap>, tag: String): List<Bitmap> {
-        if (bitmaps.isEmpty()) return bitmaps
-        val maxHeight = bitmaps.maxOf { it.height }
-        logManager.debug(tag, "缩放到最大高度: $maxHeight")
-        return scaleBitmaps(
-            bitmaps,
-            maxHeight,
-            { bitmap, targetSize -> bitmap.height == targetSize },
-            { bitmap, targetSize ->
-                val scale = targetSize.toFloat() / bitmap.height.toFloat()
-                val newWidth = (bitmap.width * scale).toInt()
-                Pair(newWidth, targetSize)
-            },
-            tag
-        )
-    }
-    
-    protected fun scaleToMinHeight(bitmaps: List<Bitmap>, tag: String): List<Bitmap> {
-        if (bitmaps.isEmpty()) return bitmaps
-        val minHeight = bitmaps.minOf { it.height }
-        logManager.debug(tag, "缩放到最小高度: $minHeight")
-        return scaleBitmaps(
-            bitmaps,
-            minHeight,
-            { bitmap, targetSize -> bitmap.height == targetSize },
-            { bitmap, targetSize ->
-                val scale = targetSize.toFloat() / bitmap.height.toFloat()
-                val newWidth = (bitmap.width * scale).toInt()
-                Pair(newWidth, targetSize)
-            },
-            tag
-        )
-    }
-
-    private fun scaleBitmaps(
+    protected fun scaleBitmapsForLayout(
         bitmaps: List<Bitmap>,
-        targetSize: Int,
-        isMatch: (Bitmap, Int) -> Boolean,
-        calculateDimensions: (Bitmap, Int) -> Pair<Int, Int>,
+        widthScale: WidthScale,
+        orientation: StitchOrientation,
         tag: String
     ): List<Bitmap> {
-        return bitmaps.map { bitmap ->
-            if (isMatch(bitmap, targetSize)) {
+        val targetDimensions = StitchLayoutCalculator.scale(
+            images = bitmaps.map { ImageDimensions(it.width, it.height) },
+            orientation = orientation.toLayoutOrientation(),
+            scaleMode = widthScale.toLayoutScaleMode()
+        )
+        if (bitmaps.indices.all { index ->
+                bitmaps[index].width == targetDimensions[index].width &&
+                    bitmaps[index].height == targetDimensions[index].height
+            }) {
+            return bitmaps
+        }
+
+        return bitmaps.mapIndexed { index, bitmap ->
+            val target = targetDimensions[index]
+            if (bitmap.width == target.width && bitmap.height == target.height) {
                 bitmap
             } else {
-                val (newWidth, newHeight) = calculateDimensions(bitmap, targetSize)
-                val scaledBitmap = bitmap.scale(newWidth, newHeight, true)
+                val scaledBitmap = bitmap.scale(target.width, target.height, true)
                 logManager.debug(tag) {
                     "图片缩放: ${bitmap.width}x${bitmap.height} -> ${scaledBitmap.width}x${scaledBitmap.height}"
                 }
@@ -127,6 +79,24 @@ abstract class BaseStitchingStrategy(
             }
         }
     }
+
+    protected fun calculateLayout(
+        bitmaps: List<Bitmap>,
+        orientation: StitchOrientation,
+        mode: LayoutMode,
+        spacing: Int = 0,
+        overlayRatio: Int = 0
+    ): StitchLayout = requireNotNull(
+        StitchLayoutCalculator.calculate(
+            images = bitmaps.map { ImageDimensions(it.width, it.height) },
+            options = LayoutOptions(
+                orientation = orientation.toLayoutOrientation(),
+                mode = mode,
+                spacing = spacing,
+                overlayRatio = overlayRatio
+            )
+        )
+    )
 
     protected fun recycleScaledIntermediates(
         originalBitmaps: List<Bitmap>,
@@ -146,4 +116,15 @@ abstract class BaseStitchingStrategy(
             }
         }
     }
+}
+
+private fun StitchOrientation.toLayoutOrientation(): LayoutOrientation = when (this) {
+    StitchOrientation.VERTICAL -> LayoutOrientation.VERTICAL
+    StitchOrientation.HORIZONTAL -> LayoutOrientation.HORIZONTAL
+}
+
+private fun WidthScale.toLayoutScaleMode(): LayoutScaleMode = when (this) {
+    WidthScale.NONE -> LayoutScaleMode.NONE
+    WidthScale.MIN_WIDTH -> LayoutScaleMode.MIN
+    WidthScale.MAX_WIDTH -> LayoutScaleMode.MAX
 }

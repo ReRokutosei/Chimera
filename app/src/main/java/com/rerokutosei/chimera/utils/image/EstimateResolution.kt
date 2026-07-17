@@ -20,10 +20,18 @@ package com.rerokutosei.chimera.utils.image
 
 import android.net.Uri
 import android.util.LruCache
-import com.rerokutosei.chimera.data.model.ImageInfo
 import com.rerokutosei.chimera.ui.main.OverlayMode
 import com.rerokutosei.chimera.ui.main.StitchMode
 import com.rerokutosei.chimera.ui.main.WidthScale
+import com.rerokutosei.chimera.utils.stitch.layout.FormatValidation
+import com.rerokutosei.chimera.utils.stitch.layout.ImageDimensions
+import com.rerokutosei.chimera.utils.stitch.layout.LayoutMode
+import com.rerokutosei.chimera.utils.stitch.layout.LayoutOptions
+import com.rerokutosei.chimera.utils.stitch.layout.LayoutOrientation
+import com.rerokutosei.chimera.utils.stitch.layout.LayoutScaleMode
+import com.rerokutosei.chimera.utils.stitch.layout.OutputImageFormat
+import com.rerokutosei.chimera.utils.stitch.layout.StitchLayout
+import com.rerokutosei.chimera.utils.stitch.layout.StitchLayoutCalculator
 
 /**
  * 图片尺寸验证器
@@ -64,27 +72,18 @@ class EstimateResolution(private val bitmapLoader: BitmapLoader) {
                 imageUris, stitchMode, widthScale, overlayMode, overlayArea, imageSpacing
             )
 
-            // 根据格式检查限制
-            val formatLimit = when (outputFormat) {
-                0 -> "PNG" to Int.MAX_VALUE.toLong() // PNG 无实际限制
-                1 -> "JPEG" to 65535L // JPEG 限制
-                2 -> "WEBP" to 16383L // WEBP 限制
-                else -> "JPEG" to 65535L
-            }
-
-            val (formatName, limit) = formatLimit
-
-            return if (width > limit || height > limit) {
-                ResolutionValidationResult.Invalid(
-                    width = width,
-                    height = height,
-                    formatName = formatName,
-                    limit = limit.toInt()
-                )
-            } else {
-                ResolutionValidationResult.Valid(
-                    width = width,
-                    height = height
+            val layout = StitchLayout(
+                width = width,
+                height = height,
+                scaledImages = emptyList()
+            )
+            return when (val validation = StitchLayoutCalculator.validateFormat(layout, OutputImageFormat.fromCode(outputFormat))) {
+                is FormatValidation.Valid -> ResolutionValidationResult.Valid(validation.width, validation.height)
+                is FormatValidation.ExceedsLimit -> ResolutionValidationResult.Invalid(
+                    width = validation.width,
+                    height = validation.height,
+                    formatName = validation.format.displayName,
+                    limit = validation.limit.toInt()
                 )
             }
         } catch (e: Exception) {
@@ -128,20 +127,26 @@ class EstimateResolution(private val bitmapLoader: BitmapLoader) {
 
         if (imageUris.isEmpty()) return 0L to 0L
 
-        val images = imageUris.mapNotNull { uri ->
-            bitmapLoader.getSampledDimensions(uri)?.let { (w, h) ->
-                ImageInfo(uri = uri, width = w, height = h)
+        val images = imageUris.map { uri ->
+            val (width, height) = requireNotNull(bitmapLoader.getSampledDimensions(uri)) {
+                "Unable to read image dimensions: $uri"
             }
+            ImageDimensions(width, height)
         }
 
-        val result = when {
-            overlayMode == OverlayMode.ENABLED -> {
-                calculateOverlayResolution(images, stitchMode, widthScale, overlayArea)
-            }
-            else -> {
-                calculateDirectResolution(images, stitchMode, widthScale, imageSpacing)
-            }
-        }
+        val layout = requireNotNull(
+            StitchLayoutCalculator.calculate(
+                images = images,
+                options = LayoutOptions(
+                    orientation = stitchMode.toLayoutOrientation(),
+                    scaleMode = widthScale.toLayoutScaleMode(),
+                    mode = if (overlayMode == OverlayMode.ENABLED) LayoutMode.OVERLAY else LayoutMode.DIRECT,
+                    spacing = imageSpacing,
+                    overlayRatio = overlayArea
+                )
+            )
+        )
+        val result = layout.width to layout.height
 
         // 将结果存入缓存
         resolutionCache.put(cacheKey, result)
@@ -149,158 +154,17 @@ class EstimateResolution(private val bitmapLoader: BitmapLoader) {
         return result
     }
 
-    /**
-     * 通用缩放方法
-     */
-    private fun scaleImages(
-        images: List<ImageInfo>,
-        widthScale: WidthScale,
-        stitchMode: StitchMode
-    ): List<ImageInfo> {
-        return when (widthScale) {
-            WidthScale.MAX_WIDTH -> {
-                if (stitchMode == StitchMode.DIRECT_VERTICAL) {
-                    scaleToMaxWidth(images)
-                } else {
-                    scaleToMaxHeight(images)
-                }
-            }
-            WidthScale.MIN_WIDTH -> {
-                if (stitchMode == StitchMode.DIRECT_VERTICAL) {
-                    scaleToMinWidth(images)
-                } else {
-                    scaleToMinHeight(images)
-                }
-            }
-            else -> images
-        }
-    }
+}
 
-    /**
-     * 计算普通拼接模式的预期尺寸
-     */
-    private fun calculateDirectResolution(
-        images: List<ImageInfo>,
-        stitchMode: StitchMode,
-        widthScale: WidthScale,
-        imageSpacing: Int
-    ): Pair<Long, Long> {
-        if (images.isEmpty()) return 0L to 0L
+private fun StitchMode.toLayoutOrientation(): LayoutOrientation = when (this) {
+    StitchMode.DIRECT_VERTICAL -> LayoutOrientation.VERTICAL
+    StitchMode.DIRECT_HORIZONTAL -> LayoutOrientation.HORIZONTAL
+}
 
-        val scaledImages = scaleImages(images, widthScale, stitchMode)
-
-        return when (stitchMode) {
-            StitchMode.DIRECT_VERTICAL -> {
-                val totalHeight = scaledImages.sumOf { it.height.toLong() } + (scaledImages.size - 1) * imageSpacing
-                val maxWidth = scaledImages.maxOf { it.width.toLong() }
-                maxWidth to totalHeight
-            }
-            StitchMode.DIRECT_HORIZONTAL -> {
-                val totalWidth = scaledImages.sumOf { it.width.toLong() } + (scaledImages.size - 1) * imageSpacing
-                val maxHeight = scaledImages.maxOf { it.height.toLong() }
-                totalWidth to maxHeight
-            }
-        }
-    }
-
-    /**
-     * 计算叠加模式的预期尺寸
-     */
-    private fun calculateOverlayResolution(
-        images: List<ImageInfo>,
-        stitchMode: StitchMode,
-        widthScale: WidthScale,
-        overlayArea: Int
-    ): Pair<Long, Long> {
-        if (images.isEmpty()) return 0L to 0L
-
-        val scaledImages = scaleImages(images, widthScale, stitchMode)
-
-        return when (stitchMode) {
-            StitchMode.DIRECT_VERTICAL -> {
-                val firstImageHeight = scaledImages[0].height
-                val overlayHeight = (firstImageHeight * overlayArea / 100).coerceAtLeast(1)
-                val totalHeight = firstImageHeight + (scaledImages.size - 1) * overlayHeight
-                val maxWidth = scaledImages.maxOf { it.width }
-                maxWidth.toLong() to totalHeight.toLong()
-            }
-            StitchMode.DIRECT_HORIZONTAL -> {
-                val firstImageWidth = scaledImages[0].width
-                val overlayWidth = (firstImageWidth * overlayArea / 100).coerceAtLeast(1)
-                val totalWidth = firstImageWidth + (scaledImages.size - 1) * overlayWidth
-                val maxHeight = scaledImages.maxOf { it.height }
-                totalWidth.toLong() to maxHeight.toLong()
-            }
-        }
-    }
-
-    /**
-     * 缩放到最大宽度
-     */
-    private fun scaleToMaxWidth(images: List<ImageInfo>): List<ImageInfo> {
-        if (images.isEmpty()) return images
-        val maxWidth = images.maxOf { it.width }
-        return images.map { image ->
-            if (image.width == maxWidth) {
-                image
-            } else {
-                val scale = maxWidth.toDouble() / image.width.toDouble()
-                val newHeight = (image.height * scale).toInt()
-                image.copy(width = maxWidth, height = newHeight)
-            }
-        }
-    }
-
-    /**
-     * 缩放到最小宽度
-     */
-    private fun scaleToMinWidth(images: List<ImageInfo>): List<ImageInfo> {
-        if (images.isEmpty()) return images
-        val minWidth = images.minOf { it.width }
-        return images.map { image ->
-            if (image.width == minWidth) {
-                image
-            } else {
-                val scale = minWidth.toDouble() / image.width.toDouble()
-                val newHeight = (image.height * scale).toInt()
-                image.copy(width = minWidth, height = newHeight)
-            }
-        }
-    }
-
-    /**
-     * 缩放到最大高度
-     */
-    private fun scaleToMaxHeight(images: List<ImageInfo>): List<ImageInfo> {
-        if (images.isEmpty()) return images
-        val maxHeight = images.maxOf { it.height }
-        return images.map { image ->
-            if (image.height == maxHeight) {
-                image
-            } else {
-                val scale = maxHeight.toDouble() / image.height.toDouble()
-                val newWidth = (image.width * scale).toInt()
-                image.copy(width = newWidth, height = maxHeight)
-            }
-        }
-    }
-
-    /**
-     * 缩放到最小高度
-     */
-    private fun scaleToMinHeight(images: List<ImageInfo>): List<ImageInfo> {
-        if (images.isEmpty()) return images
-        val minHeight = images.minOf { it.height }
-        return images.map { image ->
-            if (image.height == minHeight) {
-                image
-            } else {
-                val scale = minHeight.toDouble() / image.height.toDouble()
-                val newWidth = (image.width * scale).toInt()
-                image.copy(width = newWidth, height = minHeight)
-            }
-        }
-    }
+private fun WidthScale.toLayoutScaleMode(): LayoutScaleMode = when (this) {
+    WidthScale.NONE -> LayoutScaleMode.NONE
+    WidthScale.MIN_WIDTH -> LayoutScaleMode.MIN
+    WidthScale.MAX_WIDTH -> LayoutScaleMode.MAX
 }
 
 /**

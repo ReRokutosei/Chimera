@@ -199,6 +199,7 @@ dependencies {
     // 用于调试和Compose预览功能
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    testImplementation(libs.junit4)
 }
 
 detekt {

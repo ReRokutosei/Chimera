@@ -24,7 +24,8 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import androidx.core.graphics.createBitmap
-import com.rerokutosei.chimera.ui.main.WidthScale
+import com.rerokutosei.chimera.utils.stitch.StitchOrientation
+import com.rerokutosei.chimera.utils.stitch.layout.LayoutMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -43,36 +44,28 @@ class DirectStitchingStrategy(
     override suspend fun stitch(bitmaps: List<Bitmap>, options: StitchingOptions): Bitmap? {
         logManager.debug(TAG, "开始拼接，图片数量: ${bitmaps.size}，方向: ${if (isVertical) "垂直" else "水平"}，宽度缩放: ${options.widthScale}")
 
-        val processedBitmaps = when (options.widthScale) {
-            WidthScale.MAX_WIDTH -> {
-                logManager.debug(TAG, "应用最大宽度缩放")
-                if (isVertical) {
-                    scaleToMaxWidth(bitmaps, TAG)
-                } else {
-                    scaleToMaxHeight(bitmaps, TAG)
-                }
-            }
-            WidthScale.MIN_WIDTH -> {
-                logManager.debug(TAG, "应用最小宽度缩放")
-                if (isVertical) {
-                    scaleToMinWidth(bitmaps, TAG)
-                } else {
-                    scaleToMinHeight(bitmaps, TAG)
-                }
-            }
-            else -> {
-                logManager.debug(TAG, "不应用宽度缩放")
-                bitmaps // WidthScale.NONE，不进行缩放
-            }
-        }
+        val orientation = if (isVertical) StitchOrientation.VERTICAL else StitchOrientation.HORIZONTAL
+        val processedBitmaps = scaleBitmapsForLayout(bitmaps, options.widthScale, orientation, TAG)
         
         var resultBitmap: Bitmap? = null
         return try {
             withContext(Dispatchers.Default) {
                 if (isVertical) {
-                    stitchVertically(processedBitmaps, options.spacing, options.spacingColor, options.outputFormat)
+                    stitchVertically(
+                        processedBitmaps,
+                        options.spacing,
+                        options.spacingColor,
+                        options.outputFormat,
+                        options.highMemoryLimitEnabled
+                    )
                 } else {
-                    stitchHorizontally(processedBitmaps, options.spacing, options.spacingColor, options.outputFormat)
+                    stitchHorizontally(
+                        processedBitmaps,
+                        options.spacing,
+                        options.spacingColor,
+                        options.outputFormat,
+                        options.highMemoryLimitEnabled
+                    )
                 }
             }.also { bitmap ->
                 resultBitmap = bitmap
@@ -94,8 +87,14 @@ class DirectStitchingStrategy(
      * @param spacingColor 间隔填充颜色
      * @param outputFormat 输出图片格式
      */
-    private fun stitchVertically(bitmaps: List<Bitmap>, spacing: Int, spacingColor: Int = Color.BLACK, outputFormat: Int): Bitmap? {
-        return stitchImages(bitmaps, spacing, true, spacingColor, outputFormat)
+    private fun stitchVertically(
+        bitmaps: List<Bitmap>,
+        spacing: Int,
+        spacingColor: Int = Color.BLACK,
+        outputFormat: Int,
+        highMemoryLimitEnabled: Boolean
+    ): Bitmap? {
+        return stitchImages(bitmaps, spacing, true, spacingColor, outputFormat, highMemoryLimitEnabled)
     }
 
     /**
@@ -105,8 +104,14 @@ class DirectStitchingStrategy(
      * @param spacingColor 间隔填充颜色
      * @param outputFormat 输出图片格式
      */
-    private fun stitchHorizontally(bitmaps: List<Bitmap>, spacing: Int, spacingColor: Int = Color.BLACK, outputFormat: Int): Bitmap? {
-        return stitchImages(bitmaps, spacing, false, spacingColor, outputFormat)
+    private fun stitchHorizontally(
+        bitmaps: List<Bitmap>,
+        spacing: Int,
+        spacingColor: Int = Color.BLACK,
+        outputFormat: Int,
+        highMemoryLimitEnabled: Boolean
+    ): Bitmap? {
+        return stitchImages(bitmaps, spacing, false, spacingColor, outputFormat, highMemoryLimitEnabled)
     }
 
     /**
@@ -117,25 +122,34 @@ class DirectStitchingStrategy(
      * @param spacingColor 间隔填充颜色
      * @param outputFormat 输出图片格式
      */
-    private fun stitchImages(bitmaps: List<Bitmap>, spacing: Int, isVertical: Boolean, spacingColor: Int = Color.BLACK, outputFormat: Int): Bitmap? {
+    private fun stitchImages(
+        bitmaps: List<Bitmap>,
+        spacing: Int,
+        isVertical: Boolean,
+        spacingColor: Int = Color.BLACK,
+        outputFormat: Int,
+        highMemoryLimitEnabled: Boolean
+    ): Bitmap? {
         logManager.debug(TAG, "开始${if (isVertical) "垂直" else "水平"}拼接，图片数量: ${bitmaps.size}，间隔: $spacing")
         
-        val (totalMajor, totalMinor) = if (isVertical) {
-            bitmaps.sumOf { it.height } + (bitmaps.size - 1) * spacing to bitmaps.maxOf { it.width }
-        } else {
-            bitmaps.sumOf { it.width } + (bitmaps.size - 1) * spacing to bitmaps.maxOf { it.height }
-        }
+        val orientation = if (isVertical) StitchOrientation.VERTICAL else StitchOrientation.HORIZONTAL
+        val layout = calculateLayout(bitmaps, orientation, LayoutMode.DIRECT, spacing = spacing)
+        val totalMajorLong = if (isVertical) layout.height else layout.width
+        val totalMinorLong = if (isVertical) layout.width else layout.height
 
-        logManager.debug(TAG, "${if (isVertical) "垂直" else "水平"}拼接：总${if (isVertical) "高度" else "宽度"}=$totalMajor, 最大${if (isVertical) "宽度" else "高度"}=$totalMinor")
+        logManager.debug(TAG, "${if (isVertical) "垂直" else "水平"}拼接：总${if (isVertical) "高度" else "宽度"}=$totalMajorLong, 最大${if (isVertical) "宽度" else "高度"}=$totalMinorLong")
 
         // 检查内存限制
-        val estimatedSize = totalMajor.toLong() * totalMinor.toLong() * 4 // ARGB_8888
-        val maxImageSize = memoryLimitCalculator.calculateMaxImageSize(options.highMemoryLimitEnabled)
+        val estimatedSize = totalMajorLong * totalMinorLong * 4 // ARGB_8888
+        val maxImageSize = memoryLimitCalculator.calculateMaxImageSize(highMemoryLimitEnabled)
         
-        if (estimatedSize > maxImageSize) {
+        if (estimatedSize > maxImageSize || totalMajorLong > Int.MAX_VALUE || totalMinorLong > Int.MAX_VALUE) {
             logManager.error(TAG, "拼接结果图片过大: ${estimatedSize / (1024 * 1024)}MB，超过限制: ${maxImageSize / (1024 * 1024)}MB")
             return null
         }
+
+        val totalMajor = totalMajorLong.toInt()
+        val totalMinor = totalMinorLong.toInt()
 
         logManager.debug(TAG, "创建结果位图：${if (isVertical) totalMinor else totalMajor}x${if (isVertical) totalMajor else totalMinor}")
         return try {
