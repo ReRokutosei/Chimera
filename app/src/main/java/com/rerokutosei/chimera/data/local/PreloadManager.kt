@@ -34,21 +34,21 @@ import okio.IOException
  * 预加载管理器，用于在应用启动时预加载所有必要数据，避免UI闪烁
  */
 class PreloadManager private constructor(private val context: Context) {
-    
+
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    
+
     companion object {
         @SuppressLint("StaticFieldLeak")
         @Volatile
         private var INSTANCE: PreloadManager? = null
-        
+
         fun getInstance(context: Context): PreloadManager {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: PreloadManager(context.applicationContext).also { INSTANCE = it }
             }
         }
     }
-    
+
     /**
      * 预加载所有必要数据
      */
@@ -65,11 +65,12 @@ class PreloadManager private constructor(private val context: Context) {
                     imageSettingsDeferred.await()
                 }
             } catch (e: IOException) {
-                LogManager.Companion.getInstance(context).error("PreloadManager", "预加载数据时出错", e)
+                LogManager.Companion.getInstance(context)
+                    .error("PreloadManager", "预加载数据时出错", e)
             }
         }
     }
-    
+
     /**
      * 预加载主题设置
      */
@@ -81,10 +82,11 @@ class PreloadManager private constructor(private val context: Context) {
             themeSettingsManager.getLogLevelFlow().collect { }
             themeSettingsManager.getFollowSystemThemeFlow().collect { }
         } catch (e: IOException) {
-            LogManager.Companion.getInstance(context).error("PreloadManager", "预加载主题设置时出错", e)
+            LogManager.Companion.getInstance(context)
+                .error("PreloadManager", "预加载主题设置时出错", e)
         }
     }
-    
+
     /**
      * 预加载拼接设置
      */
@@ -97,10 +99,11 @@ class PreloadManager private constructor(private val context: Context) {
             stitchSettingsManager.getWidthScaleFlow().collect { }
             stitchSettingsManager.getImageSpacingFlow().collect { }
         } catch (e: IOException) {
-            LogManager.Companion.getInstance(context).error("PreloadManager", "预加载拼接设置时出错", e)
+            LogManager.Companion.getInstance(context)
+                .error("PreloadManager", "预加载拼接设置时出错", e)
         }
     }
-    
+
     /**
      * 预加载图片设置
      */
@@ -114,7 +117,8 @@ class PreloadManager private constructor(private val context: Context) {
             imageSettingsManager.getHighMemoryLimitFlow().collect { }
             imageSettingsManager.getUseSafPickerFlow().collect { }
         } catch (e: IOException) {
-            LogManager.Companion.getInstance(context).error("PreloadManager", "预加载图片设置时出错", e)
+            LogManager.Companion.getInstance(context)
+                .error("PreloadManager", "预加载图片设置时出错", e)
         }
     }
 }

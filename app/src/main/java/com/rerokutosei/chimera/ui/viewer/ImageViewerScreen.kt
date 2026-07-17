@@ -42,7 +42,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -60,8 +59,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rerokutosei.chimera.R
 import com.rerokutosei.chimera.domain.error.CutFailure
 import com.rerokutosei.chimera.domain.error.SaveFailure
@@ -99,8 +98,10 @@ fun ImageViewerScreen(
     val cutGridRows by viewModel.cutGridRows.collectAsStateWithLifecycle()
     val currentCutIndex by viewModel.currentCutIndex.collectAsStateWithLifecycle()
     val cutSaveState by viewModel.cutSaveState.collectAsStateWithLifecycle()
-    val previewSource = (stitchState as? StitchState.Success)?.let { PreviewSource.FromBitmap(it.result) }
-    val errorMessage = (stitchState as? StitchState.Error)?.failure?.let { stitchFailureMessage(it) }
+    val previewSource =
+        (stitchState as? StitchState.Success)?.let { PreviewSource.FromBitmap(it.result) }
+    val errorMessage =
+        (stitchState as? StitchState.Error)?.failure?.let { stitchFailureMessage(it) }
     val isProcessing = stitchState is StitchState.Processing
 
     var isSaving by remember { mutableStateOf(false) }
@@ -132,7 +133,8 @@ fun ImageViewerScreen(
             val idx = pagerState.currentPage
             val retainedIndices = (idx - 1..idx + 1).filter { it in cutImageUris.indices }.toSet()
             val retainedBitmaps = cutBitmaps.value.filterKeys { it in retainedIndices }
-            val evictedBitmaps = cutBitmaps.value.filterKeys { it !in retainedIndices }.values.toList()
+            val evictedBitmaps =
+                cutBitmaps.value.filterKeys { it !in retainedIndices }.values.toList()
             cutBitmaps.value = retainedBitmaps
             bitmapLoader.recycleBitmaps(
                 evictedBitmaps
@@ -198,6 +200,7 @@ fun ImageViewerScreen(
                 } else {
                     stringResource(R.string.cut_completed_9)
                 }
+
                 is CutSaveState.Failure -> cutSaveIssueMessage(state.issue)
             }
             cutSaveMessage?.let {
@@ -218,12 +221,19 @@ fun ImageViewerScreen(
                     enabled = cutSaveState !is CutSaveState.Saving
                 ) {
                     if (cutSaveState is CutSaveState.Saving) {
-                        CircularProgressIndicator(modifier = Modifier.size(16.dp), color = Color.White)
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            color = Color.White
+                        )
                     } else {
                         Icon(imageVector = Icons.Default.Save, contentDescription = null)
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(if (cutSaveState is CutSaveState.Saving) stringResource(R.string.saving) else stringResource(R.string.save))
+                    Text(
+                        if (cutSaveState is CutSaveState.Saving) stringResource(R.string.saving) else stringResource(
+                            R.string.save
+                        )
+                    )
                 }
             }
         }
@@ -279,7 +289,11 @@ fun ImageViewerScreen(
                 onShareClick = { source ->
                     coroutineScope.launch {
                         when (source) {
-                            is PreviewSource.FromBitmap -> imageSharer.shareBitmap(source.bitmap, shareText)
+                            is PreviewSource.FromBitmap -> imageSharer.shareBitmap(
+                                source.bitmap,
+                                shareText
+                            )
+
                             else -> {}
                         }
                     }
@@ -295,6 +309,7 @@ fun ImageViewerScreen(
                                         is ImageSaveResult.Failure -> saveFailedText
                                     }
                                 }
+
                                 else -> {}
                             }
                         } finally {
@@ -326,6 +341,7 @@ private fun cutSaveIssueMessage(issue: CutSaveIssue): String = when (issue) {
         is CutFailure.SplitFailed -> stringResource(R.string.cut_error_split_failed)
         is CutFailure.Unexpected -> stringResource(R.string.cut_error_unexpected)
     }
+
     is CutSaveIssue.Save -> when (issue.failure) {
         SaveFailure.StorageUnavailable -> stringResource(R.string.save_error_storage_unavailable)
         SaveFailure.EncodingFailed -> stringResource(R.string.save_error_encoding_failed)
@@ -349,7 +365,10 @@ private fun ErrorDialog(errorMessage: String, onBackClick: () -> Unit, context: 
                 Text(errorMessage)
                 if (showLogContent) {
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text(text = stringResource(R.string.log_content) + logContent, style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        text = stringResource(R.string.log_content) + logContent,
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
             }
         },
@@ -361,7 +380,8 @@ private fun ErrorDialog(errorMessage: String, onBackClick: () -> Unit, context: 
                     if (!isLogDisplayed) {
                         val logManager = LogManager.getInstance(context)
                         coroutineScope.launch(Dispatchers.IO) {
-                            val logFile = logManager.javaClass.getDeclaredMethod("getLogFile").apply { isAccessible = true }.invoke(logManager) as File
+                            val logFile = logManager.javaClass.getDeclaredMethod("getLogFile")
+                                .apply { isAccessible = true }.invoke(logManager) as File
                             logContent = if (logFile.exists()) {
                                 try {
                                     filterCurrentSessionLogs(logFile.readText())
@@ -375,11 +395,18 @@ private fun ErrorDialog(errorMessage: String, onBackClick: () -> Unit, context: 
                             isLogDisplayed = true
                         }
                     } else {
-                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                        val clipboard =
+                            context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
                         val clip = android.content.ClipData.newPlainText("日志内容", logContent)
                         clipboard.setPrimaryClip(clip)
                     }
-                }) { Text(if (isLogDisplayed) stringResource(R.string.copy_log) else stringResource(R.string.view_log)) }
+                }) {
+                    Text(
+                        if (isLogDisplayed) stringResource(R.string.copy_log) else stringResource(
+                            R.string.view_log
+                        )
+                    )
+                }
             }
         }
     )

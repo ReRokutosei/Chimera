@@ -29,7 +29,7 @@ sealed class StitchResult {
      * Bitmap结果
      */
     data class BitmapResult(val bitmap: Bitmap) : StitchResult()
-    
+
     /**
      * 错误结果
      */

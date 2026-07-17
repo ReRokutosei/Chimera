@@ -37,24 +37,25 @@ import java.io.IOException
  * 图片设置管理器
  */
 class ImageSettingsManager private constructor(private val context: Context) {
-    
+
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "image_settings")
-    
+
     companion object {
         @SuppressLint("StaticFieldLeak")
         @Volatile
         private var INSTANCE: ImageSettingsManager? = null
-        
+
         fun getInstance(context: Context): ImageSettingsManager {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: ImageSettingsManager(context.applicationContext).also { INSTANCE = it }
             }
         }
     }
-    
+
     // 图片设置键
     private object PreferencesKeys {
-        val OUTPUT_IMAGE_FORMAT = intPreferencesKey("output_image_format") // 0: PNG, 1: JPEG, 2: WEBP
+        val OUTPUT_IMAGE_FORMAT =
+            intPreferencesKey("output_image_format") // 0: PNG, 1: JPEG, 2: WEBP
         val OUTPUT_IMAGE_QUALITY = intPreferencesKey("output_image_quality") // 0-100
         val DELETE_ORIGINAL_IMAGE = booleanPreferencesKey("delete_original_image")
         val AUTO_CLEAR_IMAGES = booleanPreferencesKey("auto_clear_images")
@@ -64,7 +65,7 @@ class ImageSettingsManager private constructor(private val context: Context) {
         val SLIDER_THUMB_SHAPE = intPreferencesKey("slider_thumb_shape") // 滑块手柄形状
         val IMAGE_LIST_DIRECTION = intPreferencesKey("image_list_direction") // 图片列表方向
     }
-    
+
     /**
      * 获取输出图片格式
      */
@@ -81,7 +82,7 @@ class ImageSettingsManager private constructor(private val context: Context) {
                 preferences[PreferencesKeys.OUTPUT_IMAGE_FORMAT] ?: 1 // 默认JPEG
             }
     }
-    
+
     /**
      * 设置输出图片格式
      */
@@ -90,7 +91,7 @@ class ImageSettingsManager private constructor(private val context: Context) {
             preferences[PreferencesKeys.OUTPUT_IMAGE_FORMAT] = format
         }
     }
-    
+
     /**
      * 获取输出图片质量
      */
@@ -107,7 +108,7 @@ class ImageSettingsManager private constructor(private val context: Context) {
                 preferences[PreferencesKeys.OUTPUT_IMAGE_QUALITY] ?: 85 // 默认85%
             }
     }
-    
+
     /**
      * 设置输出图片质量
      */
@@ -116,7 +117,7 @@ class ImageSettingsManager private constructor(private val context: Context) {
             preferences[PreferencesKeys.OUTPUT_IMAGE_QUALITY] = quality
         }
     }
-    
+
     /**
      * 获取删除原始图片设置
      */
@@ -150,7 +151,7 @@ class ImageSettingsManager private constructor(private val context: Context) {
                 preferences[PreferencesKeys.AUTO_CLEAR_IMAGES] ?: false
             }
     }
-    
+
     /**
      * 设置自动清理图片
      */
@@ -159,7 +160,7 @@ class ImageSettingsManager private constructor(private val context: Context) {
             preferences[PreferencesKeys.AUTO_CLEAR_IMAGES] = enabled
         }
     }
-    
+
     /**
      * 获取提高内存阈值设置
      */
@@ -176,7 +177,7 @@ class ImageSettingsManager private constructor(private val context: Context) {
                 preferences[PreferencesKeys.HIGH_MEMORY_LIMIT] ?: false
             }
     }
-    
+
     /**
      * 设置提高内存阈值
      */
@@ -185,7 +186,7 @@ class ImageSettingsManager private constructor(private val context: Context) {
             preferences[PreferencesKeys.HIGH_MEMORY_LIMIT] = enabled
         }
     }
-    
+
     /**
      * 获取使用存储访问框架选择器设置
      */
@@ -202,7 +203,7 @@ class ImageSettingsManager private constructor(private val context: Context) {
                 preferences[PreferencesKeys.USE_SAF_PICKER] ?: false
             }
     }
-    
+
     /**
      * 设置使用存储访问框架选择器
      */
@@ -211,7 +212,7 @@ class ImageSettingsManager private constructor(private val context: Context) {
             preferences[PreferencesKeys.USE_SAF_PICKER] = enabled
         }
     }
-    
+
     /**
      * 获取使用Embedded Picker设置
      */
@@ -228,7 +229,7 @@ class ImageSettingsManager private constructor(private val context: Context) {
                 preferences[PreferencesKeys.USE_EMBEDDED_PICKER] ?: false
             }
     }
-    
+
     /**
      * 设置使用Embedded Picker
      */
@@ -237,7 +238,7 @@ class ImageSettingsManager private constructor(private val context: Context) {
             preferences[PreferencesKeys.USE_EMBEDDED_PICKER] = enabled
         }
     }
-    
+
     /**
      * 获取滑块手柄形状
      */
@@ -254,7 +255,7 @@ class ImageSettingsManager private constructor(private val context: Context) {
                 preferences[PreferencesKeys.SLIDER_THUMB_SHAPE] ?: 0 // 默认星形
             }
     }
-    
+
     /**
      * 设置滑块手柄形状
      */

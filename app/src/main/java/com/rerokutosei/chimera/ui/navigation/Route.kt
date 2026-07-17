@@ -22,9 +22,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 sealed class Route {
-    @Serializable data object Main : Route()
-    @Serializable data object Settings : Route()
-    @Serializable data class ImageViewer(
+    @Serializable
+    data object Main : Route()
+    @Serializable
+    data object Settings : Route()
+    @Serializable
+    data class ImageViewer(
         val widthScale: String = "",
         val stitchMode: String = "",
         val imageSpacing: String = "",

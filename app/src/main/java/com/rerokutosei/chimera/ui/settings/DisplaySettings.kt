@@ -90,11 +90,11 @@ fun DisplaySettingsSection(
     modifier: Modifier = Modifier
 ) {
     DisplaySettingsHeader(modifier = modifier)
-    
+
     ThemeModeSettings(uiState = uiState, viewModel = viewModel)
-    
+
     ThemeColorSettings(uiState = uiState, viewModel = viewModel)
-    
+
     SliderHandleIconSettings(uiState = uiState, viewModel = viewModel)
 }
 
@@ -135,7 +135,7 @@ fun ThemeModeSettings(
                     text = stringResource(R.string.theme_mode),
                     style = MaterialTheme.typography.bodyLarge
                 )
-                
+
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -148,7 +148,7 @@ fun ThemeModeSettings(
                         unselectedIcon = Icons.Rounded.BrightnessAuto,
                         contentDescription = stringResource(R.string.auto_mode)
                     )
-                        
+
                     // 浅色模式按钮
                     ThemeModeIconButton(
                         selected = uiState.themeMode == ThemeMode.LIGHT,
@@ -157,7 +157,7 @@ fun ThemeModeSettings(
                         unselectedIcon = Icons.Rounded.LightMode,
                         contentDescription = stringResource(R.string.light_mode)
                     )
-                        
+
                     // 深色模式按钮
                     ThemeModeIconButton(
                         selected = uiState.themeMode == ThemeMode.DARK,
@@ -182,7 +182,7 @@ fun ThemeColorSettings(
     val context = LocalContext.current
     val themeSettingsManager = ThemeRepository.getInstance(context)
     val coroutineScope = rememberCoroutineScope()
-    
+
     // 主题颜色设置
     ListItem(
         headlineContent = {
@@ -193,7 +193,7 @@ fun ThemeColorSettings(
         },
         supportingContent = {
             var showCustomColorPicker by remember { mutableStateOf(false) }
-            
+
             if (showCustomColorPicker) {
                 CustomColorPickerDialog(
                     onColorSelected = { colorScheme ->
@@ -206,7 +206,7 @@ fun ThemeColorSettings(
                     onDismissRequest = { showCustomColorPicker = false }
                 )
             }
-            
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -218,7 +218,7 @@ fun ThemeColorSettings(
                     ThemeMode.DARK -> true // 深色模式
                     ThemeMode.LIGHT -> false // 浅色模式
                 }
-                
+
                 // 预定义颜色方案网格
                 Row(
                     modifier = Modifier
@@ -228,68 +228,69 @@ fun ThemeColorSettings(
                 ) {
                     val colorSchemes = getColorSchemes()
                     val context = LocalContext.current
-                    
+
                     colorSchemes.forEach { (name, colorScheme) ->
-                        val dynamicColorScheme = if (name == "dynamic" && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            val originalScheme = if (shouldUseDarkThemePreview) {
-                                dynamicDarkColorScheme(context)
+                        val dynamicColorScheme =
+                            if (name == "dynamic" && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                val originalScheme = if (shouldUseDarkThemePreview) {
+                                    dynamicDarkColorScheme(context)
+                                } else {
+                                    dynamicLightColorScheme(context)
+                                }
+
+                                // 创建一个新的色彩方案，其中主色、次色、第三色使用相反主题的值
+                                // 我也不知道为什么获取的动态色彩值在深浅色模式下颠倒
+                                val invertedScheme = if (shouldUseDarkThemePreview) {
+                                    // 在深色主题预览下，使用浅色主题的主色系列
+                                    val lightScheme = dynamicLightColorScheme(context)
+                                    originalScheme.copy(
+                                        primary = lightScheme.primary,
+                                        onPrimary = lightScheme.onPrimary,
+                                        primaryContainer = lightScheme.primaryContainer,
+                                        onPrimaryContainer = lightScheme.onPrimaryContainer,
+                                        inversePrimary = lightScheme.inversePrimary,
+                                        secondary = lightScheme.secondary,
+                                        onSecondary = lightScheme.onSecondary,
+                                        secondaryContainer = lightScheme.secondaryContainer,
+                                        onSecondaryContainer = lightScheme.onSecondaryContainer,
+                                        tertiary = lightScheme.tertiary,
+                                        onTertiary = lightScheme.onTertiary,
+                                        tertiaryContainer = lightScheme.tertiaryContainer,
+                                        onTertiaryContainer = lightScheme.onTertiaryContainer
+                                    )
+                                } else {
+                                    // 在浅色主题预览下，使用深色主题的主色系列
+                                    val darkScheme = dynamicDarkColorScheme(context)
+                                    originalScheme.copy(
+                                        primary = darkScheme.primary,
+                                        onPrimary = darkScheme.onPrimary,
+                                        primaryContainer = darkScheme.primaryContainer,
+                                        onPrimaryContainer = darkScheme.onPrimaryContainer,
+                                        inversePrimary = darkScheme.inversePrimary,
+                                        secondary = darkScheme.secondary,
+                                        onSecondary = darkScheme.onSecondary,
+                                        secondaryContainer = darkScheme.secondaryContainer,
+                                        onSecondaryContainer = darkScheme.onSecondaryContainer,
+                                        tertiary = darkScheme.tertiary,
+                                        onTertiary = darkScheme.onTertiary,
+                                        tertiaryContainer = darkScheme.tertiaryContainer,
+                                        onTertiaryContainer = darkScheme.onTertiaryContainer
+                                    )
+                                }
+
+                                invertedScheme
                             } else {
-                                dynamicLightColorScheme(context)
+                                null
                             }
-                            
-                            // 创建一个新的色彩方案，其中主色、次色、第三色使用相反主题的值
-                            // 我也不知道为什么获取的动态色彩值在深浅色模式下颠倒
-                            val invertedScheme = if (shouldUseDarkThemePreview) {
-                                // 在深色主题预览下，使用浅色主题的主色系列
-                                val lightScheme = dynamicLightColorScheme(context)
-                                originalScheme.copy(
-                                    primary = lightScheme.primary,
-                                    onPrimary = lightScheme.onPrimary,
-                                    primaryContainer = lightScheme.primaryContainer,
-                                    onPrimaryContainer = lightScheme.onPrimaryContainer,
-                                    inversePrimary = lightScheme.inversePrimary,
-                                    secondary = lightScheme.secondary,
-                                    onSecondary = lightScheme.onSecondary,
-                                    secondaryContainer = lightScheme.secondaryContainer,
-                                    onSecondaryContainer = lightScheme.onSecondaryContainer,
-                                    tertiary = lightScheme.tertiary,
-                                    onTertiary = lightScheme.onTertiary,
-                                    tertiaryContainer = lightScheme.tertiaryContainer,
-                                    onTertiaryContainer = lightScheme.onTertiaryContainer
-                                )
-                            } else {
-                                // 在浅色主题预览下，使用深色主题的主色系列
-                                val darkScheme = dynamicDarkColorScheme(context)
-                                originalScheme.copy(
-                                    primary = darkScheme.primary,
-                                    onPrimary = darkScheme.onPrimary,
-                                    primaryContainer = darkScheme.primaryContainer,
-                                    onPrimaryContainer = darkScheme.onPrimaryContainer,
-                                    inversePrimary = darkScheme.inversePrimary,
-                                    secondary = darkScheme.secondary,
-                                    onSecondary = darkScheme.onSecondary,
-                                    secondaryContainer = darkScheme.secondaryContainer,
-                                    onSecondaryContainer = darkScheme.onSecondaryContainer,
-                                    tertiary = darkScheme.tertiary,
-                                    onTertiary = darkScheme.onTertiary,
-                                    tertiaryContainer = darkScheme.tertiaryContainer,
-                                    onTertiaryContainer = darkScheme.onTertiaryContainer
-                                )
-                            }
-                            
-                            invertedScheme
-                        } else {
-                            null
-                        }
 
                         val isColorPicker = name == "custom"
-                        
+
                         ColorSchemeItem(
                             modifier = Modifier.weight(1f, fill = false),
                             colorScheme = colorScheme,
                             isSelected = uiState.selectedColorScheme == name,
                             isDarkThemePreview = shouldUseDarkThemePreview,
-                            onClick = { 
+                            onClick = {
                                 if (isColorPicker) {
                                     showCustomColorPicker = true
                                 } else {
@@ -300,12 +301,12 @@ fun ThemeColorSettings(
                             isColorPicker = isColorPicker
                         )
                     }
-                    
+
                     // 显示当前保存的自定义色彩方案
-                    val hasCustomColors = uiState.customPrimaryColor.isNotEmpty() && 
-                                         uiState.customSecondaryColor.isNotEmpty() && 
-                                         uiState.customTertiaryColor.isNotEmpty()
-                    
+                    val hasCustomColors = uiState.customPrimaryColor.isNotEmpty() &&
+                        uiState.customSecondaryColor.isNotEmpty() &&
+                        uiState.customTertiaryColor.isNotEmpty()
+
                     // 只有在已有自定义颜色时才显示自定义颜色选择器入口和已保存的方案
                     if (hasCustomColors) {
                         val customScheme = ColorScheme(
@@ -314,25 +315,25 @@ fun ThemeColorSettings(
                             secondary = parseColorString(uiState.customSecondaryColor),
                             tertiary = parseColorString(uiState.customTertiaryColor)
                         )
-                        
+
                         ColorSchemeItem(
                             modifier = Modifier.weight(1f, fill = false),
                             colorScheme = customScheme,
                             isSelected = uiState.selectedColorScheme == "custom",
                             isDarkThemePreview = shouldUseDarkThemePreview,
-                            onClick = { 
+                            onClick = {
                                 viewModel.setSelectedColorScheme("custom")
                             },
                             isColorPicker = false
                         )
-                        
+
                         // 显示自定义颜色选择器入口
                         ColorSchemeItem(
                             modifier = Modifier.weight(1f, fill = false),
                             colorScheme = PredefinedColorSchemes.custom,
                             isSelected = false,
                             isDarkThemePreview = shouldUseDarkThemePreview,
-                            onClick = { 
+                            onClick = {
                                 showCustomColorPicker = true
                             },
                             isColorPicker = true
@@ -344,7 +345,7 @@ fun ThemeColorSettings(
                             colorScheme = PredefinedColorSchemes.custom,
                             isSelected = uiState.selectedColorScheme == "custom",
                             isDarkThemePreview = shouldUseDarkThemePreview,
-                            onClick = { 
+                            onClick = {
                                 showCustomColorPicker = true
                             },
                             isColorPicker = true
@@ -404,10 +405,10 @@ fun SliderHandleIconSettings(
                 // 按钮和图标的大小
                 val buttonSize = 40.dp
                 val iconSize = buttonSize * 0.65f
-                
+
                 shapes.forEachIndexed { index, (shape, _) ->
                     OutlinedButton(
-                        onClick = { 
+                        onClick = {
                             viewModel.setSliderThumbShape(index)
                         },
                         modifier = Modifier.size(buttonSize),
@@ -474,7 +475,7 @@ fun ThemeModeIconButton(
     val contentColor by transition.animateColor(label = "contentColor") { selected ->
         if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
     }
-    
+
     Surface(
         onClick = onClick,
         modifier = Modifier.size(40.dp),
@@ -527,12 +528,12 @@ fun ColorSchemeItem(
 
 private fun getColorSchemes(): List<Triple<String, ColorScheme, Boolean>> {
     val schemes = mutableListOf<Triple<String, ColorScheme, Boolean>>()
-    
+
     schemes.add(Triple("bocchi", PredefinedColorSchemes.bocchi, false))
     schemes.add(Triple("nijika", PredefinedColorSchemes.nijika, false))
     schemes.add(Triple("kita", PredefinedColorSchemes.kita, false))
     schemes.add(Triple("ryo", PredefinedColorSchemes.ryo, false))
-    
+
     // 动态色彩 (仅在 Android 12+ 可见)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         schemes.add(Triple("dynamic", PredefinedColorSchemes.dynamic, false))

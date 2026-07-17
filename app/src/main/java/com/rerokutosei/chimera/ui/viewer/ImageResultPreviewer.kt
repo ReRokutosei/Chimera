@@ -26,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
 
 private fun chooseGridLineColor(bitmap: Bitmap): Int {
     val thumb = Bitmap.createScaledBitmap(bitmap, 16, 16, true)
@@ -54,6 +53,7 @@ fun ImageResultPreviewer(
         is PreviewSource.FromBitmap -> {
             AdaptiveImageDisplay(bitmap = source.bitmap, modifier = modifier)
         }
+
         is PreviewSource.FromBitmapWithGrid -> {
             val displayBitmap = remember(source.bitmap, source.cols, source.rows) {
                 val copy = source.bitmap.copy(source.bitmap.config ?: Bitmap.Config.ARGB_8888, true)

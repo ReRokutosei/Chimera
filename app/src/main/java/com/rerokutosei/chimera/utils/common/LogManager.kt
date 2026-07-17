@@ -22,7 +22,6 @@ import android.content.Context
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
@@ -39,18 +38,18 @@ import java.util.Locale
 class LogManager private constructor(context: Context) {
 
     private val applicationContext = context.applicationContext
-    
+
     companion object {
         private const val TAG = "LogManager"
         private const val LOG_FILE_NAME = "chimera_log.txt"
         private const val MAX_LOG_FILE_SIZE = 10 * 1024 * 1024L // 10MB
-        
+
         // 日志等级定义
         const val LOG_LEVEL_DEBUG = 0
         const val LOG_LEVEL_INFO = 1
         const val LOG_LEVEL_WARN = 2
         const val LOG_LEVEL_ERROR = 3
-        
+
         @Volatile
         private var INSTANCE: LogManager? = null
 
@@ -66,16 +65,15 @@ class LogManager private constructor(context: Context) {
     private val logDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault())
     private val logMutex = Mutex()
     private val logScope = CoroutineScope(Dispatchers.IO + kotlinx.coroutines.SupervisorJob())
-    
+
     /**
      * 设置日志等级
      */
     fun setLogLevel(level: Int) {
         currentLogLevel = level
     }
-    
 
-    
+
     /**
      * 获取日志文件路径
      */
@@ -93,7 +91,7 @@ class LogManager private constructor(context: Context) {
             File(applicationContext.filesDir, LOG_FILE_NAME)
         }
     }
-    
+
     /**
      * 记录调试日志
      */
@@ -111,7 +109,7 @@ class LogManager private constructor(context: Context) {
     }
 
     fun isDebugEnabled(): Boolean = currentLogLevel <= LOG_LEVEL_DEBUG
-    
+
     /**
      * 记录信息日志
      */
@@ -121,7 +119,7 @@ class LogManager private constructor(context: Context) {
             writeLogToFile("INFO", tag, message)
         }
     }
-    
+
     /**
      * 记录警告日志
      */
@@ -131,7 +129,7 @@ class LogManager private constructor(context: Context) {
             writeLogToFile("WARN", tag, message)
         }
     }
-    
+
     /**
      * 记录错误日志
      */
@@ -142,10 +140,14 @@ class LogManager private constructor(context: Context) {
             } else {
                 Log.e(tag, message)
             }
-            writeLogToFile("ERROR", tag, message + if (throwable != null) " | ${throwable.message}" else "")
+            writeLogToFile(
+                "ERROR",
+                tag,
+                message + if (throwable != null) " | ${throwable.message}" else ""
+            )
         }
     }
-    
+
     /**
      * 将日志写入文件
      */
@@ -154,7 +156,7 @@ class LogManager private constructor(context: Context) {
             writeLogEntry(level, tag, message)
         }
     }
-    
+
     /**
      * 同步写入日志到文件
      */
@@ -169,7 +171,7 @@ class LogManager private constructor(context: Context) {
             }
         }
     }
-    
+
     /**
      * 实际的日志写入操作
      */
@@ -181,7 +183,7 @@ class LogManager private constructor(context: Context) {
                 if (logFile.exists() && logFile.length() > MAX_LOG_FILE_SIZE) {
                     logFile.delete()
                 }
-                
+
                 val timestamp = logDateFormat.format(Date())
                 val logEntry = "[$timestamp] $level/$tag: $message\n"
 
@@ -206,7 +208,7 @@ class LogManager private constructor(context: Context) {
             }
         }
     }
-    
+
 
     fun critical(tag: String, message: String) {
         this.error(tag, message)

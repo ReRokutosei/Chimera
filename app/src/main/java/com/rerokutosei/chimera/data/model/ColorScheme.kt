@@ -32,7 +32,8 @@ import kotlinx.serialization.json.Json
 
 // Color序列化器
 object ColorSerializer : KSerializer<Color> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.STRING)
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("Color", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: Color) {
         val argb = value.toArgb()
@@ -67,7 +68,7 @@ data class ColorScheme(
     fun toSerializedString(): String {
         return Json.encodeToString(this)
     }
-    
+
     companion object {
         fun fromSerializedString(serialized: String): ColorScheme {
             return Json.decodeFromString(serialized)

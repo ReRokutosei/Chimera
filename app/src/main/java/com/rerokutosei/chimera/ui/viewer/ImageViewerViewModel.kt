@@ -36,7 +36,8 @@ import kotlinx.coroutines.launch
 
 class ImageViewerViewModel(application: Application) : AndroidViewModel(application) {
     private val logManager = LogManager.getInstance(application)
-    private val saveCutImagesUseCase = SaveCutImagesUseCase(BitmapLoader(application), ImageSaver(application))
+    private val saveCutImagesUseCase =
+        SaveCutImagesUseCase(BitmapLoader(application), ImageSaver(application))
 
     // 切割模式状态
     private val _isCutMode = MutableStateFlow(false)
@@ -84,17 +85,25 @@ class ImageViewerViewModel(application: Application) : AndroidViewModel(applicat
         viewModelScope.launch {
             _cutSaveState.value = CutSaveState.Saving
             try {
-                _cutSaveState.value = when (val result = saveCutImagesUseCase(imageUris, cols, rows)) {
-                    is CutSaveResult.Success -> CutSaveState.Success(result.savedCount)
-                    is CutSaveResult.CutFailed -> {
-                        logFailure("切图失败", result.failure, result.failure.cause)
-                        CutSaveState.Failure(CutSaveIssue.Cut(result.failure), result.savedCount)
+                _cutSaveState.value =
+                    when (val result = saveCutImagesUseCase(imageUris, cols, rows)) {
+                        is CutSaveResult.Success -> CutSaveState.Success(result.savedCount)
+                        is CutSaveResult.CutFailed -> {
+                            logFailure("切图失败", result.failure, result.failure.cause)
+                            CutSaveState.Failure(
+                                CutSaveIssue.Cut(result.failure),
+                                result.savedCount
+                            )
+                        }
+
+                        is CutSaveResult.SaveFailed -> {
+                            logFailure("保存切图失败", result.failure, result.failure.cause)
+                            CutSaveState.Failure(
+                                CutSaveIssue.Save(result.failure),
+                                result.savedCount
+                            )
+                        }
                     }
-                    is CutSaveResult.SaveFailed -> {
-                        logFailure("保存切图失败", result.failure, result.failure.cause)
-                        CutSaveState.Failure(CutSaveIssue.Save(result.failure), result.savedCount)
-                    }
-                }
             } catch (e: CancellationException) {
                 throw e
             } catch (failure: Exception) {

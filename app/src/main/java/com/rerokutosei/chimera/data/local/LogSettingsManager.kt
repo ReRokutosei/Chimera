@@ -29,7 +29,7 @@ class LogSettingsManager private constructor() {
         @SuppressLint("StaticFieldLeak")
         @Volatile
         private var INSTANCE: LogSettingsManager? = null
-        
+
         fun getInstance(): LogSettingsManager {
             return INSTANCE ?: synchronized(this) {
                 INSTANCE ?: LogSettingsManager().also { INSTANCE = it }

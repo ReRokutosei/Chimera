@@ -30,12 +30,12 @@ class MemoryLimitCalculator(
     private val logManager: LogManager,
     private val tag: String
 ) {
-    
+
     companion object {
         private const val DEFAULT_MEMORY_LIMIT_RATIO = 0.5 // 默认内存限制比例 50%
         private const val HIGH_MEMORY_LIMIT_RATIO = 0.8 // 高内存限制比例 80%
     }
-    
+
     /**
      * 根据设备内存和已读取的用户设置计算最大图片大小限制
      */
@@ -49,9 +49,12 @@ class MemoryLimitCalculator(
         } else {
             DEFAULT_MEMORY_LIMIT_RATIO
         }
-        
+
         val limit = (memoryInfo.totalMem * ratio).toLong()
-        logManager.debug(tag, "根据设备内存计算限制: ${limit / (1024 * 1024)}MB，总内存: ${memoryInfo.totalMem / (1024 * 1024 * 1024)}GB，阈值: ${ratio * 100}%")
+        logManager.debug(
+            tag,
+            "根据设备内存计算限制: ${limit / (1024 * 1024)}MB，总内存: ${memoryInfo.totalMem / (1024 * 1024 * 1024)}GB，阈值: ${ratio * 100}%"
+        )
         return limit
     }
 }

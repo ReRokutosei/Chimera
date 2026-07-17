@@ -55,7 +55,7 @@ class ImageRepository(private val context: Context) {
                     val options = BitmapFactory.Options().apply {
                         inJustDecodeBounds = true
                     }
-                    
+
                     try {
                         context.contentResolver.openInputStream(uri)?.use { inputStream ->
                             BitmapFactory.decodeStream(inputStream, null, options)
@@ -69,7 +69,7 @@ class ImageRepository(private val context: Context) {
                     } catch (e: IOException) {
                         logManager.error("ImageRepository", "读取图片时发生IO错误: ${e.message}", e)
                     }
-                    
+
                     ImageInfo(
                         uri = uri,
                         name = uri.lastPathSegment ?: "Unknown",

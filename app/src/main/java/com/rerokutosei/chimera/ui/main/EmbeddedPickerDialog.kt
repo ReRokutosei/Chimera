@@ -37,7 +37,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -83,7 +82,7 @@ fun EmbeddedPickerDialog(
             }
         }
     }
-    
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
@@ -111,17 +110,17 @@ private fun EmbeddedPickerContent(
 ) {
     val context = LocalContext.current
     val mediaRetriever = remember { AndroidMediaRetriever(context) }
-    val viewModel = remember { 
+    val viewModel = remember {
         MediaPickerViewModel(mediaRetriever).apply {
             init(AllowedMedia.Photos())
         }
     }
-    
+
     val albumsState by viewModel.albumsState.collectAsStateWithLifecycle()
     val mediaState by viewModel.mediaState.collectAsStateWithLifecycle()
     val isLoading = albumsState.isLoading || mediaState.isLoading
     val hasContent = albumsState.albums.isNotEmpty() || mediaState.media.isNotEmpty()
-    
+
     if (isLoading && !hasContent) {
         Box(
             modifier = Modifier

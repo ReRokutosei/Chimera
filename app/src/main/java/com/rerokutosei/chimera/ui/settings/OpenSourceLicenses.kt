@@ -75,7 +75,7 @@ fun OpenSourceLicensesDialog(
                 .withJson(aboutLibrariesJson)
                 .build()
                 .libraries
-                 .sortedBy { it.name.lowercase() }
+                .sortedBy { it.name.lowercase() }
         }.getOrElse { emptyList() }
     }
 
@@ -141,8 +141,8 @@ fun OpenSourceLibraryItem(library: Library) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { 
-                library.website?.let { 
+            .clickable {
+                library.website?.let {
                     uriHandler.openUri(it)
                 }
             }

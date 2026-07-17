@@ -38,7 +38,8 @@ import java.io.IOException
 class UserPreferencesManager private constructor(private val context: Context) {
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_preferences")
-    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE)
+    private val sharedPreferences: SharedPreferences =
+        context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE)
 
     companion object {
         @SuppressLint("StaticFieldLeak")
@@ -47,7 +48,9 @@ class UserPreferencesManager private constructor(private val context: Context) {
 
         fun getInstance(context: Context): UserPreferencesManager {
             return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: UserPreferencesManager(context.applicationContext).also { INSTANCE = it }
+                INSTANCE ?: UserPreferencesManager(context.applicationContext).also {
+                    INSTANCE = it
+                }
             }
         }
     }
@@ -81,7 +84,7 @@ class UserPreferencesManager private constructor(private val context: Context) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.FIRST_LAUNCH] = isFirstLaunch
         }
-        
+
         sharedPreferences.edit()
             .putBoolean("first_launch", isFirstLaunch)
             .apply()

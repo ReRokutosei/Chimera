@@ -18,8 +18,8 @@
 
 package com.rerokutosei.chimera.ui.main
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -93,19 +93,22 @@ fun MainScreen(
     // 获取设置项状态
     val imageSettingsManager = ImageSettingsManager.getInstance(context)
     val themeSettingsManager = ThemeRepository.getInstance(context)
-    val useSafPicker by imageSettingsManager.getUseSafPickerFlow().collectAsStateWithLifecycle(initialValue = false)
-    val useEmbeddedPicker by imageSettingsManager.getUseEmbeddedPickerFlow().collectAsStateWithLifecycle(initialValue = false)
-    val sliderThumbShape by imageSettingsManager.getSliderThumbShapeFlow().collectAsStateWithLifecycle(initialValue = 0)
+    val useSafPicker by imageSettingsManager.getUseSafPickerFlow()
+        .collectAsStateWithLifecycle(initialValue = false)
+    val useEmbeddedPicker by imageSettingsManager.getUseEmbeddedPickerFlow()
+        .collectAsStateWithLifecycle(initialValue = false)
+    val sliderThumbShape by imageSettingsManager.getSliderThumbShapeFlow()
+        .collectAsStateWithLifecycle(initialValue = 0)
     val imageListDirection by imageSettingsManager.getImageListDirectionFlow()
         .collectAsStateWithLifecycle(initialValue = ImageListDirectionMode.HORIZONTAL)
-    
+
     // 添加尺寸验证状态
     val resolutionValidationState by viewModel.resolutionValidationState.collectAsStateWithLifecycle()
     val showResolutionErrorToast by viewModel.showResolutionErrorToast.collectAsStateWithLifecycle()
-    
+
     // Embedded Picker状态
     var showEmbeddedPicker by remember { mutableStateOf(false) }
-    
+
     // 添加标识，用于跟踪当前使用的图片选择器类型
     var isUsingEmbeddedPicker by remember { mutableStateOf(false) }
     var sortMenuExpanded by remember { mutableStateOf(false) }
@@ -135,7 +138,7 @@ fun MainScreen(
                 showEmbeddedPicker = false
                 isUsingEmbeddedPicker = false
             },
-            onDismiss = { 
+            onDismiss = {
                 showEmbeddedPicker = false
                 isUsingEmbeddedPicker = false
             }
@@ -178,11 +181,11 @@ fun MainScreen(
                     isDataLoaded = isDataLoaded,
                     useSafPicker = useSafPicker,
                     useEmbeddedPicker = useEmbeddedPicker,
-                    onImagesSelected = { uris -> 
+                    onImagesSelected = { uris ->
                         // 对于SAF和PhotoPicker，仍然需要反转顺序
-                        viewModel.selectImages(uris, isFromEmbeddedPicker = false) 
+                        viewModel.selectImages(uris, isFromEmbeddedPicker = false)
                     },
-                    showEmbeddedPicker = { 
+                    showEmbeddedPicker = {
                         showEmbeddedPicker = true
                         isUsingEmbeddedPicker = true
                     }
@@ -234,7 +237,7 @@ fun MainScreen(
                         onToastShown = { viewModel.clearResolutionErrorToast() }
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // 按钮组
@@ -251,13 +254,13 @@ fun MainScreen(
                         isStartButtonEnabled = if (uiState.isCutMode) true else resolutionValidationState !is ResolutionValidationState.Invalid
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
             // ImageReorderCarousel 图片预览
             val imageUris = uiState.selectedImages.map { it.uri }
-            
+
             if (uiState.selectedImages.isNotEmpty()) {
                 item {
                     Row(
@@ -293,7 +296,10 @@ fun MainScreen(
                                             fontWeight = FontWeight.SemiBold
                                         )
                                         CustomSegmentedButtonRow(
-                                            options = listOf(ImageSortMode.TIME_ASC, ImageSortMode.TIME_DESC),
+                                            options = listOf(
+                                                ImageSortMode.TIME_ASC,
+                                                ImageSortMode.TIME_DESC
+                                            ),
                                             selectedOption = uiState.currentSortMode,
                                             onOptionSelected = {
                                                 sortMenuExpanded = false
@@ -315,7 +321,10 @@ fun MainScreen(
                                             fontWeight = FontWeight.SemiBold
                                         )
                                         CustomSegmentedButtonRow(
-                                            options = listOf(ImageSortMode.NAME_ASC, ImageSortMode.NAME_DESC),
+                                            options = listOf(
+                                                ImageSortMode.NAME_ASC,
+                                                ImageSortMode.NAME_DESC
+                                            ),
                                             selectedOption = uiState.currentSortMode,
                                             onOptionSelected = {
                                                 sortMenuExpanded = false
@@ -373,7 +382,8 @@ fun MainScreen(
                             .height(200.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        if (uiState.isImagePreviewLoading) { ContainedLoadingIndicator()
+                        if (uiState.isImagePreviewLoading) {
+                            ContainedLoadingIndicator()
                         } else {
                             Column(
                                 modifier = Modifier.fillMaxSize(),
@@ -381,7 +391,9 @@ fun MainScreen(
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = if (uiState.isCutMode) stringResource(R.string.please_select_cut_images) else stringResource(R.string.please_select_images),
+                                    text = if (uiState.isCutMode) stringResource(R.string.please_select_cut_images) else stringResource(
+                                        R.string.please_select_images
+                                    ),
                                     style = MaterialTheme.typography.bodyLarge,
                                     modifier = Modifier.alpha(if (isPageEntered && isDataLoaded) 1f else 0f)
                                 )

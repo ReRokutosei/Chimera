@@ -27,9 +27,9 @@ import android.provider.MediaStore
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.domain.error.SaveFailure
 import com.rerokutosei.chimera.utils.common.LogManager
-import com.rerokutosei.chimera.utils.stitch.layout.OutputImageFormat
 import com.rerokutosei.chimera.utils.performance.ProcessingPerformance
 import com.rerokutosei.chimera.utils.performance.ProcessingStage
+import com.rerokutosei.chimera.utils.stitch.layout.OutputImageFormat
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -55,7 +55,9 @@ class ImageSaver(private val context: Context) {
      */
     suspend fun loadOptions(): ImageSaveOptions = withContext(Dispatchers.IO) {
         ImageSaveOptions(
-            format = OutputImageFormat.fromCode(imageSettingsManager.getOutputImageFormatFlow().first()),
+            format = OutputImageFormat.fromCode(
+                imageSettingsManager.getOutputImageFormatFlow().first()
+            ),
             quality = imageSettingsManager.getOutputImageQualityFlow().first()
         )
     }
@@ -76,45 +78,58 @@ class ImageSaver(private val context: Context) {
         options: ImageSaveOptions,
         nameSuffix: String? = null
     ): ImageSaveResult = ProcessingPerformance.measureSuspend(ProcessingStage.ENCODE_SAVE) {
-      withContext(Dispatchers.IO) {
-        var insertedUri: Uri? = null
-        try {
-            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.getDefault()).format(Date())
-            val suffix = nameSuffix?.let { "_$it" }.orEmpty()
-            val fileName = "Chimera_${timeStamp}$suffix.${getImageExtension(options.format)}"
-            val contentValues = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-                put(MediaStore.MediaColumns.MIME_TYPE, getMimeType(options.format))
-                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Chimera")
-                put(MediaStore.MediaColumns.IS_PENDING, 1)
-            }
+        withContext(Dispatchers.IO) {
+            var insertedUri: Uri? = null
+            try {
+                val timeStamp =
+                    SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.getDefault()).format(Date())
+                val suffix = nameSuffix?.let { "_$it" }.orEmpty()
+                val fileName = "Chimera_${timeStamp}$suffix.${getImageExtension(options.format)}"
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                    put(MediaStore.MediaColumns.MIME_TYPE, getMimeType(options.format))
+                    put(
+                        MediaStore.MediaColumns.RELATIVE_PATH,
+                        Environment.DIRECTORY_PICTURES + "/Chimera"
+                    )
+                    put(MediaStore.MediaColumns.IS_PENDING, 1)
+                }
 
-            val resolver = context.contentResolver
-            val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-                ?: return@withContext ImageSaveResult.Failure(SaveFailure.StorageUnavailable)
-            insertedUri = uri
-            val outputStream = resolver.openOutputStream(uri)
-                ?: return@withContext failedSave(uri, SaveFailure.WriteFailed(IllegalStateException("MediaStore returned no output stream")))
+                val resolver = context.contentResolver
+                val uri =
+                    resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                        ?: return@withContext ImageSaveResult.Failure(SaveFailure.StorageUnavailable)
+                insertedUri = uri
+                val outputStream = resolver.openOutputStream(uri)
+                    ?: return@withContext failedSave(
+                        uri,
+                        SaveFailure.WriteFailed(IllegalStateException("MediaStore returned no output stream"))
+                    )
 
-            val encoded = outputStream.use { stream ->
-                bitmap.compress(options.format.toCompressFormat(), options.quality, stream)
-            }
-            if (!encoded) {
-                return@withContext failedSave(uri, SaveFailure.EncodingFailed)
-            }
+                val encoded = outputStream.use { stream ->
+                    bitmap.compress(options.format.toCompressFormat(), options.quality, stream)
+                }
+                if (!encoded) {
+                    return@withContext failedSave(uri, SaveFailure.EncodingFailed)
+                }
 
-            resolver.update(uri, ContentValues().apply { put(MediaStore.MediaColumns.IS_PENDING, 0) }, null, null)
-            logManager.debug(TAG, "Bitmap保存成功: $uri")
-            ImageSaveResult.Success(uri)
-        } catch (e: CancellationException) {
-            insertedUri?.let(::deleteQuietly)
-            throw e
-        } catch (e: Exception) {
-            logManager.error(TAG, "保存Bitmap到MediaStore失败", e)
-            insertedUri?.let(::deleteQuietly)
-            ImageSaveResult.Failure(SaveFailure.WriteFailed(e))
+                resolver.update(
+                    uri,
+                    ContentValues().apply { put(MediaStore.MediaColumns.IS_PENDING, 0) },
+                    null,
+                    null
+                )
+                logManager.debug(TAG, "Bitmap保存成功: $uri")
+                ImageSaveResult.Success(uri)
+            } catch (e: CancellationException) {
+                insertedUri?.let(::deleteQuietly)
+                throw e
+            } catch (e: Exception) {
+                logManager.error(TAG, "保存Bitmap到MediaStore失败", e)
+                insertedUri?.let(::deleteQuietly)
+                ImageSaveResult.Failure(SaveFailure.WriteFailed(e))
+            }
         }
-      }
     }
 
     private fun failedSave(uri: Uri, failure: SaveFailure): ImageSaveResult.Failure {

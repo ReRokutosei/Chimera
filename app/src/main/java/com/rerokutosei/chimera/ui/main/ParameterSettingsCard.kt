@@ -136,7 +136,7 @@ fun ParameterSettingsCard(
                             onUpdateOverlayMode(it)
                         }
                     },
-                    optionDisplayName = { 
+                    optionDisplayName = {
                         when (it) {
                             OverlayMode.DISABLED -> stringResource(R.string.overlay_disabled)
                             OverlayMode.ENABLED -> stringResource(R.string.overlay_enabled)
@@ -189,7 +189,7 @@ fun ParameterSettingsCard(
                         }
                     )
                 }
-                
+
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
@@ -281,9 +281,13 @@ fun ParameterSettingsCard(
                         )
                     )
                     var showColorPicker by remember { mutableStateOf(false) }
-                    val spacingColor = ColorUtils.parseColorSafely(uiState.imageSpacingColor, Color.Black)
+                    val spacingColor =
+                        ColorUtils.parseColorSafely(uiState.imageSpacingColor, Color.Black)
                     val isDark = shouldUseDarkTheme()
-                    val displayColor = if (isDark && spacingColor != Color.Black) ColorUtils.adjustColorForDarkTheme(spacingColor) else spacingColor
+                    val displayColor =
+                        if (isDark && spacingColor != Color.Black) ColorUtils.adjustColorForDarkTheme(
+                            spacingColor
+                        ) else spacingColor
                     Row(
                         modifier = Modifier.clickable { showColorPicker = true },
                         verticalAlignment = Alignment.CenterVertically
@@ -309,7 +313,7 @@ fun ParameterSettingsCard(
                         )
                     }
                 }
-                
+
                 // 图片间隔滑块
                 FancySlider(
                     value = uiState.imageSpacing.toFloat(),

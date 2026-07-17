@@ -53,13 +53,16 @@ fun AdaptiveImageDisplay(
     val memoryLimitCalculator = remember {
         MemoryLimitCalculator(context, logManager, "AdaptiveImageDisplay")
     }
-    
-    val largeImagePreviewer = remember { 
+
+    val largeImagePreviewer = remember {
         LargeImagePreviewer(context, memoryLimitCalculator, logManager)
     }
-    
+
     if (largeImagePreviewer.shouldUseTiledLoading(bitmap, highMemoryLimitEnabled)) {
-        logManager.debug("AdaptiveImageDisplay", "使用分块加载显示大图: ${bitmap.width}x${bitmap.height}")
+        logManager.debug(
+            "AdaptiveImageDisplay",
+            "使用分块加载显示大图: ${bitmap.width}x${bitmap.height}"
+        )
         AndroidView(
             factory = { ctx ->
                 SubsamplingScaleImageView(ctx).apply {
@@ -71,7 +74,10 @@ fun AdaptiveImageDisplay(
             modifier = modifier.fillMaxSize()
         )
     } else {
-        logManager.debug("AdaptiveImageDisplay", "使用普通方式显示图片: ${bitmap.width}x${bitmap.height}")
+        logManager.debug(
+            "AdaptiveImageDisplay",
+            "使用普通方式显示图片: ${bitmap.width}x${bitmap.height}"
+        )
         Image(
             bitmap = bitmap.asImageBitmap(),
             contentDescription = null,
@@ -92,6 +98,7 @@ private class LargeImagePreviewer(
     companion object {
         private const val TAG = "LargeImagePreviewer"
         private const val FORCE_TILED_LOADING_THRESHOLD = 50 * 1024 * 1024L // 50MB
+
         // 大图尺寸阈值
         private const val LARGE_IMAGE_DIMENSION_THRESHOLD = 3001
     }
@@ -102,13 +109,17 @@ private class LargeImagePreviewer(
     fun shouldUseTiledLoading(bitmap: Bitmap, highMemoryLimitEnabled: Boolean): Boolean {
         val maxDisplaySize = memoryLimitCalculator.calculateMaxImageSize(highMemoryLimitEnabled)
         val bitmapSize = bitmap.allocationByteCount.toLong()
-        
+
         // 果图像尺寸或体积过大(超过预设值)，不管什么情况，都使用分块加载方式显示
         val forceTiledLoading = bitmapSize > FORCE_TILED_LOADING_THRESHOLD
         // 如果图片任意一边大于3001px，也使用分块加载
-        val largeDimension = bitmap.width > LARGE_IMAGE_DIMENSION_THRESHOLD || bitmap.height > LARGE_IMAGE_DIMENSION_THRESHOLD
-        
-        logManager.debug(TAG, "检查图片是否需要分块加载: bitmapSize=${bitmapSize}, maxDisplaySize=${maxDisplaySize}, forceTiledLoading=$forceTiledLoading, largeDimension=$largeDimension")
+        val largeDimension =
+            bitmap.width > LARGE_IMAGE_DIMENSION_THRESHOLD || bitmap.height > LARGE_IMAGE_DIMENSION_THRESHOLD
+
+        logManager.debug(
+            TAG,
+            "检查图片是否需要分块加载: bitmapSize=${bitmapSize}, maxDisplaySize=${maxDisplaySize}, forceTiledLoading=$forceTiledLoading, largeDimension=$largeDimension"
+        )
         return bitmapSize > maxDisplaySize || forceTiledLoading || largeDimension
     }
 }

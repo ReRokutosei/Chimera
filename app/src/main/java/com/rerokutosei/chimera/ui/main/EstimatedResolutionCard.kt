@@ -54,7 +54,7 @@ fun EstimatedResolutionCard(
         message = showResolutionErrorToast,
         onShown = onToastShown
     )
-    
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -74,7 +74,7 @@ fun EstimatedResolutionCard(
                 is ResolutionValidationState.NotNeeded -> {
                     Spacer(modifier = Modifier.height(40.dp))
                 }
-                
+
                 is ResolutionValidationState.InProgress -> {
                     CircularProgressIndicator(
                         modifier = Modifier.height(20.dp),
@@ -100,7 +100,11 @@ fun EstimatedResolutionCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = stringResource(R.string.estimated_resolution, targetState.width, targetState.height),
+                                text = stringResource(
+                                    R.string.estimated_resolution,
+                                    targetState.width,
+                                    targetState.height
+                                ),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = MaterialTheme.colorScheme.onPrimary
                             )
@@ -125,7 +129,11 @@ fun EstimatedResolutionCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = stringResource(R.string.estimated_resolution, targetState.width, targetState.height),
+                                text = stringResource(
+                                    R.string.estimated_resolution,
+                                    targetState.width,
+                                    targetState.height
+                                ),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = MaterialTheme.colorScheme.onError
                             )

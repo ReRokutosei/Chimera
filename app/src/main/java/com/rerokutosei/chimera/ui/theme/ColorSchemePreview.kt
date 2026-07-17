@@ -26,14 +26,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.ColorLens
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -92,7 +92,7 @@ fun ColorSchemePreview(
                 isDarkTheme = isDarkTheme
             )
         }
-        
+
         // 对于色彩选择器入口，显示调色盘图标
         if (isColorPicker) {
             IconWithBackground(
@@ -125,7 +125,11 @@ private fun DrawScope.drawColorScheme(
 ) {
     when {
         colorScheme.isDynamic -> drawDynamicColorScheme(dynamicColorScheme, canvasSize, isDarkTheme)
-        colorScheme.name == "custom" && colorScheme.primary == Color.Unspecified -> rainbowColors(canvasSize, isDarkTheme)
+        colorScheme.name == "custom" && colorScheme.primary == Color.Unspecified -> rainbowColors(
+            canvasSize,
+            isDarkTheme
+        )
+
         else -> drawRegularColorScheme(colorScheme, canvasSize)
     }
 }
@@ -181,8 +185,10 @@ fun RainbowColorCircle(
     isDark: Boolean = isSystemInDarkTheme(),
     modifier: Modifier = Modifier
 ) {
-    val containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
-    val contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+    val containerColor =
+        if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
+    val contentColor =
+        if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
     val borderColor = MaterialTheme.colorScheme.outline
 
     OutlinedButton(
@@ -218,17 +224,17 @@ private fun DrawScope.rainbowColors(
         Color(0xFF0000FF), // 蓝色
         Color(0xFF8B00FF)  // 紫色
     )
-    
+
     // 如果是深色主题，调整颜色
     val colors = if (isDarkTheme) {
         originalColors.map { ColorUtils.adjustColorForDarkTheme(it) }
     } else {
         originalColors
     }
-    
+
     val anglePerSection = 360f / colors.size
     var currentAngle = 0f
-    
+
     // 绘制前6个扇形
     for (i in 0..5) {
         drawArc(
@@ -241,7 +247,7 @@ private fun DrawScope.rainbowColors(
         )
         currentAngle += anglePerSection
     }
-    
+
     // 使用剩余的角度绘制最后一个扇形
     drawArc(
         color = colors[6],
@@ -315,7 +321,7 @@ private fun IconWithBackground(
     } else {
         backgroundColor
     }
-    
+
     Box(
         modifier = modifier.size(20.dp),
         contentAlignment = Alignment.Center

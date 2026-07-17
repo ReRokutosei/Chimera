@@ -39,7 +39,10 @@ class StitchLayoutCalculatorTest {
             spacing = 10
         )
 
-        assertEquals(listOf(ImageDimensions(50, 100), ImageDimensions(50, 100)), layout.scaledImages)
+        assertEquals(
+            listOf(ImageDimensions(50, 100), ImageDimensions(50, 100)),
+            layout.scaledImages
+        )
         assertEquals(50L, layout.width)
         assertEquals(210L, layout.height)
     }
@@ -52,7 +55,10 @@ class StitchLayoutCalculatorTest {
             scaleMode = LayoutScaleMode.MAX
         )
 
-        assertEquals(listOf(ImageDimensions(200, 100), ImageDimensions(200, 100)), layout.scaledImages)
+        assertEquals(
+            listOf(ImageDimensions(200, 100), ImageDimensions(200, 100)),
+            layout.scaledImages
+        )
         assertEquals(400L, layout.width)
         assertEquals(100L, layout.height)
     }
@@ -79,7 +85,12 @@ class StitchLayoutCalculatorTest {
         val valid = StitchLayout(65_535, 1, emptyList())
         val invalid = StitchLayout(65_536, 1, emptyList())
 
-        assertTrue(StitchLayoutCalculator.validateFormat(valid, OutputImageFormat.JPEG) is FormatValidation.Valid)
+        assertTrue(
+            StitchLayoutCalculator.validateFormat(
+                valid,
+                OutputImageFormat.JPEG
+            ) is FormatValidation.Valid
+        )
         val result = StitchLayoutCalculator.validateFormat(invalid, OutputImageFormat.JPEG)
         assertTrue(result is FormatValidation.ExceedsLimit)
         assertEquals(65_535L, (result as FormatValidation.ExceedsLimit).limit)

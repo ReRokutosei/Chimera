@@ -75,7 +75,11 @@ object StitchLayoutCalculator {
         val scaledImages = scale(images, options.orientation, options.scaleMode)
         return when (options.mode) {
             LayoutMode.DIRECT -> calculateDirect(scaledImages, options.orientation, options.spacing)
-            LayoutMode.OVERLAY -> calculateOverlay(scaledImages, options.orientation, options.overlayRatio)
+            LayoutMode.OVERLAY -> calculateOverlay(
+                scaledImages,
+                options.orientation,
+                options.overlayRatio
+            )
         }
     }
 
@@ -92,6 +96,7 @@ object StitchLayoutCalculator {
                 LayoutScaleMode.MAX -> images.maxOf { it.width }
                 LayoutScaleMode.NONE -> return images
             }
+
             LayoutOrientation.HORIZONTAL -> when (scaleMode) {
                 LayoutScaleMode.MIN -> images.minOf { it.height }
                 LayoutScaleMode.MAX -> images.maxOf { it.height }
@@ -104,12 +109,15 @@ object StitchLayoutCalculator {
                 LayoutOrientation.VERTICAL -> {
                     if (image.width == target) image else ImageDimensions(
                         width = target,
-                        height = (image.height * (target.toDouble() / image.width)).toInt().coerceAtLeast(1)
+                        height = (image.height * (target.toDouble() / image.width)).toInt()
+                            .coerceAtLeast(1)
                     )
                 }
+
                 LayoutOrientation.HORIZONTAL -> {
                     if (image.height == target) image else ImageDimensions(
-                        width = (image.width * (target.toDouble() / image.height)).toInt().coerceAtLeast(1),
+                        width = (image.width * (target.toDouble() / image.height)).toInt()
+                            .coerceAtLeast(1),
                         height = target
                     )
                 }
@@ -118,7 +126,8 @@ object StitchLayoutCalculator {
     }
 
     fun validateFormat(layout: StitchLayout, format: OutputImageFormat): FormatValidation {
-        val limit = format.maxDimension ?: return FormatValidation.Valid(layout.width, layout.height)
+        val limit =
+            format.maxDimension ?: return FormatValidation.Valid(layout.width, layout.height)
         return if (layout.width > limit || layout.height > limit) {
             FormatValidation.ExceedsLimit(layout.width, layout.height, format, limit)
         } else {
@@ -138,6 +147,7 @@ object StitchLayoutCalculator {
                 height = images.sumOf { it.height.toLong() } + spacingTotal,
                 scaledImages = images
             )
+
             LayoutOrientation.HORIZONTAL -> StitchLayout(
                 width = images.sumOf { it.width.toLong() } + spacingTotal,
                 height = images.maxOf { it.height }.toLong(),
@@ -163,6 +173,7 @@ object StitchLayoutCalculator {
                     overlaySteps = steps
                 )
             }
+
             LayoutOrientation.HORIZONTAL -> {
                 val firstMajor = images.first().width
                 val preferredStep = (firstMajor * overlayRatio / 100).coerceAtLeast(1)

@@ -33,18 +33,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
-    
+
     private val themeSettingsManager = ThemeRepository.getInstance(application)
     private val imageSettingsManager = ImageSettingsManager.getInstance(application)
     private val stitchSettingsManager = StitchSettingsManager.getInstance(application)
 
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
-    
+
     init {
         loadSettings()
     }
-    
+
     private fun loadSettings() {
         viewModelScope.launch {
             kotlinx.coroutines.coroutineScope {
@@ -53,29 +53,33 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                         _uiState.value = _uiState.value.copy(isDarkTheme = isDarkTheme)
                     }
                 }
-                
+
                 launch {
                     themeSettingsManager.getDynamicColorFlow().collect { isDynamicColor ->
                         _uiState.value = _uiState.value.copy(isDynamicColor = isDynamicColor)
                     }
                 }
-                
+
                 launch {
                     stitchSettingsManager.getOverlayAreaFlow().collect { overlayArea ->
                         _uiState.value = _uiState.value.copy(overlayArea = overlayArea)
                     }
                 }
-                
+
                 launch {
-                    imageSettingsManager.getDeleteOriginalImageFlow().collect { deleteOriginalImage ->
-                        _uiState.value = _uiState.value.copy(deleteOriginalImage = deleteOriginalImage)
-                    }
+                    imageSettingsManager.getDeleteOriginalImageFlow()
+                        .collect { deleteOriginalImage ->
+                            _uiState.value =
+                                _uiState.value.copy(deleteOriginalImage = deleteOriginalImage)
+                        }
                 }
-                
+
                 launch {
-                    stitchSettingsManager.getMultiThreadEnabledFlow().collect { multiThreadEnabled ->
-                        _uiState.value = _uiState.value.copy(multiThreadEnabled = multiThreadEnabled)
-                    }
+                    stitchSettingsManager.getMultiThreadEnabledFlow()
+                        .collect { multiThreadEnabled ->
+                            _uiState.value =
+                                _uiState.value.copy(multiThreadEnabled = multiThreadEnabled)
+                        }
                 }
 
                 launch {
@@ -86,7 +90,8 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
                 launch {
                     imageSettingsManager.getOutputImageQualityFlow().collect { outputImageQuality ->
-                        _uiState.value = _uiState.value.copy(outputImageQuality = outputImageQuality)
+                        _uiState.value =
+                            _uiState.value.copy(outputImageQuality = outputImageQuality)
                     }
                 }
 
@@ -96,43 +101,50 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                     }
                 }
 
-                
+
                 launch {
                     imageSettingsManager.getAutoClearImagesFlow().collect { autoClearImages ->
                         _uiState.value = _uiState.value.copy(autoClearImages = autoClearImages)
                     }
                 }
-                
+
                 launch {
                     themeSettingsManager.getThemeModeFlow().collect { themeMode ->
                         _uiState.value = _uiState.value.copy(themeMode = themeMode)
                     }
                 }
-                
+
                 launch {
-                    themeSettingsManager.getSelectedColorSchemeFlow().collect { selectedColorScheme ->
-                        _uiState.value = _uiState.value.copy(selectedColorScheme = selectedColorScheme)
-                    }
+                    themeSettingsManager.getSelectedColorSchemeFlow()
+                        .collect { selectedColorScheme ->
+                            _uiState.value =
+                                _uiState.value.copy(selectedColorScheme = selectedColorScheme)
+                        }
                 }
-                
+
                 launch {
                     themeSettingsManager.getCustomPrimaryColorFlow().collect { customPrimaryColor ->
-                        _uiState.value = _uiState.value.copy(customPrimaryColor = customPrimaryColor)
+                        _uiState.value =
+                            _uiState.value.copy(customPrimaryColor = customPrimaryColor)
                     }
                 }
-                
+
                 launch {
-                    themeSettingsManager.getCustomSecondaryColorFlow().collect { customSecondaryColor ->
-                        _uiState.value = _uiState.value.copy(customSecondaryColor = customSecondaryColor)
-                    }
+                    themeSettingsManager.getCustomSecondaryColorFlow()
+                        .collect { customSecondaryColor ->
+                            _uiState.value =
+                                _uiState.value.copy(customSecondaryColor = customSecondaryColor)
+                        }
                 }
-                
+
                 launch {
-                    themeSettingsManager.getCustomTertiaryColorFlow().collect { customTertiaryColor ->
-                        _uiState.value = _uiState.value.copy(customTertiaryColor = customTertiaryColor)
-                    }
+                    themeSettingsManager.getCustomTertiaryColorFlow()
+                        .collect { customTertiaryColor ->
+                            _uiState.value =
+                                _uiState.value.copy(customTertiaryColor = customTertiaryColor)
+                        }
                 }
-                
+
                 launch {
                     imageSettingsManager.getHighMemoryLimitFlow().collect { highMemoryLimit ->
                         _uiState.value = _uiState.value.copy(highMemoryLimit = highMemoryLimit)
@@ -144,13 +156,13 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                         _uiState.value = _uiState.value.copy(useSafPicker = useSafPicker)
                     }
                 }
-                
+
                 launch {
                     imageSettingsManager.getUseEmbeddedPickerFlow().collect { useEmbeddedPicker ->
                         _uiState.value = _uiState.value.copy(useEmbeddedPicker = useEmbeddedPicker)
                     }
                 }
-                
+
                 launch {
                     imageSettingsManager.getSliderThumbShapeFlow().collect { sliderThumbShape ->
                         _uiState.value = _uiState.value.copy(sliderThumbShape = sliderThumbShape)
@@ -159,7 +171,8 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
                 launch {
                     imageSettingsManager.getImageListDirectionFlow().collect { imageListDirection ->
-                        _uiState.value = _uiState.value.copy(imageListDirection = imageListDirection)
+                        _uiState.value =
+                            _uiState.value.copy(imageListDirection = imageListDirection)
                     }
                 }
 
@@ -213,31 +226,31 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             themeSettingsManager.setThemeMode(mode)
         }
     }
-    
+
     fun setSelectedColorScheme(schemeName: String) {
         viewModelScope.launch {
             themeSettingsManager.setSelectedColorScheme(schemeName)
         }
     }
-    
+
     fun setCustomPrimaryColor(color: String) {
         viewModelScope.launch {
             themeSettingsManager.setCustomPrimaryColor(color)
         }
     }
-    
+
     fun setCustomSecondaryColor(color: String) {
         viewModelScope.launch {
             themeSettingsManager.setCustomSecondaryColor(color)
         }
     }
-    
+
     fun setCustomTertiaryColor(color: String) {
         viewModelScope.launch {
             themeSettingsManager.setCustomTertiaryColor(color)
         }
     }
-    
+
     fun setHighMemoryLimit(enabled: Boolean) {
         viewModelScope.launch {
             imageSettingsManager.setHighMemoryLimit(enabled)
@@ -249,23 +262,23 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         if (enabled) {
             setUseEmbeddedPicker(false)
         }
-        
+
         viewModelScope.launch {
             imageSettingsManager.setUseSafPicker(enabled)
         }
     }
-    
+
     fun setUseEmbeddedPicker(enabled: Boolean) {
         // 启用Embedded Picker时禁用SAF Picker
         if (enabled) {
             setUseSafPicker(false)
         }
-        
+
         viewModelScope.launch {
             imageSettingsManager.setUseEmbeddedPicker(enabled)
         }
     }
-    
+
     /**
      * 检查Embedded Picker所需的权限是否已授予
      */
@@ -283,7 +296,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             ) == android.content.pm.PackageManager.PERMISSION_GRANTED
         }
     }
-    
+
     fun setSliderThumbShape(shape: Int) {
         viewModelScope.launch {
             imageSettingsManager.setSliderThumbShape(shape)

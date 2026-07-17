@@ -78,8 +78,15 @@ class EstimateResolution(private val bitmapLoader: BitmapLoader) {
                 height = height,
                 scaledImages = emptyList()
             )
-            return when (val validation = StitchLayoutCalculator.validateFormat(layout, OutputImageFormat.fromCode(outputFormat))) {
-                is FormatValidation.Valid -> ResolutionValidationResult.Valid(validation.width, validation.height)
+            return when (val validation = StitchLayoutCalculator.validateFormat(
+                layout,
+                OutputImageFormat.fromCode(outputFormat)
+            )) {
+                is FormatValidation.Valid -> ResolutionValidationResult.Valid(
+                    validation.width,
+                    validation.height
+                )
+
                 is FormatValidation.ExceedsLimit -> ResolutionValidationResult.Invalid(
                     width = validation.width,
                     height = validation.height,
@@ -118,7 +125,14 @@ class EstimateResolution(private val bitmapLoader: BitmapLoader) {
         imageSpacing: Int
     ): Pair<Long, Long> {
         // 生成缓存键
-        val cacheKey = generateCacheKey(imageUris, stitchMode, widthScale, overlayMode, overlayArea, imageSpacing)
+        val cacheKey = generateCacheKey(
+            imageUris,
+            stitchMode,
+            widthScale,
+            overlayMode,
+            overlayArea,
+            imageSpacing
+        )
 
         // 尝试从缓存中获取结果
         resolutionCache.get(cacheKey)?.let {
@@ -173,6 +187,9 @@ private fun WidthScale.toLayoutScaleMode(): LayoutScaleMode = when (this) {
 sealed class ResolutionValidationResult {
     object NotNeeded : ResolutionValidationResult()
     data class Valid(val width: Long, val height: Long) : ResolutionValidationResult()
-    data class Invalid(val width: Long, val height: Long, val formatName: String, val limit: Int) : ResolutionValidationResult()
-    data class Unavailable(val failure: StitchFailure.MetadataUnavailable) : ResolutionValidationResult()
+    data class Invalid(val width: Long, val height: Long, val formatName: String, val limit: Int) :
+        ResolutionValidationResult()
+
+    data class Unavailable(val failure: StitchFailure.MetadataUnavailable) :
+        ResolutionValidationResult()
 }

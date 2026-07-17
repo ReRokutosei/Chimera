@@ -48,7 +48,7 @@ class ToastUtil {
 @Composable
 fun ShowToast(message: String?, onShown: () -> Unit = {}) {
     val context = LocalContext.current
-    
+
     LaunchedEffect(message) {
         if (message != null) {
             ToastUtil.showShort(context, message)

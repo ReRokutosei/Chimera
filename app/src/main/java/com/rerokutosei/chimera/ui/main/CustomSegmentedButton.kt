@@ -70,7 +70,8 @@ fun <T> CustomSegmentedButtonRow(
                     text = optionDisplayName(option),
                     style = MaterialTheme.typography.labelLarge.copy(
                         letterSpacing = (-0.5).sp,
-                        fontSize = MaterialTheme.typography.labelLarge.fontSize),
+                        fontSize = MaterialTheme.typography.labelLarge.fontSize
+                    ),
                     maxLines = 1
                 )
             }

@@ -21,7 +21,10 @@ class SaveCutImagesUseCase(
         rows: Int
     ): CutSaveResult = withContext(Dispatchers.IO) {
         if (imageUris.isEmpty()) return@withContext CutSaveResult.CutFailed(CutFailure.NoImages, 0)
-        if (cols <= 0 || rows <= 0) return@withContext CutSaveResult.CutFailed(CutFailure.InvalidGrid, 0)
+        if (cols <= 0 || rows <= 0) return@withContext CutSaveResult.CutFailed(
+            CutFailure.InvalidGrid,
+            0
+        )
 
         val options = try {
             imageSaver.loadOptions()
@@ -45,9 +48,17 @@ class SaveCutImagesUseCase(
                         } catch (e: CancellationException) {
                             throw e
                         } catch (failure: OutOfMemoryError) {
-                            return@withContext CutSaveResult.CutFailed(CutFailure.SplitFailed(failure), savedCount)
+                            return@withContext CutSaveResult.CutFailed(
+                                CutFailure.SplitFailed(
+                                    failure
+                                ), savedCount
+                            )
                         } catch (failure: Exception) {
-                            return@withContext CutSaveResult.CutFailed(CutFailure.SplitFailed(failure), savedCount)
+                            return@withContext CutSaveResult.CutFailed(
+                                CutFailure.SplitFailed(
+                                    failure
+                                ), savedCount
+                            )
                         }
 
                         val saveResult = try {
@@ -63,7 +74,10 @@ class SaveCutImagesUseCase(
                         when (saveResult) {
                             is ImageSaveResult.Success -> savedCount++
                             is ImageSaveResult.Failure -> {
-                                return@withContext CutSaveResult.SaveFailed(saveResult.failure, savedCount)
+                                return@withContext CutSaveResult.SaveFailed(
+                                    saveResult.failure,
+                                    savedCount
+                                )
                             }
                         }
                     }

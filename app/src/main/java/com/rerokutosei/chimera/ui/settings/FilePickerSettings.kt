@@ -56,7 +56,7 @@ fun FilePickerSettingsSection(
 ) {
     val context = LocalContext.current
     val permissionDeniedMessage = stringResource(R.string.storage_permission_required)
-    
+
     // 为 Embedded Picker 权限请求创建 launcher
     val embeddedPickerPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -68,7 +68,7 @@ fun FilePickerSettingsSection(
             Toast.makeText(context, permissionDeniedMessage, Toast.LENGTH_SHORT).show()
         }
     }
-    
+
     // 文件选择设置
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -229,7 +229,7 @@ fun FilePickerSettingsSection(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { 
+                .clickable {
                     if (!uiState.useEmbeddedPicker) {
                         if (viewModel.checkEmbeddedPickerPermissions()) {
                             viewModel.setUseEmbeddedPicker(true)

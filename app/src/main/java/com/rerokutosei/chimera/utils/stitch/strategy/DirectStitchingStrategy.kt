@@ -25,12 +25,12 @@ import android.graphics.Color
 import android.graphics.Paint
 import androidx.core.graphics.createBitmap
 import com.rerokutosei.chimera.domain.error.StitchFailure
+import com.rerokutosei.chimera.utils.performance.ProcessingPerformance
+import com.rerokutosei.chimera.utils.performance.ProcessingStage
 import com.rerokutosei.chimera.utils.stitch.StitchOrientation
 import com.rerokutosei.chimera.utils.stitch.StitchResult
 import com.rerokutosei.chimera.utils.stitch.layout.LayoutMode
 import com.rerokutosei.chimera.utils.stitch.layout.OutputImageFormat
-import com.rerokutosei.chimera.utils.performance.ProcessingPerformance
-import com.rerokutosei.chimera.utils.performance.ProcessingStage
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -42,15 +42,19 @@ class DirectStitchingStrategy(
     private val isVertical: Boolean,
     context: Context
 ) : BaseStitchingStrategy(context, TAG) {
-    
+
     companion object {
         private const val TAG = "DirectStitchingStrategy"
     }
-    
-    override suspend fun stitch(bitmaps: List<Bitmap>, options: StitchingOptions): StitchResult {
-        logManager.debug(TAG, "开始拼接，图片数量: ${bitmaps.size}，方向: ${if (isVertical) "垂直" else "水平"}，宽度缩放: ${options.widthScale}")
 
-        val orientation = if (isVertical) StitchOrientation.VERTICAL else StitchOrientation.HORIZONTAL
+    override suspend fun stitch(bitmaps: List<Bitmap>, options: StitchingOptions): StitchResult {
+        logManager.debug(
+            TAG,
+            "开始拼接，图片数量: ${bitmaps.size}，方向: ${if (isVertical) "垂直" else "水平"}，宽度缩放: ${options.widthScale}"
+        )
+
+        val orientation =
+            if (isVertical) StitchOrientation.VERTICAL else StitchOrientation.HORIZONTAL
         var processedBitmaps = bitmaps
         var resultBitmap: Bitmap? = null
         return try {
@@ -99,7 +103,7 @@ class DirectStitchingStrategy(
             )
         }
     }
-    
+
     /**
      * 垂直拼接图片
      * @param bitmaps 要拼接的位图列表
@@ -114,7 +118,14 @@ class DirectStitchingStrategy(
         outputFormat: OutputImageFormat,
         highMemoryLimitEnabled: Boolean
     ): StitchResult {
-        return stitchImages(bitmaps, spacing, true, spacingColor, outputFormat, highMemoryLimitEnabled)
+        return stitchImages(
+            bitmaps,
+            spacing,
+            true,
+            spacingColor,
+            outputFormat,
+            highMemoryLimitEnabled
+        )
     }
 
     /**
@@ -131,7 +142,14 @@ class DirectStitchingStrategy(
         outputFormat: OutputImageFormat,
         highMemoryLimitEnabled: Boolean
     ): StitchResult {
-        return stitchImages(bitmaps, spacing, false, spacingColor, outputFormat, highMemoryLimitEnabled)
+        return stitchImages(
+            bitmaps,
+            spacing,
+            false,
+            spacingColor,
+            outputFormat,
+            highMemoryLimitEnabled
+        )
     }
 
     /**
@@ -150,21 +168,31 @@ class DirectStitchingStrategy(
         outputFormat: OutputImageFormat,
         highMemoryLimitEnabled: Boolean
     ): StitchResult {
-        logManager.debug(TAG, "开始${if (isVertical) "垂直" else "水平"}拼接，图片数量: ${bitmaps.size}，间隔: $spacing")
-        
-        val orientation = if (isVertical) StitchOrientation.VERTICAL else StitchOrientation.HORIZONTAL
+        logManager.debug(
+            TAG,
+            "开始${if (isVertical) "垂直" else "水平"}拼接，图片数量: ${bitmaps.size}，间隔: $spacing"
+        )
+
+        val orientation =
+            if (isVertical) StitchOrientation.VERTICAL else StitchOrientation.HORIZONTAL
         val layout = calculateLayout(bitmaps, orientation, LayoutMode.DIRECT, spacing = spacing)
         val totalMajorLong = if (isVertical) layout.height else layout.width
         val totalMinorLong = if (isVertical) layout.width else layout.height
 
-        logManager.debug(TAG, "${if (isVertical) "垂直" else "水平"}拼接：总${if (isVertical) "高度" else "宽度"}=$totalMajorLong, 最大${if (isVertical) "宽度" else "高度"}=$totalMinorLong")
+        logManager.debug(
+            TAG,
+            "${if (isVertical) "垂直" else "水平"}拼接：总${if (isVertical) "高度" else "宽度"}=$totalMajorLong, 最大${if (isVertical) "宽度" else "高度"}=$totalMinorLong"
+        )
 
         // 检查内存限制
         val estimatedSize = totalMajorLong * totalMinorLong * 4 // ARGB_8888
         val maxImageSize = memoryLimitCalculator.calculateMaxImageSize(highMemoryLimitEnabled)
-        
+
         if (estimatedSize > maxImageSize || totalMajorLong > Int.MAX_VALUE || totalMinorLong > Int.MAX_VALUE) {
-            logManager.error(TAG, "拼接结果图片过大: ${estimatedSize / (1024 * 1024)}MB，超过限制: ${maxImageSize / (1024 * 1024)}MB")
+            logManager.error(
+                TAG,
+                "拼接结果图片过大: ${estimatedSize / (1024 * 1024)}MB，超过限制: ${maxImageSize / (1024 * 1024)}MB"
+            )
             return StitchResult.ErrorResult(
                 StitchFailure.ResultTooLarge(
                     width = layout.width,
@@ -178,7 +206,10 @@ class DirectStitchingStrategy(
         val totalMajor = totalMajorLong.toInt()
         val totalMinor = totalMinorLong.toInt()
 
-        logManager.debug(TAG, "创建结果位图：${if (isVertical) totalMinor else totalMajor}x${if (isVertical) totalMajor else totalMinor}")
+        logManager.debug(
+            TAG,
+            "创建结果位图：${if (isVertical) totalMinor else totalMajor}x${if (isVertical) totalMajor else totalMinor}"
+        )
         // 根据用户设置的输出图片格式和图片透明度需求选择合适的格式
         // 如果输出格式为PNG或WEBP，且图片中至少有一张使用了ARGB_8888格式时，结果图片才会使用ARGB_8888格式
         // 如果输出格式为JPEG，一律不使用ARGB_8888格式
@@ -187,7 +218,7 @@ class DirectStitchingStrategy(
             (outputFormat == OutputImageFormat.PNG || outputFormat == OutputImageFormat.WEBP) && hasAlpha -> Bitmap.Config.ARGB_8888
             else -> Bitmap.Config.RGB_565
         }
-            
+
         val result = ProcessingPerformance.measure(ProcessingStage.ALLOCATION) {
             if (isVertical) {
                 createBitmap(totalMinor, totalMajor, config)
@@ -212,51 +243,66 @@ class DirectStitchingStrategy(
             }
 
             ProcessingPerformance.measure(ProcessingStage.DRAW) {
-              try {
-                var currentMajor = 0
-                for ((index, bitmap) in bitmaps.withIndex()) {
-                    val (x, y) = if (isVertical) {
-                        val xPos = (totalMinor - bitmap.width) / 2
-                        xPos to currentMajor
-                    } else {
-                        val yPos = (totalMinor - bitmap.height) / 2
-                        currentMajor to yPos
-                    }
-                    
-                    logManager.debug(TAG) {
-                        "绘制图片 $index：位置($x, $y), 尺寸(${bitmap.width}x${bitmap.height})"
-                    }
-                    canvas.drawBitmap(bitmap, x.toFloat(), y.toFloat(), paint)
-                    
-                    // 如果不是最后一张图片且有间隔，则绘制黑色间隔
-                    if (index < bitmaps.size - 1 && spacing > 0) {
-                        if (isVertical) {
-                            currentMajor += bitmap.height
-                            logManager.debug(TAG) {
-                                "绘制间隔：位置(0, $currentMajor), 尺寸(${totalMinor}x${spacing})"
-                            }
-                            canvas.drawRect(0f, currentMajor.toFloat(), totalMinor.toFloat(), (currentMajor + spacing).toFloat(), spacingPaint)
-                            currentMajor += spacing
+                try {
+                    var currentMajor = 0
+                    for ((index, bitmap) in bitmaps.withIndex()) {
+                        val (x, y) = if (isVertical) {
+                            val xPos = (totalMinor - bitmap.width) / 2
+                            xPos to currentMajor
                         } else {
-                            currentMajor += bitmap.width
-                            logManager.debug(TAG) {
-                                "绘制间隔：位置($currentMajor, 0), 尺寸(${spacing}x${totalMinor})"
-                            }
-                            canvas.drawRect(currentMajor.toFloat(), 0f, (currentMajor + spacing).toFloat(), totalMinor.toFloat(), spacingPaint)
-                            currentMajor += spacing
+                            val yPos = (totalMinor - bitmap.height) / 2
+                            currentMajor to yPos
                         }
-                    } else {
-                        currentMajor += if (isVertical) bitmap.height else bitmap.width
+
+                        logManager.debug(TAG) {
+                            "绘制图片 $index：位置($x, $y), 尺寸(${bitmap.width}x${bitmap.height})"
+                        }
+                        canvas.drawBitmap(bitmap, x.toFloat(), y.toFloat(), paint)
+
+                        // 如果不是最后一张图片且有间隔，则绘制黑色间隔
+                        if (index < bitmaps.size - 1 && spacing > 0) {
+                            if (isVertical) {
+                                currentMajor += bitmap.height
+                                logManager.debug(TAG) {
+                                    "绘制间隔：位置(0, $currentMajor), 尺寸(${totalMinor}x${spacing})"
+                                }
+                                canvas.drawRect(
+                                    0f,
+                                    currentMajor.toFloat(),
+                                    totalMinor.toFloat(),
+                                    (currentMajor + spacing).toFloat(),
+                                    spacingPaint
+                                )
+                                currentMajor += spacing
+                            } else {
+                                currentMajor += bitmap.width
+                                logManager.debug(TAG) {
+                                    "绘制间隔：位置($currentMajor, 0), 尺寸(${spacing}x${totalMinor})"
+                                }
+                                canvas.drawRect(
+                                    currentMajor.toFloat(),
+                                    0f,
+                                    (currentMajor + spacing).toFloat(),
+                                    totalMinor.toFloat(),
+                                    spacingPaint
+                                )
+                                currentMajor += spacing
+                            }
+                        } else {
+                            currentMajor += if (isVertical) bitmap.height else bitmap.width
+                        }
                     }
+                } finally {
+                    canvas.setBitmap(null)
+                    paint.reset()
+                    spacingPaint.reset()
                 }
-              } finally {
-                  canvas.setBitmap(null)
-                  paint.reset()
-                  spacingPaint.reset()
-              }
             }
 
-            logManager.debug(TAG, "${if (isVertical) "垂直" else "水平"}拼接完成，结果位图尺寸：${result.width}x${result.height}")
+            logManager.debug(
+                TAG,
+                "${if (isVertical) "垂直" else "水平"}拼接完成，结果位图尺寸：${result.width}x${result.height}"
+            )
             logManager.debug(TAG, "结果位图内存大小: ${result.allocationByteCount} bytes")
             StitchResult.BitmapResult(result)
         } catch (failure: Throwable) {

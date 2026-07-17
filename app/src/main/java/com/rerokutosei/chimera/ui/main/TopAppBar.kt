@@ -29,8 +29,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Help
@@ -82,7 +82,7 @@ fun TopAppBar(
     val selectedColorScheme by themeRepository.getSelectedColorSchemeFlow()
         .collectAsStateWithLifecycle(initialValue = "bocchi")
     val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5
-    
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End,
@@ -128,11 +128,12 @@ fun TopAppBar(
                             baseColors
                         }
                     }
+
                     else -> {
                         List(4) { MaterialTheme.colorScheme.primary }
                     }
                 }
-                
+
                 circleColors.forEach { color ->
                     Canvas(
                         modifier = Modifier.size(20.dp) // 整个圆的大小
@@ -186,8 +187,8 @@ fun TopAppBar(
             }
         }
 
-        Row (
-            horizontalArrangement = Arrangement.spacedBy(0.dp) 
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(0.dp)
         ) {
             IconButton(onClick = { showHelpSheet = true }) {
                 Icon(
@@ -203,7 +204,7 @@ fun TopAppBar(
             }
         }
     }
-    
+
     if (showHelpSheet) {
         HelpBottomSheet(
             onDismiss = { showHelpSheet = false }

@@ -42,7 +42,7 @@ import kotlin.concurrent.write
  * 图片加载器，负责从Uri加载Bitmap
  */
 class BitmapLoader(private val context: Context) {
-    
+
     companion object {
         private const val TAG = "BitmapLoader"
         private const val DEFAULT_LARGE_IMAGE_THRESHOLD = 10L * 1024 * 1024 // 10MB
@@ -51,16 +51,16 @@ class BitmapLoader(private val context: Context) {
         private const val DEFAULT_TARGET_SIZE_LARGE = 1200
         private const val DEFAULT_TARGET_SIZE_NORMAL = 1920
     }
-    
+
     private val logManager = LogManager.getInstance(context)
     private val imageSettingsManager = ImageSettingsManager.getInstance(context)
-    
+
     // 用于跟踪正在使用的位图
     private val activeBitmaps = ConcurrentHashMap<String, Bitmap>()
-    
+
     // 读写锁
     private val bitmapLock = ReentrantReadWriteLock()
-    
+
     /**
      * 检查URI权限
      */
@@ -73,9 +73,12 @@ class BitmapLoader(private val context: Context) {
             if (!hasPermission) {
                 logManager.debug(TAG, "当前应用拥有的持久化权限数量: ${permissions.size}")
                 permissions.forEachIndexed { index, permission ->
-                    logManager.debug(TAG, "权限 $index: URI=${permission.uri}, 读权限=${permission.isReadPermission}, 写权限=${permission.isWritePermission}")
+                    logManager.debug(
+                        TAG,
+                        "权限 $index: URI=${permission.uri}, 读权限=${permission.isReadPermission}, 写权限=${permission.isWritePermission}"
+                    )
                 }
-                
+
                 // 尝试重新获取权限
                 try {
                     context.contentResolver.takePersistableUriPermission(
@@ -91,7 +94,7 @@ class BitmapLoader(private val context: Context) {
             logManager.error(TAG, "检查URI权限时出错: $uri", e)
         }
     }
-    
+
     /**
      * 预估经过采样（缩放）后的图片尺寸，模拟真实加载的逻辑但仅读取元数据。
      * 以最小的内存开销，更准确地获取到图片加载到内存后的实际尺寸。
@@ -100,37 +103,41 @@ class BitmapLoader(private val context: Context) {
      * @return 返回预估的宽度和高度，如果失败则返回 null。
      */
     fun getSampledDimensions(uri: Uri): Pair<Int, Int>? =
-      ProcessingPerformance.measure(ProcessingStage.METADATA) {
-        try {
-            // 只获取图片原始尺寸和类型，不加载图片本身
-            val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-            context.contentResolver.openInputStream(uri)?.use {
-                BitmapFactory.decodeStream(it, null, options)
-            }
+        ProcessingPerformance.measure(ProcessingStage.METADATA) {
+            try {
+                // 只获取图片原始尺寸和类型，不加载图片本身
+                val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                context.contentResolver.openInputStream(uri)?.use {
+                    BitmapFactory.decodeStream(it, null, options)
+                }
 
-            if (options.outWidth <= 0 || options.outHeight <= 0) {
-                logManager.warn(TAG, "无法获取图片尺寸: $uri")
+                if (options.outWidth <= 0 || options.outHeight <= 0) {
+                    logManager.warn(TAG, "无法获取图片尺寸: $uri")
+                    return null
+                }
+
+                // 模拟真实加载逻辑，判断是否为大图，并计算 inSampleSize
+                val isLargeImage = isLargeImage(options)
+                val targetSize =
+                    if (isLargeImage) DEFAULT_TARGET_SIZE_LARGE else DEFAULT_TARGET_SIZE_NORMAL
+                val inSampleSize = calculateInSampleSize(options, targetSize, targetSize)
+
+                // 根据 inSampleSize 计算最终加载到内存的尺寸
+                val finalWidth = options.outWidth / inSampleSize
+                val finalHeight = options.outHeight / inSampleSize
+
+                logManager.debug(
+                    TAG,
+                    "预估采样后尺寸 for $uri: ${finalWidth}x$finalHeight (inSampleSize=$inSampleSize)"
+                )
+
+                return finalWidth to finalHeight
+            } catch (e: Exception) {
+                logManager.error(TAG, "预估采样后尺寸失败: $uri", e)
                 return null
             }
-
-            // 模拟真实加载逻辑，判断是否为大图，并计算 inSampleSize
-            val isLargeImage = isLargeImage(options)
-            val targetSize = if (isLargeImage) DEFAULT_TARGET_SIZE_LARGE else DEFAULT_TARGET_SIZE_NORMAL
-            val inSampleSize = calculateInSampleSize(options, targetSize, targetSize)
-
-            // 根据 inSampleSize 计算最终加载到内存的尺寸
-            val finalWidth = options.outWidth / inSampleSize
-            val finalHeight = options.outHeight / inSampleSize
-
-            logManager.debug(TAG, "预估采样后尺寸 for $uri: ${finalWidth}x$finalHeight (inSampleSize=$inSampleSize)")
-
-            return finalWidth to finalHeight
-        } catch (e: Exception) {
-            logManager.error(TAG, "预估采样后尺寸失败: $uri", e)
-            return null
         }
-      }
-    
+
     /**
      * 从Uri加载Bitmap，使用适当的缩放以避免内存问题
      * 统一转换为ARGB_8888格式以确保格式兼容性
@@ -139,7 +146,7 @@ class BitmapLoader(private val context: Context) {
     @SuppressLint("Recycle")
     fun loadBitmapFromUri(uri: Uri): Bitmap? {
         val uriString = uri.toString()
-        
+
         logManager.debug(TAG, "开始加载图片: $uriString")
 
         return try {
@@ -151,7 +158,7 @@ class BitmapLoader(private val context: Context) {
             logManager.debug(TAG, "准备打开输入流")
 
             checkUriPermission(uri)
-            
+
             val inputStream: InputStream? = try {
                 logManager.debug(TAG, "尝试打开输入流: $uri")
                 val inputStream = context.contentResolver.openInputStream(uri)
@@ -178,61 +185,79 @@ class BitmapLoader(private val context: Context) {
             }
 
             ProcessingPerformance.measure(ProcessingStage.METADATA) {
-              inputStream.use { stream ->
-                  BitmapFactory.decodeStream(stream, null, options)
-              }
+                inputStream.use { stream ->
+                    BitmapFactory.decodeStream(stream, null, options)
+                }
             }
 
-            logManager.debug(TAG, "图片尺寸信息: ${options.outWidth}x${options.outHeight}, MIME类型: ${options.outMimeType}")
+            logManager.debug(
+                TAG,
+                "图片尺寸信息: ${options.outWidth}x${options.outHeight}, MIME类型: ${options.outMimeType}"
+            )
 
             val isLargeImage = isLargeImage(options)
-            logManager.debug(TAG, "图片尺寸: ${options.outWidth}x${options.outHeight}, 是否为大图片: $isLargeImage")
+            logManager.debug(
+                TAG,
+                "图片尺寸: ${options.outWidth}x${options.outHeight}, 是否为大图片: $isLargeImage"
+            )
 
             val estimatedSize = options.outWidth.toLong() * options.outHeight.toLong() * 4
 
             val bitmap = ProcessingPerformance.measure(ProcessingStage.DECODE) {
-              if (estimatedSize > DEFAULT_REGION_DECODER_THRESHOLD) {
-                logManager.debug(TAG, "使用 BitmapRegionDecoder 处理超大图片")
-                loadBitmapWithRegionDecoder(uri, options)
-            } else {
-                val targetSize = if (isLargeImage) {
-                    DEFAULT_TARGET_SIZE_LARGE
+                if (estimatedSize > DEFAULT_REGION_DECODER_THRESHOLD) {
+                    logManager.debug(TAG, "使用 BitmapRegionDecoder 处理超大图片")
+                    loadBitmapWithRegionDecoder(uri, options)
                 } else {
-                    DEFAULT_TARGET_SIZE_NORMAL
-                }
-
-                options.inSampleSize = calculateInSampleSize(options, targetSize, targetSize)
-                options.inJustDecodeBounds = false
-                
-                // 根据是否需要透明度选择合适的格式
-                val mimeType = options.outMimeType?.lowercase() ?: ""
-                val hasAlpha = mimeType.contains("png") || 
-                              mimeType.contains("webp") || 
-                              mimeType.contains("avif") ||
-                              mimeType.contains("gif")
-
-                options.inPreferredConfig = if (hasAlpha) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565
-
-                logManager.debug(TAG, "缩放比例: ${options.inSampleSize}, 格式: ${options.inPreferredConfig}, MIME类型: $mimeType")
-
-                logManager.debug(TAG, "加载缩放后的图片")
-                try {
-                    context.contentResolver.openInputStream(uri)?.use { scaledInputStream ->
-                        BitmapFactory.decodeStream(scaledInputStream, null, options)
+                    val targetSize = if (isLargeImage) {
+                        DEFAULT_TARGET_SIZE_LARGE
+                    } else {
+                        DEFAULT_TARGET_SIZE_NORMAL
                     }
-                } catch (e: OutOfMemoryError) {
-                    logManager.error(TAG, "内存不足，加载缩放后的图片时出错: $uri | ${e.message}", e)
-                    null
-                } catch (e: SecurityException) {
-                    logManager.error(TAG, "加载缩放后的图片时出现安全异常: $uri | ${e.message}", e)
-                    null
-                } catch (e: Exception) {
-                    logManager.error(TAG, "加载缩放后的图片时出错: $uri | ${e.message}", e)
-                    null
+
+                    options.inSampleSize = calculateInSampleSize(options, targetSize, targetSize)
+                    options.inJustDecodeBounds = false
+
+                    // 根据是否需要透明度选择合适的格式
+                    val mimeType = options.outMimeType?.lowercase() ?: ""
+                    val hasAlpha = mimeType.contains("png") ||
+                        mimeType.contains("webp") ||
+                        mimeType.contains("avif") ||
+                        mimeType.contains("gif")
+
+                    options.inPreferredConfig =
+                        if (hasAlpha) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565
+
+                    logManager.debug(
+                        TAG,
+                        "缩放比例: ${options.inSampleSize}, 格式: ${options.inPreferredConfig}, MIME类型: $mimeType"
+                    )
+
+                    logManager.debug(TAG, "加载缩放后的图片")
+                    try {
+                        context.contentResolver.openInputStream(uri)?.use { scaledInputStream ->
+                            BitmapFactory.decodeStream(scaledInputStream, null, options)
+                        }
+                    } catch (e: OutOfMemoryError) {
+                        logManager.error(
+                            TAG,
+                            "内存不足，加载缩放后的图片时出错: $uri | ${e.message}",
+                            e
+                        )
+                        null
+                    } catch (e: SecurityException) {
+                        logManager.error(
+                            TAG,
+                            "加载缩放后的图片时出现安全异常: $uri | ${e.message}",
+                            e
+                        )
+                        null
+                    } catch (e: Exception) {
+                        logManager.error(TAG, "加载缩放后的图片时出错: $uri | ${e.message}", e)
+                        null
+                    }
                 }
-              }
             }
-            
+
             val correctedBitmap = ProcessingPerformance.measure(ProcessingStage.EXIF) {
                 applyExifOrientation(uri, bitmap)
             }
@@ -240,8 +265,11 @@ class BitmapLoader(private val context: Context) {
                 bitmap.recycle()
             }
 
-            logManager.debug(TAG, "图片加载完成: ${correctedBitmap?.width}x${correctedBitmap?.height}")
-            
+            logManager.debug(
+                TAG,
+                "图片加载完成: ${correctedBitmap?.width}x${correctedBitmap?.height}"
+            )
+
             // 将加载的图片放入活跃位图集合
             correctedBitmap?.let {
                 if (!it.isRecycled) {
@@ -251,7 +279,7 @@ class BitmapLoader(private val context: Context) {
                     logManager.warn(TAG, "尝试将已回收的位图添加到活跃位图集合: $uriString")
                 }
             }
-            
+
             correctedBitmap
         } catch (e: OutOfMemoryError) {
             logManager.error(TAG, "内存不足，无法加载位图: $uri", e)
@@ -261,7 +289,7 @@ class BitmapLoader(private val context: Context) {
             null
         }
     }
-    
+
     /**
      * 使用 BitmapRegionDecoder 加载大图片
      */
@@ -280,20 +308,20 @@ class BitmapLoader(private val context: Context) {
                 logManager.error(TAG, "无法创建 BitmapRegionDecoder")
                 return null
             }
-            
+
             inputStream.close()
 
             val targetSize = DEFAULT_TARGET_SIZE_LARGE
             val inSampleSize = calculateInSampleSize(options, targetSize, targetSize)
 
             val mimeType = options.outMimeType?.lowercase() ?: ""
-            val hasAlpha = mimeType.contains("png") || 
-                          mimeType.contains("webp") || 
-                          mimeType.contains("avif") ||
-                          mimeType.contains("gif")
+            val hasAlpha = mimeType.contains("png") ||
+                mimeType.contains("webp") ||
+                mimeType.contains("avif") ||
+                mimeType.contains("gif")
 
             val config = if (hasAlpha) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565
-            
+
             val regionOptions = BitmapFactory.Options().apply {
                 this.inSampleSize = inSampleSize
                 this.inPreferredConfig = config
@@ -313,7 +341,7 @@ class BitmapLoader(private val context: Context) {
             null
         }
     }
-    
+
 
     /**
      * 根据EXIF方向修正位图方向
@@ -348,18 +376,22 @@ class BitmapLoader(private val context: Context) {
                 matrix.setScale(-1f, 1f)
                 matrix.postTranslate(bitmap.width.toFloat(), 0f)
             }
+
             ExifInterface.ORIENTATION_FLIP_VERTICAL -> {
                 matrix.setScale(1f, -1f)
                 matrix.postTranslate(0f, bitmap.height.toFloat())
             }
+
             ExifInterface.ORIENTATION_TRANSPOSE -> {
                 matrix.setRotate(90f)
                 matrix.postScale(-1f, 1f)
             }
+
             ExifInterface.ORIENTATION_TRANSVERSE -> {
                 matrix.setRotate(270f)
                 matrix.postScale(-1f, 1f)
             }
+
             else -> return bitmap
         }
 
@@ -389,11 +421,15 @@ class BitmapLoader(private val context: Context) {
         val estimatedSize = width * height * 4
         return estimatedSize > DEFAULT_LARGE_IMAGE_THRESHOLD
     }
-    
+
     /**
      * 计算合适的图片缩放比例
      */
-    private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+    private fun calculateInSampleSize(
+        options: BitmapFactory.Options,
+        reqWidth: Int,
+        reqHeight: Int
+    ): Int {
         // 原始图片的宽度和高度
         val (height: Int, width: Int) = options.run { outHeight to outWidth }
         var inSampleSize = 1
@@ -410,7 +446,7 @@ class BitmapLoader(private val context: Context) {
 
         return inSampleSize
     }
-    
+
     /**
      * 清空内存缓存
      */
@@ -424,7 +460,7 @@ class BitmapLoader(private val context: Context) {
             logManager.debug(TAG, "清空活跃位图集合")
         }
     }
-    
+
     /**
      * 回收位图列表
      */
@@ -434,7 +470,7 @@ class BitmapLoader(private val context: Context) {
                 if (bitmap != exclude && !bitmap.isRecycled) {
                     val width = bitmap.width
                     val height = bitmap.height
-                    
+
                     activeBitmaps.entries.removeIf { it.value == bitmap }
 
                     bitmap.recycle()

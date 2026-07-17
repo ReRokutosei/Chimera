@@ -96,8 +96,10 @@ fun AppNavGraph(
 
             val context = LocalContext.current
             val themeSettingsManager = remember { ThemeRepository.getInstance(context) }
-            val darkTheme by themeSettingsManager.getDarkThemeFlow().collectAsStateWithLifecycle(initialValue = false)
-            val followSystemTheme by themeSettingsManager.getFollowSystemThemeFlow().collectAsStateWithLifecycle(initialValue = true)
+            val darkTheme by themeSettingsManager.getDarkThemeFlow()
+                .collectAsStateWithLifecycle(initialValue = false)
+            val followSystemTheme by themeSettingsManager.getFollowSystemThemeFlow()
+                .collectAsStateWithLifecycle(initialValue = true)
 
             val isSystemInDarkThemeVal = isSystemInDarkTheme()
             val effectiveDarkTheme = when {
@@ -135,7 +137,12 @@ fun AppNavGraph(
                 onNavigateToCut = {
                     val imageUris = mainUiState.selectedImages.map { it.uri }
                     mainViewModel.setPendingStitchUris(imageUris)
-                    navController.navigate(Route.ImageViewer(isCutMode = "true", cutGrid = mainUiState.cutGrid.toString())) {
+                    navController.navigate(
+                        Route.ImageViewer(
+                            isCutMode = "true",
+                            cutGrid = mainUiState.cutGrid.toString()
+                        )
+                    ) {
                         popUpTo(Route.Main) { inclusive = false }
                     }
                 },
@@ -163,7 +170,10 @@ fun AppNavGraph(
 
             val context = LocalContext.current
             val logManager = LogManager.getInstance(context)
-            logManager.debug("NavGraph", "ImageViewer composable被调用，widthScaleParam: $widthScaleParam, stitchModeParam: $stitchModeParam, imageSpacingParam: $imageSpacingParam")
+            logManager.debug(
+                "NavGraph",
+                "ImageViewer composable被调用，widthScaleParam: $widthScaleParam, stitchModeParam: $stitchModeParam, imageSpacingParam: $imageSpacingParam"
+            )
 
             val stitchViewModel: StitchViewModel = viewModel()
             val imageViewerViewModel: ImageViewerViewModel = viewModel()
@@ -188,11 +198,21 @@ fun AppNavGraph(
             }
 
             if (isCutModeParam != "true") {
-                LaunchedEffect(widthScaleParam, stitchModeParam, imageSpacingParam, triggerStitchParam, pendingStitchUris) {
-                    logManager.debug("NavGraph", "LaunchedEffect触发，stitchState: ${stitchUiState.stitchState}, triggerStitchParam: $triggerStitchParam")
+                LaunchedEffect(
+                    widthScaleParam,
+                    stitchModeParam,
+                    imageSpacingParam,
+                    triggerStitchParam,
+                    pendingStitchUris
+                ) {
+                    logManager.debug(
+                        "NavGraph",
+                        "LaunchedEffect触发，stitchState: ${stitchUiState.stitchState}, triggerStitchParam: $triggerStitchParam"
+                    )
 
                     if (stitchUiState.stitchState is StitchState.Idle &&
-                        triggerStitchParam == "true" && pendingStitchUris.isNotEmpty()) {
+                        triggerStitchParam == "true" && pendingStitchUris.isNotEmpty()
+                    ) {
 
                         logManager.debug("NavGraph", "开始拼接流程")
 
@@ -228,7 +248,8 @@ fun AppNavGraph(
 
                         if (overlayMode == OverlayMode.ENABLED) {
                             val stitchSettingsManager = StitchSettingsManager.getInstance(context)
-                            val overlayRatio: Int = stitchSettingsManager.getOverlayAreaFlow().first()
+                            val overlayRatio: Int =
+                                stitchSettingsManager.getOverlayAreaFlow().first()
 
                             val widthScale = when (mainViewModel.uiState.value.widthScale) {
                                 WidthScale.MAX_WIDTH -> WidthScale.MAX_WIDTH

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Chimera</string>
-    
+
     <!-- Embedded Picker Strings -->
     <string name="pick_multiple_media">Pick</string>
     <string name="pick_single_media">Pick</string>
@@ -11,14 +11,14 @@
     <string name="grant_camera_permission_to_capture_image">Grant camera permission to capture image</string>
     <string name="pick_image">Pick image</string>
     <string name="file_provider">com.t8rin.embeddedpicker.fileprovider</string>
-  <string name="embedded_picker">Use Embedded Picker</string>
+    <string name="embedded_picker">Use Embedded Picker</string>
     <string name="embedded_picker_sub">Uses Image Toolbox\'s elegant image picker</string>
-    
+
     <!-- Image Reorder Carousel Strings -->
     <string name="images_order">Image Order</string>
     <string name="add">Add</string>
     <string name="remove">Remove</string>
-    
+
     <!-- Open Source Licenses -->
     <string name="open_source_licenses">Open Source Licenses</string>
     <string name="gpl_license_header">License</string>
@@ -29,13 +29,13 @@
     <string name="privacy_policy_header">Privacy Policy</string>
     <string name="disclaimer_header">Disclaimer</string>
     <string name="full_documents_info">For the complete privacy policy, disclaimer, and license information, please visit our project page: \nhttps://github.com/ReRokutosei/Chimera</string>
-    
+
     <!-- Welcome Dialog -->
     <string name="welcome_title">Welcome to Chimera</string>
     <string name="welcome_description">Please read and agree to our terms before using the app</string>
     <string name="agree">Agree</string>
     <string name="disagree_and_exit">Disagree and Exit</string>
-    
+
     <!-- UI Strings -->
     <string name="clear_images">Clear Images</string>
     <string name="start_stitching">Stitching</string>
@@ -85,12 +85,12 @@
     <string name="squircle_shape">Squircle</string>
     <string name="file_picker_settings">File Picker Settings</string>
     <string name="auto_clear_selected">Auto Clear Selected Images</string>
-  <string name="clear_after_stitching">Clear selected image list from main page after stitching (does not delete local files)</string>
+    <string name="clear_after_stitching">Clear selected image list from main page after stitching (does not delete local files)</string>
     <string name="image_list_direction">Image List Direction</string>
     <string name="image_list_direction_desc">Choose the direction of preview images before stitching</string>
     <string name="auto">Auto</string>
     <string name="use_saf_picker">Use Storage Access Framework Picker</string>
-  <string name="use_saf_without_permission">Use Storage Access Framework to select images without permission</string>
+    <string name="use_saf_without_permission">Use Storage Access Framework to select images without permission</string>
     <string name="default_picker_info">Your device uses this picker by default</string>
     <string name="image_output_settings">Image Output Settings</string>
     <string name="output_format">Output Image Format</string>
@@ -149,7 +149,7 @@
     <string name="stitch_error_result_too_large">The stitched image is too large for this device or output format.</string>
     <string name="stitch_error_allocation_failed">There is not enough memory to create the stitched image.</string>
     <string name="stitch_error_unexpected">Stitching failed unexpectedly. Check the log for details.</string>
-    
+
     <!-- ImageSharer -->
 
     <!-- Log Levels -->

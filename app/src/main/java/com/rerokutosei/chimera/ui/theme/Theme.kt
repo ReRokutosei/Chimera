@@ -33,8 +33,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rerokutosei.chimera.data.model.ColorScheme
 import com.rerokutosei.chimera.data.model.PredefinedColorSchemes
 import com.rerokutosei.chimera.data.model.ThemeMode
@@ -49,11 +49,11 @@ fun AppTheme(
 ) {
     val context = LocalContext.current
     val themeSettingsManager = ThemeRepository.getInstance(context)
-    
+
     // 获取颜色方案设置
     val selectedColorScheme by themeSettingsManager.getSelectedColorSchemeFlow()
         .collectAsStateWithLifecycle(initialValue = "bocchi")
-    
+
     val colorScheme = getColorScheme(
         selectedColorScheme = selectedColorScheme,
         darkTheme = darkTheme,
@@ -61,7 +61,7 @@ fun AppTheme(
         context = context,
         themeSettingsManager = themeSettingsManager
     )
-    
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -92,8 +92,9 @@ private fun getColorScheme(
     return when {
         dynamicColor && selectedColorScheme == "dynamic" && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
 
-            val originalScheme = if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-            
+            val originalScheme =
+                if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+
             // 创建一个新的色彩方案，其中主色、次色、第三色使用相反主题的值
             val invertedScheme = if (darkTheme) {
                 // 在深色主题下，使用浅色主题的主色系列，但保持深色主题的背景色
@@ -132,7 +133,7 @@ private fun getColorScheme(
                     onTertiaryContainer = darkScheme.onTertiaryContainer
                 )
             }
-            
+
             invertedScheme
         }
 
@@ -148,29 +149,32 @@ private fun getCustomColorScheme(
     themeSettingsManager: ThemeRepository,
     darkTheme: Boolean
 ): androidx.compose.material3.ColorScheme {
-    val customPrimary by themeSettingsManager.getCustomPrimaryColorFlow().collectAsStateWithLifecycle(initialValue = "")
-    val customSecondary by themeSettingsManager.getCustomSecondaryColorFlow().collectAsStateWithLifecycle(initialValue = "")
-    val customTertiary by themeSettingsManager.getCustomTertiaryColorFlow().collectAsStateWithLifecycle(initialValue = "")
-    
+    val customPrimary by themeSettingsManager.getCustomPrimaryColorFlow()
+        .collectAsStateWithLifecycle(initialValue = "")
+    val customSecondary by themeSettingsManager.getCustomSecondaryColorFlow()
+        .collectAsStateWithLifecycle(initialValue = "")
+    val customTertiary by themeSettingsManager.getCustomTertiaryColorFlow()
+        .collectAsStateWithLifecycle(initialValue = "")
+
     // 如果自定义颜色为空，则使用默认的 Bocchi 颜色方案作为后备
     val primary = if (customPrimary.isNotEmpty()) {
         parseColorSafely(customPrimary, PredefinedColorSchemes.bocchi.primary)
     } else {
         PredefinedColorSchemes.bocchi.primary
     }
-    
+
     val secondary = if (customSecondary.isNotEmpty()) {
         parseColorSafely(customSecondary, PredefinedColorSchemes.bocchi.secondary)
     } else {
         PredefinedColorSchemes.bocchi.secondary
     }
-    
+
     val tertiary = if (customTertiary.isNotEmpty()) {
         parseColorSafely(customTertiary, PredefinedColorSchemes.bocchi.tertiary)
     } else {
         PredefinedColorSchemes.bocchi.tertiary
     }
-    
+
     // 调整自定义颜色以适应深色主题
     val adjustedScheme = if (darkTheme) {
         PredefinedColorSchemes.adjustColorsForDarkTheme(
@@ -189,7 +193,7 @@ private fun getCustomColorScheme(
             tertiary = tertiary
         )
     }
-    
+
     return if (darkTheme) {
         darkColorScheme(
             primary = adjustedScheme.primary,
@@ -225,7 +229,7 @@ private fun getPredefinedColorScheme(
     } else {
         scheme
     }
-    
+
     return if (darkTheme) {
         darkColorScheme(
             primary = adjustedScheme.primary,
@@ -250,8 +254,9 @@ private fun getPredefinedColorScheme(
 fun shouldUseDarkTheme(): Boolean {
     val context = LocalContext.current
     val themeSettingsManager = ThemeRepository.getInstance(context)
-    val themeMode by themeSettingsManager.getThemeModeFlow().collectAsStateWithLifecycle(initialValue = ThemeMode.AUTO)
-    
+    val themeMode by themeSettingsManager.getThemeModeFlow()
+        .collectAsStateWithLifecycle(initialValue = ThemeMode.AUTO)
+
     return when (themeMode) {
         ThemeMode.AUTO -> isSystemInDarkTheme() // 自动模式，跟随系统
         ThemeMode.DARK -> true // 深色模式

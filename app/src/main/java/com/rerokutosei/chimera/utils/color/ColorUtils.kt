@@ -53,13 +53,13 @@ object ColorUtils {
             if (colorString.startsWith("#")) {
                 return Color(colorString.toColorInt())
             }
-            
+
             // 如果是 Color(r, g, b, a, ...) 格式
             if (colorString.startsWith("Color(")) {
                 val values = colorString.substring(6, colorString.indexOfLast { it == ',' })
                     .split(",")
                     .map { it.trim().toFloat() }
-                
+
                 if (values.size >= 4) {
                     // RGBA 格式 (0-1 范围)
                     return Color(
@@ -70,7 +70,7 @@ object ColorUtils {
                     )
                 }
             }
-            
+
             // 默认尝试解析
             Color(colorString.toColorInt())
         } catch (e: Exception) {
@@ -81,7 +81,7 @@ object ColorUtils {
 
     /**
      * 将颜色格式化为十六进制字符串
-    */
+     */
     fun formatColorToHex(color: Color): String {
         return String.format("#%08X", color.toArgb())
     }
@@ -95,11 +95,11 @@ object ColorUtils {
         val r = ((rgb shr 16) and 0xFF) / 255f
         val g = ((rgb shr 8) and 0xFF) / 255f
         val b = (rgb and 0xFF) / 255f
-        
+
         val max = max(r, max(g, b))
         val min = min(r, min(g, b))
         val delta = max - min
-        
+
         // 计算色相
         hsv[0] = when (max) {
             min -> 0f
@@ -108,13 +108,13 @@ object ColorUtils {
             else -> 60 * ((r - g) / delta + 4)
         }
         if (hsv[0] < 0) hsv[0] += 360f
-        
+
         // 计算饱和度
         hsv[1] = if (max == 0f) 0f else delta / max
-        
+
         // 计算明度
         hsv[2] = max
-        
+
         return hsv
     }
 
@@ -124,13 +124,13 @@ object ColorUtils {
      */
     fun adjustColorForDarkTheme(color: Color): Color {
         val hsv = colorToHSV(color)
-        
+
         // 降低明度
         hsv[2] = max(0.4f, hsv[2] * 0.8f)
-        
+
         // 增加饱和度以补偿亮度降低
         hsv[1] = min(1f, hsv[1] * 1.2f)
-        
+
         return Color.hsv(hsv[0], hsv[1], hsv[2])
     }
 

@@ -11,11 +11,11 @@ import androidx.benchmark.junit4.measureRepeated
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.rerokutosei.chimera.ui.main.WidthScale
+import com.rerokutosei.chimera.utils.performance.ProcessingPerformance
+import com.rerokutosei.chimera.utils.performance.StageTiming
 import com.rerokutosei.chimera.utils.stitch.StitchOrientation
 import com.rerokutosei.chimera.utils.stitch.StitchResult
 import com.rerokutosei.chimera.utils.stitch.layout.OutputImageFormat
-import com.rerokutosei.chimera.utils.performance.ProcessingPerformance
-import com.rerokutosei.chimera.utils.performance.StageTiming
 import com.rerokutosei.chimera.utils.stitch.strategy.DirectStitchingStrategy
 import com.rerokutosei.chimera.utils.stitch.strategy.OverlayStitchingStrategy
 import com.rerokutosei.chimera.utils.stitch.strategy.StitchingOptions
@@ -200,7 +200,9 @@ class StitchProcessingBenchmark {
 
         val summary = timings.groupBy(StageTiming::stage)
             .toSortedMap()
-            .mapValues { (_, values) -> values.map(StageTiming::durationNanos).sorted()[values.size / 2] / 1_000_000.0 }
+            .mapValues { (_, values) ->
+                values.map(StageTiming::durationNanos).sorted()[values.size / 2] / 1_000_000.0
+            }
         Log.i("ChimeraBenchmark", "$label stage medians ms: $summary")
     }
 

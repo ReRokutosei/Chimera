@@ -54,7 +54,7 @@ class StitchSettingsManager private constructor(private val context: Context) {
             }
         }
     }
-    
+
     // 拼接设置键
     private object PreferencesKeys {
         val STITCH_MODE = stringPreferencesKey("stitch_mode")
@@ -79,7 +79,11 @@ class StitchSettingsManager private constructor(private val context: Context) {
 
     fun getStitchModeFlow(): Flow<StitchMode> {
         return context.dataStore.getPref(PreferencesKeys.STITCH_MODE, "DIRECT_VERTICAL")
-            .map { when (it) { "DIRECT_HORIZONTAL" -> StitchMode.DIRECT_HORIZONTAL; else -> StitchMode.DIRECT_VERTICAL } }
+            .map {
+                when (it) {
+                    "DIRECT_HORIZONTAL" -> StitchMode.DIRECT_HORIZONTAL; else -> StitchMode.DIRECT_VERTICAL
+                }
+            }
     }
 
     suspend fun setStitchMode(mode: StitchMode) {
@@ -88,15 +92,22 @@ class StitchSettingsManager private constructor(private val context: Context) {
 
     fun getWidthScaleFlow(): Flow<WidthScale> {
         return context.dataStore.getPref(PreferencesKeys.WIDTH_SCALE, "MIN_WIDTH")
-            .map { when (it) { "MAX_WIDTH" -> WidthScale.MAX_WIDTH; "MIN_WIDTH" -> WidthScale.MIN_WIDTH; else -> WidthScale.NONE } }
+            .map {
+                when (it) {
+                    "MAX_WIDTH" -> WidthScale.MAX_WIDTH; "MIN_WIDTH" -> WidthScale.MIN_WIDTH; else -> WidthScale.NONE
+                }
+            }
     }
 
     suspend fun setWidthScale(scale: WidthScale) {
         context.dataStore.setPref(PreferencesKeys.WIDTH_SCALE, scale.name)
     }
 
-    fun getOverlayAreaFlow(): Flow<Int> = context.dataStore.getPref(PreferencesKeys.OVERLAY_AREA, 10)
-    suspend fun setOverlayArea(area: Int) = context.dataStore.setPref(PreferencesKeys.OVERLAY_AREA, area)
+    fun getOverlayAreaFlow(): Flow<Int> =
+        context.dataStore.getPref(PreferencesKeys.OVERLAY_AREA, 10)
+
+    suspend fun setOverlayArea(area: Int) =
+        context.dataStore.setPref(PreferencesKeys.OVERLAY_AREA, area)
 
     fun getOverlayModeFlow(): Flow<OverlayMode> {
         return context.dataStore.getPref(PreferencesKeys.OVERLAY_MODE, "DISABLED")
@@ -107,15 +118,24 @@ class StitchSettingsManager private constructor(private val context: Context) {
         context.dataStore.setPref(PreferencesKeys.OVERLAY_MODE, mode.name)
     }
 
-    fun getImageSpacingFlow(): Flow<Int> = context.dataStore.getPref(PreferencesKeys.IMAGE_SPACING, 0)
-    suspend fun setImageSpacing(spacing: Int) = context.dataStore.setPref(PreferencesKeys.IMAGE_SPACING, spacing)
+    fun getImageSpacingFlow(): Flow<Int> =
+        context.dataStore.getPref(PreferencesKeys.IMAGE_SPACING, 0)
 
-    fun getImageSpacingColorFlow(): Flow<String> = context.dataStore.getPref(PreferencesKeys.IMAGE_SPACING_COLOR, "#FF000000")
-    suspend fun setImageSpacingColor(color: String) = context.dataStore.setPref(PreferencesKeys.IMAGE_SPACING_COLOR, color)
+    suspend fun setImageSpacing(spacing: Int) =
+        context.dataStore.setPref(PreferencesKeys.IMAGE_SPACING, spacing)
+
+    fun getImageSpacingColorFlow(): Flow<String> =
+        context.dataStore.getPref(PreferencesKeys.IMAGE_SPACING_COLOR, "#FF000000")
+
+    suspend fun setImageSpacingColor(color: String) =
+        context.dataStore.setPref(PreferencesKeys.IMAGE_SPACING_COLOR, color)
 
     fun getCutGridFlow(): Flow<Int> = context.dataStore.getPref(PreferencesKeys.CUT_GRID, 3)
     suspend fun setCutGrid(grid: Int) = context.dataStore.setPref(PreferencesKeys.CUT_GRID, grid)
 
-    fun getMultiThreadEnabledFlow(): Flow<Boolean> = context.dataStore.getPref(PreferencesKeys.MULTI_THREAD_ENABLED, false)
-    suspend fun setMultiThreadEnabled(enabled: Boolean) = context.dataStore.setPref(PreferencesKeys.MULTI_THREAD_ENABLED, enabled)
+    fun getMultiThreadEnabledFlow(): Flow<Boolean> =
+        context.dataStore.getPref(PreferencesKeys.MULTI_THREAD_ENABLED, false)
+
+    suspend fun setMultiThreadEnabled(enabled: Boolean) =
+        context.dataStore.setPref(PreferencesKeys.MULTI_THREAD_ENABLED, enabled)
 }

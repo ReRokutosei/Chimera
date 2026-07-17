@@ -24,6 +24,8 @@ import androidx.core.graphics.scale
 import com.rerokutosei.chimera.ui.main.WidthScale
 import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.common.MemoryLimitCalculator
+import com.rerokutosei.chimera.utils.performance.ProcessingPerformance
+import com.rerokutosei.chimera.utils.performance.ProcessingStage
 import com.rerokutosei.chimera.utils.stitch.StitchOrientation
 import com.rerokutosei.chimera.utils.stitch.layout.ImageDimensions
 import com.rerokutosei.chimera.utils.stitch.layout.LayoutMode
@@ -32,8 +34,6 @@ import com.rerokutosei.chimera.utils.stitch.layout.LayoutOrientation
 import com.rerokutosei.chimera.utils.stitch.layout.LayoutScaleMode
 import com.rerokutosei.chimera.utils.stitch.layout.StitchLayout
 import com.rerokutosei.chimera.utils.stitch.layout.StitchLayoutCalculator
-import com.rerokutosei.chimera.utils.performance.ProcessingPerformance
-import com.rerokutosei.chimera.utils.performance.ProcessingStage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -78,15 +78,16 @@ abstract class BaseStitchingStrategy(
             val scaleAtIndex: (Int) -> Unit = { index ->
                 val bitmap = bitmaps[index]
                 val target = targetDimensions[index]
-                val processed = if (bitmap.width == target.width && bitmap.height == target.height) {
-                    bitmap
-                } else {
-                    bitmap.scale(target.width, target.height, true).also { scaledBitmap ->
-                        logManager.debug(tag) {
-                            "图片缩放: ${bitmap.width}x${bitmap.height} -> ${scaledBitmap.width}x${scaledBitmap.height}"
+                val processed =
+                    if (bitmap.width == target.width && bitmap.height == target.height) {
+                        bitmap
+                    } else {
+                        bitmap.scale(target.width, target.height, true).also { scaledBitmap ->
+                            logManager.debug(tag) {
+                                "图片缩放: ${bitmap.width}x${bitmap.height} -> ${scaledBitmap.width}x${scaledBitmap.height}"
+                            }
                         }
                     }
-                }
                 processedBitmaps[index] = processed
             }
 
@@ -118,15 +119,17 @@ abstract class BaseStitchingStrategy(
         spacing: Int = 0,
         overlayRatio: Int = 0
     ): StitchLayout = ProcessingPerformance.measure(ProcessingStage.LAYOUT) {
-        requireNotNull(StitchLayoutCalculator.calculate(
-            images = bitmaps.map { ImageDimensions(it.width, it.height) },
-            options = LayoutOptions(
-                orientation = orientation.toLayoutOrientation(),
-                mode = mode,
-                spacing = spacing,
-                overlayRatio = overlayRatio
+        requireNotNull(
+            StitchLayoutCalculator.calculate(
+                images = bitmaps.map { ImageDimensions(it.width, it.height) },
+                options = LayoutOptions(
+                    orientation = orientation.toLayoutOrientation(),
+                    mode = mode,
+                    spacing = spacing,
+                    overlayRatio = overlayRatio
+                )
             )
-        ))
+        )
     }
 
     protected fun recycleScaledIntermediates(

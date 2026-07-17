@@ -45,7 +45,7 @@ android {
         testInstrumentationRunner = "androidx.benchmark.junit4.AndroidBenchmarkRunner"
         testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
     }
-    
+
     // 配置ABI分包
     splits {
         abi {
@@ -55,19 +55,25 @@ android {
             isUniversalApk = true
         }
     }
-    
+
     lint {
         disable += "MissingTranslation" // 禁用翻译资源文本检查
     }
-    
+
     signingConfigs {
         create("release") {
             // 优先从环境变量读取，其次从本地gradle.properties读取
-            val keystorePath = System.getenv("KEYSTORE_PATH") ?: project.findProperty("KEYSTORE_PATH") as? String ?: "../keystore/Chimera.jks"
+            val keystorePath =
+                System.getenv("KEYSTORE_PATH") ?: project.findProperty("KEYSTORE_PATH") as? String
+                ?: "../keystore/Chimera.jks"
             storeFile = file(keystorePath)
-            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: project.findProperty("KEYSTORE_PASSWORD") as? String ?: ""
-            keyAlias = System.getenv("KEY_ALIAS") ?: project.findProperty("KEY_ALIAS") as? String ?: ""
-            keyPassword = System.getenv("KEY_PASSWORD") ?: project.findProperty("KEY_PASSWORD") as? String ?: ""
+            storePassword = System.getenv("KEYSTORE_PASSWORD")
+                ?: project.findProperty("KEYSTORE_PASSWORD") as? String ?: ""
+            keyAlias =
+                System.getenv("KEY_ALIAS") ?: project.findProperty("KEY_ALIAS") as? String ?: ""
+            keyPassword =
+                System.getenv("KEY_PASSWORD") ?: project.findProperty("KEY_PASSWORD") as? String
+                    ?: ""
 
             enableV1Signing = false
             enableV2Signing = false
@@ -75,7 +81,7 @@ android {
             enableV4Signing = true
         }
     }
-    
+
     buildTypes {
         debug {
             applicationIdSuffix = ".dev"
@@ -147,13 +153,13 @@ tasks.register("generateAboutLibraries") {
 // 注册执行Python脚本更新README文件的任务
 tasks.register<Exec>("updateReadmeWithLicenses") {
     dependsOn("generateAboutLibraries")
-    
+
     // 设置Python命令和脚本路径
     commandLine("python", "docs/update_readme.py")
-    
+
     // 设置工作目录为项目根目录
     workingDir(project.rootDir)
-    
+
     // 设置即使Python脚本执行失败也不影响构建过程
     isIgnoreExitValue = true
 }
@@ -190,7 +196,7 @@ dependencies {
     implementation(libs.androidx.material3)
     // 添加SubsamplingScaleImageView库用于大图显示
     implementation(libs.subsampling.scale.image.view)
-    
+
     // 添加ImageToolbox组件库
     implementation(project(":t8rin:fancy-slider-library"))
     implementation(project(":t8rin:embedded-picker-library"))
@@ -204,7 +210,7 @@ dependencies {
     implementation(libs.ui)
     implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.tracing)
-    
+
     // AboutLibraries 核心库
     implementation(libs.aboutlibraries.core)
     add("baselineProfile", project(":baselineprofile"))

@@ -21,27 +21,26 @@ package com.rerokutosei.chimera.utils.stitch.strategy
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import androidx.core.graphics.createBitmap
 import com.rerokutosei.chimera.domain.error.StitchFailure
+import com.rerokutosei.chimera.utils.performance.ProcessingPerformance
+import com.rerokutosei.chimera.utils.performance.ProcessingStage
 import com.rerokutosei.chimera.utils.stitch.StitchOrientation
 import com.rerokutosei.chimera.utils.stitch.StitchResult
 import com.rerokutosei.chimera.utils.stitch.layout.LayoutMode
 import com.rerokutosei.chimera.utils.stitch.layout.OutputImageFormat
-import com.rerokutosei.chimera.utils.performance.ProcessingPerformance
-import com.rerokutosei.chimera.utils.performance.ProcessingStage
 import kotlinx.coroutines.CancellationException
 
 /**
  * 叠加拼接策略实现
  */
 class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context, TAG) {
-    
+
     companion object {
         private const val TAG = "OverlayStitchingStrategy"
     }
-    
+
     override suspend fun stitch(bitmaps: List<Bitmap>, options: StitchingOptions): StitchResult {
         if (bitmaps.isEmpty()) {
             logManager.error(TAG, "图片列表为空")
@@ -69,9 +68,13 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
 
             // 检查内存限制（最大支持32MB的图片）
             val estimatedSize = layout.width * layout.height * 4 // ARGB_8888
-            val maxImageSize = memoryLimitCalculator.calculateMaxImageSize(options.highMemoryLimitEnabled)
+            val maxImageSize =
+                memoryLimitCalculator.calculateMaxImageSize(options.highMemoryLimitEnabled)
             if (estimatedSize > maxImageSize || layout.width > Int.MAX_VALUE || layout.height > Int.MAX_VALUE) {
-                logManager.error(TAG, "拼接结果图片过大: ${estimatedSize / (1024 * 1024)}MB，超过限制: ${maxImageSize / (1024 * 1024)}MB")
+                logManager.error(
+                    TAG,
+                    "拼接结果图片过大: ${estimatedSize / (1024 * 1024)}MB，超过限制: ${maxImageSize / (1024 * 1024)}MB"
+                )
                 return StitchResult.ErrorResult(
                     StitchFailure.ResultTooLarge(
                         width = layout.width,
@@ -91,125 +94,128 @@ class OverlayStitchingStrategy(context: Context) : BaseStitchingStrategy(context
                 OutputImageFormat.PNG, OutputImageFormat.WEBP -> Bitmap.Config.ARGB_8888
                 OutputImageFormat.JPEG -> Bitmap.Config.RGB_565
             }
-            
+
             // 创建结果位图
             val result = ProcessingPerformance.measure(ProcessingStage.ALLOCATION) {
                 createBitmap(totalWidth, totalHeight, config)
             }
             allocatedBitmap = result
             logManager.debug(TAG, "创建结果位图成功，格式：$config")
-            
+
             val canvas = Canvas(result)
             val paint = Paint().apply {
                 isAntiAlias = true
                 isFilterBitmap = true
                 isDither = true
             }
-            
+
             // 画笔用于绘制间隔区域
-            val spacingPaint = Paint().apply { 
+            val spacingPaint = Paint().apply {
                 this.color = options.spacingColor
                 style = Paint.Style.FILL
                 isAntiAlias = true
             }
 
             ProcessingPerformance.measure(ProcessingStage.DRAW) {
-              when (options.orientation) {
-                StitchOrientation.VERTICAL -> {
-                    // 绘制第一张图片（完整显示）
-                    logManager.debug(TAG, "绘制第一张图片")
-                    canvas.drawBitmap(processedBitmaps[0], 0f, 0f, paint)
-                    
-                    // 计算第一张图片的高度（完整显示）
-                    val firstImageHeight = processedBitmaps[0].height
+                when (options.orientation) {
+                    StitchOrientation.VERTICAL -> {
+                        // 绘制第一张图片（完整显示）
+                        logManager.debug(TAG, "绘制第一张图片")
+                        canvas.drawBitmap(processedBitmaps[0], 0f, 0f, paint)
 
-                    // 绘制后续图片的叠加区域
-                    var currentY = firstImageHeight
-                    for (i in 1 until processedBitmaps.size) {
-                        logManager.debug(TAG) { "处理第${i + 1}张图片的叠加区域" }
+                        // 计算第一张图片的高度（完整显示）
+                        val firstImageHeight = processedBitmaps[0].height
 
-                        val overlayHeight = overlaySteps[i - 1]
-                        // 计算叠加区域在当前图片中的位置（底部）
-                        val overlayStartY = (processedBitmaps[i].height - overlayHeight).coerceAtLeast(0)
+                        // 绘制后续图片的叠加区域
+                        var currentY = firstImageHeight
+                        for (i in 1 until processedBitmaps.size) {
+                            logManager.debug(TAG) { "处理第${i + 1}张图片的叠加区域" }
 
-                        // 在结果图片上绘制黑色背景
-                        canvas.drawRect(
-                            0f, 
-                            currentY.toFloat(), 
-                            totalWidth.toFloat(), 
-                            (currentY + overlayHeight).toFloat(), 
-                            spacingPaint
-                        )
-                        
-                        // 从当前图片中裁剪出叠加区域并绘制到结果图片
-                        val overlayBitmap = Bitmap.createBitmap(
-                            processedBitmaps[i], 
-                            0, 
-                            overlayStartY, 
-                            processedBitmaps[i].width, 
-                            overlayHeight
-                        )
-                        try {
-                            canvas.drawBitmap(overlayBitmap, 0f, currentY.toFloat(), paint)
-                        } finally {
-                            if (!overlayBitmap.isRecycled) {
-                                overlayBitmap.recycle()
+                            val overlayHeight = overlaySteps[i - 1]
+                            // 计算叠加区域在当前图片中的位置（底部）
+                            val overlayStartY =
+                                (processedBitmaps[i].height - overlayHeight).coerceAtLeast(0)
+
+                            // 在结果图片上绘制黑色背景
+                            canvas.drawRect(
+                                0f,
+                                currentY.toFloat(),
+                                totalWidth.toFloat(),
+                                (currentY + overlayHeight).toFloat(),
+                                spacingPaint
+                            )
+
+                            // 从当前图片中裁剪出叠加区域并绘制到结果图片
+                            val overlayBitmap = Bitmap.createBitmap(
+                                processedBitmaps[i],
+                                0,
+                                overlayStartY,
+                                processedBitmaps[i].width,
+                                overlayHeight
+                            )
+                            try {
+                                canvas.drawBitmap(overlayBitmap, 0f, currentY.toFloat(), paint)
+                            } finally {
+                                if (!overlayBitmap.isRecycled) {
+                                    overlayBitmap.recycle()
+                                }
                             }
+
+                            currentY += overlayHeight
                         }
-                        
-                        currentY += overlayHeight
+                    }
+
+                    StitchOrientation.HORIZONTAL -> {
+                        // 绘制第一张图片（完整显示）
+                        logManager.debug(TAG, "绘制第一张图片")
+                        canvas.drawBitmap(processedBitmaps[0], 0f, 0f, paint)
+
+                        val firstImageWidth = processedBitmaps[0].width
+
+                        var currentX = firstImageWidth
+                        for (i in 1 until processedBitmaps.size) {
+                            logManager.debug(TAG) { "处理第${i + 1}张图片的叠加区域" }
+
+                            val overlayWidth = overlaySteps[i - 1]
+                            // 计算叠加区域在当前图片中的位置（右侧）
+                            val overlayStartX =
+                                (processedBitmaps[i].width - overlayWidth).coerceAtLeast(0)
+
+                            canvas.drawRect(
+                                currentX.toFloat(),
+                                0f,
+                                (currentX + overlayWidth).toFloat(),
+                                totalHeight.toFloat(),
+                                spacingPaint
+                            )
+
+                            val overlayBitmap = Bitmap.createBitmap(
+                                processedBitmaps[i],
+                                overlayStartX,
+                                0,
+                                overlayWidth,
+                                processedBitmaps[i].height
+                            )
+                            try {
+                                canvas.drawBitmap(overlayBitmap, currentX.toFloat(), 0f, paint)
+                            } finally {
+                                if (!overlayBitmap.isRecycled) {
+                                    overlayBitmap.recycle()
+                                }
+                            }
+
+                            currentX += overlayWidth
+                        }
                     }
                 }
-                StitchOrientation.HORIZONTAL -> {
-                    // 绘制第一张图片（完整显示）
-                    logManager.debug(TAG, "绘制第一张图片")
-                    canvas.drawBitmap(processedBitmaps[0], 0f, 0f, paint)
-
-                    val firstImageWidth = processedBitmaps[0].width
-
-                    var currentX = firstImageWidth
-                    for (i in 1 until processedBitmaps.size) {
-                        logManager.debug(TAG) { "处理第${i + 1}张图片的叠加区域" }
-
-                        val overlayWidth = overlaySteps[i - 1]
-                        // 计算叠加区域在当前图片中的位置（右侧）
-                        val overlayStartX = (processedBitmaps[i].width - overlayWidth).coerceAtLeast(0)
-
-                        canvas.drawRect(
-                            currentX.toFloat(), 
-                            0f, 
-                            (currentX + overlayWidth).toFloat(), 
-                            totalHeight.toFloat(), 
-                            spacingPaint
-                        )
-
-                        val overlayBitmap = Bitmap.createBitmap(
-                            processedBitmaps[i], 
-                            overlayStartX, 
-                            0, 
-                            overlayWidth, 
-                            processedBitmaps[i].height
-                        )
-                        try {
-                            canvas.drawBitmap(overlayBitmap, currentX.toFloat(), 0f, paint)
-                        } finally {
-                            if (!overlayBitmap.isRecycled) {
-                                overlayBitmap.recycle()
-                            }
-                        }
-                        
-                        currentX += overlayWidth
-                    }
-                }
-              }
             }
 
             logManager.debug(TAG, "叠加拼接模式拼接完成")
-            
+
             canvas.setBitmap(null)
             paint.reset()
             spacingPaint.reset()
-            
+
             resultBitmap = result
             return StitchResult.BitmapResult(result)
         } catch (e: CancellationException) {

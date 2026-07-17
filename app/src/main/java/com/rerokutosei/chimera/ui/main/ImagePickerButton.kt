@@ -57,7 +57,7 @@ fun ImagePickerButton(
     onImagesSelected: (List<android.net.Uri>) -> Unit,
     showEmbeddedPicker: () -> Unit,
 ) {
-    
+
     // 为 SAF 选择器创建单独的 launcher
     val safPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenMultipleDocuments()
@@ -72,7 +72,7 @@ fun ImagePickerButton(
             onImagesSelected(uris)
         }
     }
-    
+
     // 为 Photo Picker 创建 launcher
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(999)
@@ -81,7 +81,7 @@ fun ImagePickerButton(
             onImagesSelected(uris)
         }
     }
-    
+
     // 为 Embedded Picker 权限请求创建 launcher
     val embeddedPickerPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -98,17 +98,18 @@ fun ImagePickerButton(
 
     LaunchedEffect(checkEmbeddedPickerPermission) {
         if (checkEmbeddedPickerPermission) {
-            hasEmbeddedPickerPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                ActivityCompat.checkSelfPermission(
-                    context,
-                    android.Manifest.permission.READ_MEDIA_IMAGES
-                ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-            } else {
-                ActivityCompat.checkSelfPermission(
-                    context,
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE
-                ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-            }
+            hasEmbeddedPickerPermission =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    ActivityCompat.checkSelfPermission(
+                        context,
+                        android.Manifest.permission.READ_MEDIA_IMAGES
+                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                } else {
+                    ActivityCompat.checkSelfPermission(
+                        context,
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+                }
         }
     }
 
@@ -119,12 +120,13 @@ fun ImagePickerButton(
                     useSafPicker -> {
                         safPickerLauncher.launch(arrayOf("image/*"))
                     }
+
                     useEmbeddedPicker -> {
                         showEmbeddedPicker()
                     }
                     // 对于SDK 29-32的设备，如果PhotoPicker不可用，则自动使用Embedded Picker
-                    !ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(context) && 
-                    Build.VERSION.SDK_INT <= Build.VERSION_CODES.S -> {
+                    !ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(context) &&
+                        Build.VERSION.SDK_INT <= Build.VERSION_CODES.S -> {
                         // 检查权限后再使用Embedded Picker
                         checkEmbeddedPickerPermission = true
                         if (hasEmbeddedPickerPermission) {
@@ -133,9 +135,11 @@ fun ImagePickerButton(
                             embeddedPickerPermissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
                         }
                     }
+
                     ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(context) -> {
                         photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                     }
+
                     else -> {
                         // 当所有其他选项都不可用时，使用 SAF 作为最后的备选方案
                         safPickerLauncher.launch(arrayOf("image/*"))

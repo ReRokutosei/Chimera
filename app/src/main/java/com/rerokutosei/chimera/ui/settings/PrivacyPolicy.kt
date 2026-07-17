@@ -38,8 +38,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.rerokutosei.chimera.utils.common.AnnotatedLinkText
 import com.rerokutosei.chimera.R
+import com.rerokutosei.chimera.utils.common.AnnotatedLinkText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -110,7 +110,7 @@ fun PrivacyPolicyContent() {
                 style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-            
+
             Text(
                 text = stringResource(R.string.privacy_policy_summary),
                 style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
@@ -118,7 +118,7 @@ fun PrivacyPolicyContent() {
             )
         }
     }
-    
+
     // 免责声明
     androidx.compose.material3.Card(
         modifier = Modifier
@@ -134,7 +134,7 @@ fun PrivacyPolicyContent() {
                 style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
-            
+
             Text(
                 text = stringResource(R.string.disclaimer_summary),
                 style = androidx.compose.material3.MaterialTheme.typography.bodySmall,

@@ -100,7 +100,7 @@ fun CustomColorPickerDialog(
                         selectedColor = colorEnvelope.color
                     }
                 )
-                
+
                 // Alpha调节滑块
                 AlphaSlider(
                     modifier = Modifier
@@ -110,7 +110,7 @@ fun CustomColorPickerDialog(
                     controller = controller,
                     borderRadius = 17.dp
                 )
-                
+
                 // Brightness调节滑块
                 BrightnessSlider(
                     modifier = Modifier
@@ -121,7 +121,7 @@ fun CustomColorPickerDialog(
                     controller = controller,
                     borderRadius = 17.dp
                 )
-                
+
                 // 颜色预览和方案预览
                 Row(
                     modifier = Modifier
@@ -140,14 +140,14 @@ fun CustomColorPickerDialog(
                                 .clip(CircleShape),
                             controller = controller
                         )
-                        
+
                         Text(
                             text = ColorUtils.formatColorToHex(selectedColor),
                             style = MaterialTheme.typography.bodySmall,
                             modifier = Modifier.padding(top = 8.dp)
                         )
                     }
-                    
+
                     // 生成的完整色彩方案预览
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -159,7 +159,7 @@ fun CustomColorPickerDialog(
                         } else {
                             baseColorScheme
                         }
-                        
+
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
@@ -169,14 +169,14 @@ fun CustomColorPickerDialog(
                                     .clip(CircleShape)
                                     .background(colorScheme.primary)
                             )
-                            
+
                             Box(
                                 modifier = Modifier
                                     .size(18.dp)
                                     .clip(CircleShape)
                                     .background(colorScheme.secondary)
                             )
-                            
+
                             Box(
                                 modifier = Modifier
                                     .size(18.dp)
@@ -184,7 +184,7 @@ fun CustomColorPickerDialog(
                                     .background(colorScheme.tertiary)
                             )
                         }
-                        
+
                         Text(
                             text = stringResource(R.string.preview),
                             style = MaterialTheme.typography.bodySmall,

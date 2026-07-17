@@ -31,8 +31,8 @@ import com.rerokutosei.chimera.utils.stitch.strategy.DirectStitchingStrategy
 import com.rerokutosei.chimera.utils.stitch.strategy.OverlayStitchingStrategy
 import com.rerokutosei.chimera.utils.stitch.strategy.StitchingOptions
 import com.rerokutosei.chimera.utils.stitch.strategy.StitchingStrategy
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -84,7 +84,7 @@ class KotlinStitchingEngine(
                     }
                     loadedBitmaps
                 }
-                
+
                 if (bitmaps.size != imageUris.size) {
                     logManager.error("KotlinStitchingEngine", "一张或多张图片加载失败")
                     bitmapLoader.recycleBitmaps(bitmaps)
@@ -106,6 +106,7 @@ class KotlinStitchingEngine(
                         progressCallback(100)
                         result
                     }
+
                     is StitchResult.ErrorResult -> {
                         bitmapLoader.recycleBitmaps(bitmaps)
                         result
@@ -125,10 +126,17 @@ class KotlinStitchingEngine(
     /**
      * 根据拼接方向和叠加开关创建对应的拼接策略
      */
-    private fun createStitcher(orientation: StitchOrientation, isOverlay: Boolean): StitchingStrategy {
+    private fun createStitcher(
+        orientation: StitchOrientation,
+        isOverlay: Boolean
+    ): StitchingStrategy {
         return when {
             isOverlay -> OverlayStitchingStrategy(context)
-            orientation == StitchOrientation.VERTICAL -> DirectStitchingStrategy(isVertical = true, context = context)
+            orientation == StitchOrientation.VERTICAL -> DirectStitchingStrategy(
+                isVertical = true,
+                context = context
+            )
+
             else -> DirectStitchingStrategy(isVertical = false, context = context)
         }
     }

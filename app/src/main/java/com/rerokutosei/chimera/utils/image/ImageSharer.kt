@@ -42,7 +42,10 @@ class ImageSharer(private val context: Context) {
      * @param title 分享标题
      * @return 分享是否成功
      */
-    suspend fun shareBitmap(bitmap: Bitmap, title: String = context.getString(R.string.share_stitched_image)): Boolean {
+    suspend fun shareBitmap(
+        bitmap: Bitmap,
+        title: String = context.getString(R.string.share_stitched_image)
+    ): Boolean {
         return try {
             if (bitmap.isRecycled) {
                 logManager.error("ImageSharer", "尝试分享已回收的位图")

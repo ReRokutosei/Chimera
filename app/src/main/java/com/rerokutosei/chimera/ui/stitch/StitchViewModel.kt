@@ -37,13 +37,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class StitchViewModel(application: Application) : AndroidViewModel(application) {
-    
+
     private val imageStitcher = ImageStitcher(application)
     private val logManager = LogManager.Companion.getInstance(application)
-    
+
     private val _uiState = MutableStateFlow(StitchUiState())
     val uiState: StateFlow<StitchUiState> = _uiState.asStateFlow()
-    
+
     fun stitchImages(
         orientation: StitchOrientation,
         imageUris: List<Uri>? = null,
@@ -62,7 +62,7 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
                 // 如果传入了图片URI列表，则使用该列表，否则使用全局图片列表
                 val urisToUse = imageUris ?: _uiState.value.selectedImages
                 logManager.debug("StitchViewModel", "使用的图片URI数量: ${urisToUse.size}")
-                
+
                 if (urisToUse.isEmpty()) {
                     logManager.debug("StitchViewModel", "未选择任何图片")
                     _uiState.value = _uiState.value.copy(
@@ -72,7 +72,10 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
                     return@launch
                 }
 
-                logManager.info("StitchViewModel", "开始拼接图片，方向: $orientation，数量: ${urisToUse.size}，间隔: $imageSpacing")
+                logManager.info(
+                    "StitchViewModel",
+                    "开始拼接图片，方向: $orientation，数量: ${urisToUse.size}，间隔: $imageSpacing"
+                )
 
                 // 执行拼接操作
                 val result = imageStitcher.stitchImages(
@@ -88,13 +91,20 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
                 // 根据结果类型进行处理
                 when (result) {
                     is StitchResult.BitmapResult -> {
-                        logManager.info("StitchViewModel", "拼接成功，结果尺寸: ${result.bitmap.width}x${result.bitmap.height}")
-                        logManager.debug("StitchViewModel", "拼接结果位图内存大小: ${result.bitmap.allocationByteCount} bytes")
+                        logManager.info(
+                            "StitchViewModel",
+                            "拼接成功，结果尺寸: ${result.bitmap.width}x${result.bitmap.height}"
+                        )
+                        logManager.debug(
+                            "StitchViewModel",
+                            "拼接结果位图内存大小: ${result.bitmap.allocationByteCount} bytes"
+                        )
                         _uiState.value = _uiState.value.copy(
                             stitchState = StitchState.Success(result.bitmap),
                             progress = 100
                         )
                     }
+
                     is StitchResult.ErrorResult -> {
                         logFailure(result.failure)
                         _uiState.value = _uiState.value.copy(
@@ -114,7 +124,7 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
-    
+
     /**
      * 叠加拼接模式
      */
@@ -135,7 +145,7 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val urisToUse = imageUris ?: _uiState.value.selectedImages
                 logManager.debug("StitchViewModel", "使用的图片URI数量: ${urisToUse.size}")
-                
+
                 if (urisToUse.isEmpty()) {
                     logManager.debug("StitchViewModel", "未选择任何图片")
                     _uiState.value = _uiState.value.copy(
@@ -145,7 +155,10 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
                     return@launch
                 }
 
-                logManager.info("StitchViewModel", "开始叠加拼接图片，数量: ${urisToUse.size}，被叠加区域占比: $overlayRatio%，宽度缩放: $widthScale，方向: $orientation")
+                logManager.info(
+                    "StitchViewModel",
+                    "开始叠加拼接图片，数量: ${urisToUse.size}，被叠加区域占比: $overlayRatio%，宽度缩放: $widthScale，方向: $orientation"
+                )
 
                 // 执行叠加拼接操作
                 val result = imageStitcher.stitchOverlay(
@@ -159,13 +172,20 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
 
                 when (result) {
                     is StitchResult.BitmapResult -> {
-                        logManager.info("StitchViewModel", "叠加拼接成功，结果尺寸: ${result.bitmap.width}x${result.bitmap.height}")
-                        logManager.debug("StitchViewModel", "拼接结果位图内存大小: ${result.bitmap.allocationByteCount} bytes")
+                        logManager.info(
+                            "StitchViewModel",
+                            "叠加拼接成功，结果尺寸: ${result.bitmap.width}x${result.bitmap.height}"
+                        )
+                        logManager.debug(
+                            "StitchViewModel",
+                            "拼接结果位图内存大小: ${result.bitmap.allocationByteCount} bytes"
+                        )
                         _uiState.value = _uiState.value.copy(
                             stitchState = StitchState.Success(result.bitmap),
                             progress = 100
                         )
                     }
+
                     is StitchResult.ErrorResult -> {
                         logFailure(result.failure)
                         _uiState.value = _uiState.value.copy(
@@ -189,7 +209,7 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
     fun setSelectedImages(uris: List<Uri>) {
         _uiState.value = _uiState.value.copy(selectedImages = uris)
     }
-    
+
     fun updateStitchMode(mode: StitchMode) {
         _uiState.value = _uiState.value.copy(stitchMode = mode)
     }
@@ -203,7 +223,10 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
     private fun recycleCurrentResult() {
         val currentBitmap = (_uiState.value.stitchState as? StitchState.Success)?.result ?: return
         if (!currentBitmap.isRecycled) {
-            logManager.debug("StitchViewModel", "回收拼接结果位图: ${currentBitmap.width}x${currentBitmap.height}")
+            logManager.debug(
+                "StitchViewModel",
+                "回收拼接结果位图: ${currentBitmap.width}x${currentBitmap.height}"
+            )
             currentBitmap.recycle()
         }
     }

@@ -30,17 +30,17 @@ import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.data.local.StitchSettingsManager
 import com.rerokutosei.chimera.data.model.ImageInfo
 import com.rerokutosei.chimera.data.repository.ImageRepository
+import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.image.BitmapLoader
 import com.rerokutosei.chimera.utils.image.EstimateResolution
 import com.rerokutosei.chimera.utils.image.ResolutionValidationResult
-import com.rerokutosei.chimera.utils.common.LogManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
@@ -54,22 +54,26 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val bitmapLoader = BitmapLoader(application)
     private val estimateResolution = EstimateResolution(bitmapLoader)
     private val logManager = LogManager.getInstance(application)
-    
+
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
     private val _pendingStitchUris = MutableStateFlow<List<Uri>>(emptyList())
     val pendingStitchUris: StateFlow<List<Uri>> = _pendingStitchUris.asStateFlow()
     private val _isDataLoaded = MutableStateFlow(false)
     val isDataLoaded: StateFlow<Boolean> = _isDataLoaded.asStateFlow()
-    private val _resolutionValidationState = MutableStateFlow<ResolutionValidationState>(ResolutionValidationState.NotNeeded)
-    val resolutionValidationState: StateFlow<ResolutionValidationState> = _resolutionValidationState.asStateFlow()
+    private val _resolutionValidationState =
+        MutableStateFlow<ResolutionValidationState>(ResolutionValidationState.NotNeeded)
+    val resolutionValidationState: StateFlow<ResolutionValidationState> =
+        _resolutionValidationState.asStateFlow()
     private val _showResolutionErrorToast = MutableStateFlow<String?>(null)
     val showResolutionErrorToast: StateFlow<String?> = _showResolutionErrorToast.asStateFlow()
     private var resolutionValidationJob: Job? = null
     private var resolutionValidationVersion: Long = 0
-    
-    init { loadSettings() }
-    
+
+    init {
+        loadSettings()
+    }
+
     private fun loadSettings() {
         viewModelScope.launch {
             val stitchMode = stitchSettingsManager.getStitchModeFlow().first()
@@ -80,7 +84,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             val imageSpacingColor = stitchSettingsManager.getImageSpacingColorFlow().first()
             val cutGrid = stitchSettingsManager.getCutGridFlow().first()
             val autoClearImages = imageSettingsManager.getAutoClearImagesFlow().first()
-            
+
             _uiState.value = _uiState.value.copy(
                 stitchMode = stitchMode,
                 overlayMode = overlayMode,
@@ -97,7 +101,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             listenToSettingsChanges()
         }
     }
-    
+
     /**
      * 监听设置变化以触发尺寸验证
      */
@@ -113,7 +117,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
-    
+
     fun selectImages(uris: List<Uri>, isFromEmbeddedPicker: Boolean = false) {
         viewModelScope.launch {
             setImagePreviewLoading(true)
@@ -143,7 +147,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 _uiState.value = _uiState.value.copy(selectedImages = currentImages)
 
                 if (newImages.isNotEmpty()) {
-                    setToastMessage(getApplication<Application>().getString(R.string.images_selected, newImages.size))
+                    setToastMessage(
+                        getApplication<Application>().getString(
+                            R.string.images_selected,
+                            newImages.size
+                        )
+                    )
                 }
 
                 validateResolution()
@@ -157,7 +166,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _pendingStitchUris.value = uris
     }
 
-    
+
     fun removeImage(imageInfo: ImageInfo) {
         val currentImages = _uiState.value.selectedImages.toMutableList()
         currentImages.remove(imageInfo)
@@ -165,7 +174,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         validateResolution()
     }
-    
+
     fun clearImages() {
         _uiState.value = _uiState.value.copy(selectedImages = emptyList())
 
@@ -224,7 +233,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             stitchSettingsManager.setImageSpacingColor(color)
         }
     }
-    
+
     fun setErrorMessage(message: String?) {
         _uiState.value = _uiState.value.copy(errorMessage = message)
     }
@@ -232,11 +241,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun clearError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }
-    
+
     fun setToastMessage(message: String) {
         _uiState.value = _uiState.value.copy(toastMessage = message)
     }
-    
+
     fun clearToast() {
         _uiState.value = _uiState.value.copy(toastMessage = null)
     }
@@ -265,14 +274,26 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 val sortable = currentImages.map { image ->
                     val normalizedName = extractDisplayName(image).lowercase(Locale.ROOT)
                     val takenTime = resolveTakenTimeMillis(image.uri)
-                    SortableImage(image = image, normalizedName = normalizedName, takenTime = takenTime)
+                    SortableImage(
+                        image = image,
+                        normalizedName = normalizedName,
+                        takenTime = takenTime
+                    )
                 }
 
                 when (mode) {
                     ImageSortMode.TIME_ASC -> sortable
-                        .sortedWith(compareBy<SortableImage>({ it.takenTime ?: Long.MAX_VALUE }, { it.normalizedName }))
+                        .sortedWith(
+                            compareBy<SortableImage>(
+                                { it.takenTime ?: Long.MAX_VALUE },
+                                { it.normalizedName })
+                        )
+
                     ImageSortMode.TIME_DESC -> sortable
-                        .sortedWith(compareByDescending<SortableImage> { it.takenTime ?: Long.MIN_VALUE }.thenBy { it.normalizedName })
+                        .sortedWith(compareByDescending<SortableImage> {
+                            it.takenTime ?: Long.MIN_VALUE
+                        }.thenBy { it.normalizedName })
+
                     ImageSortMode.NAME_ASC -> sortable.sortedBy { it.normalizedName }
                     ImageSortMode.NAME_DESC -> sortable.sortedByDescending { it.normalizedName }
                 }.map { it.image }
@@ -299,7 +320,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun setImagePreviewLoading(loading: Boolean) {
         _uiState.value = _uiState.value.copy(isImagePreviewLoading = loading)
     }
-    
+
     /**
      * 开始拼接
      */
@@ -362,12 +383,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 is ResolutionValidationResult.NotNeeded -> {
                     _resolutionValidationState.value = ResolutionValidationState.NotNeeded
                 }
+
                 is ResolutionValidationResult.Valid -> {
                     _resolutionValidationState.value = ResolutionValidationState.Valid(
                         width = validationResult.width,
                         height = validationResult.height
                     )
                 }
+
                 is ResolutionValidationResult.Invalid -> {
                     _resolutionValidationState.value = ResolutionValidationState.Invalid(
                         width = validationResult.width,
@@ -376,8 +399,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         limit = validationResult.limit
                     )
 
-                    _showResolutionErrorToast.value = getApplication<Application>().getString(R.string.resolution_limit_exceeded)
+                    _showResolutionErrorToast.value =
+                        getApplication<Application>().getString(R.string.resolution_limit_exceeded)
                 }
+
                 is ResolutionValidationResult.Unavailable -> {
                     logManager.error(
                         "MainViewModel",
@@ -389,7 +414,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
-    
+
     fun clearResolutionErrorToast() {
         _showResolutionErrorToast.value = null
     }
@@ -483,7 +508,9 @@ sealed class ResolutionValidationState {
     object NotNeeded : ResolutionValidationState()
     object InProgress : ResolutionValidationState()
     data class Valid(val width: Long, val height: Long) : ResolutionValidationState()
-    data class Invalid(val width: Long, val height: Long, val formatName: String, val limit: Int) : ResolutionValidationState()
+    data class Invalid(val width: Long, val height: Long, val formatName: String, val limit: Int) :
+        ResolutionValidationState()
+
     object Unavailable : ResolutionValidationState()
 }
 

@@ -23,13 +23,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.withLink
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.withStyle
 import java.util.regex.Pattern
 
 /**
@@ -45,15 +45,15 @@ fun AnnotatedLinkText(
     val uriHandler = LocalUriHandler.current
     val urlPattern = Pattern.compile("https?://[\\w.-]+(?:/[\\w.-]*)*")
     val matcher = urlPattern.matcher(text)
-    
+
     val annotatedString = buildAnnotatedString {
         var lastIndex = 0
         while (matcher.find()) {
             append(text.substring(lastIndex, matcher.start()))
-            
+
             val url = matcher.group()
             withLink(
-                link = LinkAnnotation.Url(url) { 
+                link = LinkAnnotation.Url(url) {
                     uriHandler.openUri(url)
                 }
             ) {
@@ -66,12 +66,12 @@ fun AnnotatedLinkText(
                     append(url)
                 }
             }
-            
+
             lastIndex = matcher.end()
         }
         append(text.substring(lastIndex))
     }
-    
+
     Text(
         text = annotatedString,
         style = style,

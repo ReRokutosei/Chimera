@@ -104,7 +104,7 @@ fun ImageOutputSettingsSection(
                     modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(horizontal = 2.dp)
                 )
-                
+
                 SelectableOutlinedButton(
                     selected = uiState.outputImageFormat == 1,
                     text = "JPEG",
@@ -112,7 +112,7 @@ fun ImageOutputSettingsSection(
                     modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(horizontal = 2.dp)
                 )
-                
+
                 SelectableOutlinedButton(
                     selected = uiState.outputImageFormat == 2,
                     text = "WEBP",
@@ -259,7 +259,8 @@ fun SpacingColorCircle(
 ) {
     val size = 40.dp
     val innerSize = 28.dp
-    val displayColor = if (isDark && color != Color.Black) ColorUtils.adjustColorForDarkTheme(color) else color
+    val displayColor =
+        if (isDark && color != Color.Black) ColorUtils.adjustColorForDarkTheme(color) else color
 
     OutlinedButton(
         onClick = onClick,

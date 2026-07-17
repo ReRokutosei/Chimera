@@ -37,8 +37,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.rerokutosei.chimera.data.local.PreloadManager
 import com.rerokutosei.chimera.data.local.UserPreferencesManager
@@ -81,8 +81,10 @@ class MainActivity : ComponentActivity() {
             val logManager = remember { LogManager.getInstance(context) }
 
             val useDarkTheme = shouldUseDarkTheme()
-            val dynamicColor by themeSettingsManager.getDynamicColorFlow().collectAsStateWithLifecycle(initialValue = true)
-            val logLevel by themeSettingsManager.getLogLevelFlow().collectAsStateWithLifecycle(initialValue = 1)
+            val dynamicColor by themeSettingsManager.getDynamicColorFlow()
+                .collectAsStateWithLifecycle(initialValue = true)
+            val logLevel by themeSettingsManager.getLogLevelFlow()
+                .collectAsStateWithLifecycle(initialValue = 1)
 
             logManager.setLogLevel(logLevel)
 
@@ -145,12 +147,16 @@ class MainActivity : ComponentActivity() {
 
             cacheDir.listFiles { file ->
                 file.name.startsWith("temp_") &&
-                now - file.lastModified() > expirationTime
+                    now - file.lastModified() > expirationTime
             }?.forEach { file ->
                 try {
                     file.delete()
                 } catch (e: SecurityException) {
-                    logManager.error("MainActivity", "安全异常，无法删除过期文件: ${file.absolutePath}", e)
+                    logManager.error(
+                        "MainActivity",
+                        "安全异常，无法删除过期文件: ${file.absolutePath}",
+                        e
+                    )
                 }
             }
         } catch (e: SecurityException) {
@@ -167,28 +173,36 @@ class MainActivity : ComponentActivity() {
             // 清理cache目录下的临时文件
             cacheDir.listFiles { file ->
                 file.name.startsWith("temp_") ||
-                file.name.startsWith("shared_image") ||
-                file.name.startsWith("cropped_image") ||
-                file.name.startsWith("temp_image")
+                    file.name.startsWith("shared_image") ||
+                    file.name.startsWith("cropped_image") ||
+                    file.name.startsWith("temp_image")
             }?.forEach { file ->
                 try {
                     file.delete()
                 } catch (e: SecurityException) {
-                    logManager.error("MainActivity", "安全异常，无法删除残留文件: ${file.absolutePath}", e)
+                    logManager.error(
+                        "MainActivity",
+                        "安全异常，无法删除残留文件: ${file.absolutePath}",
+                        e
+                    )
                 }
             }
 
             // 清理外部缓存目录下的临时文件
             externalCacheDir?.listFiles { file ->
                 file.name.startsWith("temp_") ||
-                file.name.startsWith("shared_image") ||
-                file.name.startsWith("cropped_image") ||
-                file.name.startsWith("temp_image")
+                    file.name.startsWith("shared_image") ||
+                    file.name.startsWith("cropped_image") ||
+                    file.name.startsWith("temp_image")
             }?.forEach { file ->
                 try {
                     file.delete()
                 } catch (e: SecurityException) {
-                    logManager.error("MainActivity", "安全异常，无法删除外部缓存残留文件: ${file.absolutePath}", e)
+                    logManager.error(
+                        "MainActivity",
+                        "安全异常，无法删除外部缓存残留文件: ${file.absolutePath}",
+                        e
+                    )
                 }
             }
         } catch (e: SecurityException) {

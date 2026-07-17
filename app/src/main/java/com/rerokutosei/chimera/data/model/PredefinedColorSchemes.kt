@@ -76,7 +76,7 @@ object PredefinedColorSchemes {
 
     // 获取所有预定义方案列表
     val allPredefined = listOf(dynamic, bocchi, nijika, kita, ryo, custom)
-    
+
     /**
      * 根据名称查找颜色方案
      */
@@ -90,7 +90,7 @@ object PredefinedColorSchemes {
             else -> dynamic // 默认返回动态色彩方案
         }
     }
-    
+
     // 从主色调生成完整的颜色方案
     fun fromPrimaryColor(primary: Color): ColorScheme {
         return ColorScheme(
@@ -100,22 +100,22 @@ object PredefinedColorSchemes {
             tertiary = generateTertiaryColor(primary)
         )
     }
-    
+
     // 生成协调的次色
     private fun generateSecondaryColor(primary: Color): Color {
         return ColorUtils.generateSecondaryColor(primary)
     }
-    
+
     // 生成协调的第三色
     private fun generateTertiaryColor(primary: Color): Color {
         return ColorUtils.generateTertiaryColor(primary)
     }
-    
+
     // 将Color转换为HSV数组
     private fun colorToHSV(color: Color): FloatArray {
         return ColorUtils.colorToHSV(color)
     }
-    
+
     /**
      * 调整颜色以适应深色主题
      * 降低颜色的亮度并适当增加饱和度
@@ -124,7 +124,7 @@ object PredefinedColorSchemes {
         if (colorScheme.isDynamic) {
             return colorScheme
         }
-        
+
         return ColorScheme(
             name = colorScheme.name,
             primary = adjustColorForDarkTheme(colorScheme.primary),
@@ -132,7 +132,7 @@ object PredefinedColorSchemes {
             tertiary = adjustColorForDarkTheme(colorScheme.tertiary)
         )
     }
-    
+
     /**
      * 调整单个颜色以适应深色主题
      */

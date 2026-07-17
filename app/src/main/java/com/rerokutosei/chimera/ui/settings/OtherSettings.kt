@@ -115,7 +115,7 @@ fun OtherSettingsSection(
                         }
                     )
                     androidx.compose.material3.DropdownMenuItem(
-                        text = { Text("WARN")},
+                        text = { Text("WARN") },
                         onClick = {
                             showLogLevelMenu = false
                             viewModel.setLogLevel(2)
@@ -137,7 +137,7 @@ fun OtherSettingsSection(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        thickness = DividerDefaults.Thickness, 
+        thickness = DividerDefaults.Thickness,
         color = DividerDefaults.color
     )
 }
