@@ -10,7 +10,9 @@
 # Fix: extract context.getString(...) to composable-scoped val with stringResource(...)
 ```
 
-- `compileSdk` / `targetSdk` = 37, `minSdk` = 29, `applicationId` = `com.rerokutosei.chimera`
+- `compileSdk` = 37, `targetSdk` = 36, `minSdk` = 29, `applicationId` = `com.rerokutosei.chimera`
+- Java/Kotlin toolchain = 21 (`sourceCompatibility`/`targetCompatibility` = `VERSION_21`)
+- `versionName` comes from the `appVerName` Gradle property (`-PappVerName=...`); `versionCode` is derived from it (`computeVersionCode`). Dev build type appends `.dev` / `-dev` suffix.
 - Release build needs keystore env vars (`KEYSTORE_PATH`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`)
 - No tests (no test runner configured; do not add tests unless explicitly asked)
 - Kotlin serialization plugin (`kotlin("plugin.serialization")`) already applied; Navigation `2.9.8` supports `@Serializable` route types via `toRoute<>()`
@@ -18,26 +20,50 @@
 
 ## Architecture
 
-- **Single Activity** → Jetpack Compose, no Fragments
+- **Single Activity** (`MainActivity`) → Jetpack Compose, no Fragments
 - **No Services, no BroadcastReceivers** (except per-user request)
-- Navigation: type-safe via `@Serializable sealed class Route` in `ui/navigation/Route.kt`
+- Gradle modules: `:app`, `:baselineprofile` (Macrobenchmark baseline profile generator), and three library modules under `t8rin/` (fancy-slider, embedded-picker, image-reorder-carousel)
+- Navigation: type-safe via `@Serializable sealed class Route` in `ui/navigation/Route.kt` — routes: `Main`, `Settings`, `ImageViewer(...)`
 - State: `ViewModel` + `MutableStateFlow` + DataStore Preferences; no Room, no network
+- Four ViewModels: `MainViewModel`, `SettingsViewModel`, `StitchViewModel` (stitch/cut orchestration), `ImageViewerViewModel`
 - App theme: `ChimeraTheme` with `shouldUseDarkTheme()` composable in `ui/theme/Theme.kt`
-- Three library modules under `t8rin/` (fancy-slider, embedded-picker, image-reorder-carousel)
+
+## Stitch engine (single Kotlin engine)
+
+- `ImageStitcher` (`utils/stitch/`) is the entry point — `StitchViewModel` calls its `stitchImages()` / `stitchOverlay()`.
+- Layering: `ImageStitcher` → `KotlinStitchingEngine` → `StitcherFactory` → a `StitchingStrategy` (`DirectStitchingStrategy` / `OverlayStitchingStrategy`, both extend `BaseStitchingStrategy`).
+- `StitchResult` is a sealed class: `BitmapResult(bitmap)` / `ErrorResult(message)`.
+- `StitchingOptions` (defined in `strategy/StitchingStrategy.kt`) carries spacing, spacing color, overlay ratio, width scale, orientation, quality, output format.
+- NOTE: `StitchingEngine` is an interface with a single implementation (`KotlinStitchingEngine`) — legacy from an abandoned dual-engine (C++/Kotlin) design; the C++ engine is gone. It is never referenced by interface type.
 
 ## Package Layout
 
 ```
-data/local/       — DataStore-based setting managers (StitchSettingsManager, ImageSettingsManager)
-data/model/       — enums and data classes (ColorScheme, ThemeMode, ImageInfo)
-data/repository/  — ThemeRepository
-ui/main/          — MainScreen, ParameterSettingsCard, BottomActionButtons, TopAppBar
-ui/settings/      — SettingsScreen, ImageOutputSettings, DisplaySettings, etc.
-ui/viewer/        — ImageViewerScreen, ImageResultPreviewer, ImageViewerViewModel
-ui/theme/         — ChimeraTheme, CustomColorPickerDialog, SpacingColorPickerDialog, ColorSchemePreview
+data/local/       — DataStore-based managers: StitchSettingsManager, ImageSettingsManager,
+                    UserPreferencesManager, LogSettingsManager, PreloadManager
+data/model/       — enums/data classes: ColorScheme, PredefinedColorSchemes, ThemeMode,
+                    ImageInfo, ImageListDirectionMode
+data/repository/  — ThemeRepository, ImageRepository
+ui/main/          — MainScreen, MainViewModel, ParameterSettingsCard, BottomActionButtons,
+                    TopAppBar, CustomSegmentedButton, ImagePickerButton, EmbeddedPickerDialog,
+                    EstimatedResolutionCard, WelcomeDialog, ErrorDialog
+ui/settings/      — SettingsScreen, SettingsViewModel, ImageOutputSettings, DisplaySettings,
+                    PerformanceSettings, FilePickerSettings, OtherSettings, About,
+                    OpenSourceLicenses, PrivacyPolicy, ComButton
+ui/viewer/        — ImageViewerScreen, ImageViewerViewModel, ImageResultPreviewer,
+                    AdaptiveDisplay, PreviewSource
+ui/theme/         — Theme (ChimeraTheme, shouldUseDarkTheme), Type, CustomColorPickerDialog,
+                    SpacingColorPickerDialog, ColorSchemePreview
 ui/navigation/    — NavGraph, Route
-utils/image/      — BitmapLoader, ImageSaver, ImageSharer, ImageSplitter
-utils/stitch/     — ImageStitcher, StitchingStrategy, DirectStitchingStrategy, OverlayStitchingStrategy
+ui/stitch/        — StitchViewModel (drives ImageStitcher)
+utils/stitch/         — ImageStitcher, StitchResult, StitcherFactory (+ StitchOrientation enum)
+utils/stitch/engine/  — StitchingEngine (legacy iface), KotlinStitchingEngine
+utils/stitch/strategy/— StitchingStrategy + StitchingOptions, BaseStitchingStrategy,
+                        DirectStitchingStrategy, OverlayStitchingStrategy
+utils/image/      — BitmapLoader, ImageSaver, ImageSharer, ImageSplitter, EstimateResolution,
+                    Media2ImageInfoConverter
+utils/color/      — ColorUtils
+utils/common/     — LogManager, MemoryLimitCalculator, ToastUtil, LinkTextUtil
 ```
 
 ## Conventions
@@ -61,6 +87,22 @@ utils/stitch/     — ImageStitcher, StitchingStrategy, DirectStitchingStrategy,
 | image_spacing_color | String | #FF000000 |
 | cut_grid | Int | 3 |
 | multi_thread_enabled | Boolean | false |
+
+## DataStore Keys (ImageSettingsManager)
+
+| Key | Type | Note |
+|-----|------|------|
+| output_image_format | Int | 0: PNG, 1: JPEG, 2: WEBP |
+| output_image_quality | Int | 0–100 |
+| delete_original_image | Boolean | |
+| auto_clear_images | Boolean | |
+| high_memory_limit | Boolean | raise memory threshold |
+| use_saf_picker | Boolean | use Storage Access Framework picker |
+| use_embedded_picker | Boolean | use embedded-picker library |
+| slider_thumb_shape | Int | FancySlider thumb shape |
+| image_list_direction | Int | image list direction mode |
+
+Other managers: `UserPreferencesManager` (`first_launch`), `LogSettingsManager`, `PreloadManager`.
 
 ## Dark Mode
 
