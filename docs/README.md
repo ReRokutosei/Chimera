@@ -1,135 +1,119 @@
-<div align="center">
-</br>
-<img src="../assets/cover.webp" width="2323" />
-</div>
+<p align="center">
+  <img src="../assets/cover.webp" width="960" alt="Chimera application preview" />
+</p>
 
-<div align="center">
-
-# Chimera
-</div>
+<h1 align="center">Chimera</h1>
 
 <p align="center">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-CD15ED?logo=kotlin&logoColor=white&style=for-the-badge"/>
   <img alt="Release" src="https://img.shields.io/github/v/release/ReRokutosei/Chimera?color=FF6598&include_prereleases&logo=github&style=for-the-badge&labelColor=FF6598"/>
-  </br>
+  <br>
   <img alt="GPLv3" src="https://img.shields.io/badge/GPL%20v3-008033?style=for-the-badge&logo=gnu&logoColor=white"/>
-  <img alt="API" src="https://img.shields.io/badge/Api%2029+-34A853?logo=android&logoColor=white&style=for-the-badge"/>
-  </br>
+  <img alt="API" src="https://img.shields.io/badge/ANdroid%2010+-34A853?logo=android&logoColor=white&style=for-the-badge"/>
+  <br>
   <img alt="Jetpack Compose" src="https://img.shields.io/static/v1?style=for-the-badge&message=Jetpack+Compose&color=4285F4&logo=Jetpack+Compose&logoColor=FFFFFF&label="/>
   <img alt="material" src="https://custom-icon-badges.demolab.com/badge/material%20you-6442D6?style=for-the-badge&logoColor=white&logo=material-you"/>
-  </br>
+  <br>
   <a href="https://deepwiki.com/ReRokutosei/Chimera"><img alt="DeepWiki" src="https://img.shields.io/badge/Ask%20DeepWiki-0D7FC0?style=for-the-badge&logoColor=white"/></a>
-  </br>
-  
+</p>
 
-<div align="center">
+<p align="center"><strong>English | <a href="README_CN.md">简体中文</a></strong></p>
 
-**English | [简体中文](README_CN.md)**
+## Overview
 
-## 🗺️ Project Overview
+Chimera is an Android application for stitching and cutting images. It is written in Kotlin with Jetpack Compose and supports Android 10 and later.
 
-Chimera is a modern Android image stitching utility built with **Kotlin** and **Jetpack Compose**. It provides multiple synthesis modes to create seamless vertical or horizontal composites.
-
-Supporting JPEG, PNG, and WEBP, Chimera features a **fully offline design**, enabling complex processing without any network permissions. The app is deeply integrated with the Material You dynamic color system for a native, fluid experience.
-
-</div>
+Image decoding, stitching, cutting, and saving are performed on the device. The application does not declare the Android `INTERNET` permission and does not transmit images to a developer-operated service.
 
 > [!TIP]
-> 
-> For the Desktop version, visit https://github.com/ReRokutosei/ChimeraWeb
+> If you need the desktop version, please go to the [ChimeraWeb](https://github.com/ReRokutosei/ChimeraWeb).
 
-## 🌟 Core Features
+## Features
 
-### Image Selection Methods
+### Image access
 
-![Selector](../assets/picker.webp)
+![Image selection interface](../assets/picker.webp)
 
-The app offers three selection strategies to balance privacy and advanced functionality:
+- **System Photo Picker**: Uses the platform picker when available and grants access only to selected media, without broad storage permission.
+- **Storage Access Framework (SAF)**: Selects image files through the system document provider.
+- **Embedded Picker**: Provides album browsing and search through components derived from ImageToolbox. It requires the applicable media permission and may need time to index media on first use.
 
-- **System Photo Picker**: The recommended modern choice. Requires zero permissions (Android 13+ / SDK 31+).
-- **Embedded Picker**: An advanced selector ported from the ImageToolbox project. It supports metadata search and album categorization while mitigating platform-specific URI ordering bugs found in the system picker.
-- **Storage Access Framework (SAF)**: Secure image access through system-level file management, compatible with SDK 29-36.
+### Stitching and cutting
 
-### Synthesis Modes
+- Direct vertical or horizontal stitching, with configurable spacing and fill color.
+- Original, minimum-alignment, and maximum-alignment scaling modes.
+- Overlay mode that keeps a configurable trailing section from each subsequent image; this is intended for workflows such as combining subtitle screenshots.
+- Drag-and-drop ordering of selected images.
+- 2 x 2 and 3 x 3 grid cutting, including batch saving.
 
-- **Direct Stitching**:
-  - Horizontal (left-to-right) or Vertical (top-to-bottom) layouts.
-  - Adjustable image spacing (0-50px) with customizable fill color.
-  - Three scaling strategies: Fit to Smallest, Preserve Original, or Fit to Largest.
-  - Long-press and drag to reorder selected images.
-- **Overlay Compositing**:
-  - Create overlaps between images, ideal for video subtitle screenshots.
-  - Precision control over the overlapping area ratio (0-100%).
+### Display and output
 
-- **Grid Cut Mode**:
-  - Split images into 2×2 (4-cell) or 3×3 (9-cell) grids with one tap.
-  - Batch process up to 10 images
+- Light, dark, and automatic themes.
+- Material You dynamic color on supported Android versions; results depend on the wallpaper information exposed by the operating system.
+- JPEG, PNG, and WebP output. The quality setting applies to JPEG and WebP.
+- Optional multithreaded decoding and scaling. The result depends on image dimensions, device cores, and available memory.
 
-### Personalization & Performance
+## Performance
 
-- **Theming**: Dark Mode support and Material You dynamic coloring based on system wallpaper.
-  - *Note: If using auto-rotating wallpaper services (e.g., Mi Carousel), the dynamic color system will capture the static wallpaper set by the OS rather than the rotating service's image. This is a system limitation, not a bug.*
-- **Performance**: Optional multi-threaded acceleration via Kotlin Coroutines and manual memory allocation threshold overrides.
-- **Output Control**: Export to JPEG, PNG, or WEBP with granular quality settings.
+The following results compare sequential and bounded parallel scaling on the same Pixel 9 Pro AVD, Android 15, x86_64, with ART `speed` compilation. They are medians from deterministic synthetic datasets and are intended for before-and-after comparison, not as performance guarantees for physical devices.
 
-## ⚠️ Technical Limitations
+| Scenario | Sequential | Multithreaded | Change |
+| --- | ---: | ---: | ---: |
+| Direct horizontal, 10 medium images, MIN | 78.47 ms | 46.28 ms | -41.0% |
+| Direct vertical, 50 small images, MAX | 83.53 ms | 51.45 ms | -38.4% |
+| Overlay vertical, 10 medium images, MIN | 54.99 ms | 32.47 ms | -41.0% |
 
-<details>
-<summary><strong>Expand for Memory & Format Details</strong></summary>
+See [Image Processing Performance Baseline](Performance_Baseline.md) for datasets, stage timings, codec measurements, commands, and limitations.
 
-### Format Specifications
-Stitching scale is governed by file format limits:
-- **JPEG**: Hard limit of 65,535 × 65,535 pixels.
-- **WebP**: Typical limit around 16,384 × 16,384 pixels.
-- **PNG**: Theoretically massive (32-bit unsigned integer limit), best for extreme composites.
+## Technical limits
 
-### Memory Constraints (OOM)
-Due to Android VM architecture, processing large bitmaps (Width × Height × 4 bytes/pixel) is RAM-intensive. If the app crashes during heavy tasks:
-1. Enable "Increase Memory Threshold" in Settings.
-2. Switch output format to PNG.
-3. For ultra-large datasets, a desktop-based utility is recommended.
+### Output dimensions
 
-### Known Issues
-- **Photo Picker Ordering**: Due to an unpatched [Android platform bug](https://issuetracker.google.com/issues/264215151), the system Photo Picker may return URIs in an arbitrary order. Use "Embedded Picker" or "SAF" if selection order is critical.
-</details>
+- JPEG output is validated against a maximum dimension of 65,535 pixels.
+- WebP output is validated against a maximum dimension of 16,383 pixels.
+- PNG is not subject to those encoder-specific limits, but Android Bitmap dimensions and available device memory still apply.
 
-## 🔨 Building the Project
+Changing the output format does not reduce the memory required by decoded source images or the stitching canvas.
 
-<details>
-<summary><strong>Expand for Dev Environment & Build Steps</strong></summary>
+### Memory
 
-### Prerequisites
-- **Android Studio Panda 4| 2025.3.4** or newer.
-- **JDK 21**.
-- **Android SDK**.
+Bitmap processing commonly requires approximately 2-4 bytes per pixel, plus source images, scaled intermediates, previews, and the output bitmap. Peak memory therefore cannot be estimated from the final file size alone.
 
-### Build Guide
-1. **Clone**: `git clone --depth 1 https://github.com/ReRokutosei/Chimera.git`
-2. **SDK Setup**: Define `sdk.dir` in your root `local.properties`.
-3. **Signing**: Add the following to your user-level `gradle.properties` (Windows: `%USERPROFILE%\.gradle\gradle.properties`):
-   ```properties
-   KEYSTORE_PATH=../keystore/Chimera.jks
-   KEYSTORE_PASSWORD=yourpassword
-   KEY_ALIAS=chimera_release
-   KEY_PASSWORD=yourpassword
-   ```
-4. **Build**: Execute `./gradlew assembleRelease`.
-</details>
+If processing fails because of memory pressure, first reduce the number or dimensions of the input images and close other memory-intensive applications. The increased memory threshold setting only relaxes Chimera's internal preflight limit; it does not add RAM and can increase the risk of process termination or an out-of-memory failure.
 
-## 🔐 Legal & Privacy
+### Photo Picker ordering
 
-- **Privacy Policy**: No network permissions requested; zero data collection. All processing remains local. See [Privacy Policy](PrivacyPolicy_EN.md).
-- **Disclaimer**: Provided "as is" without warranty. See [Disclaimer](Disclaimer_EN.md).
-- **License**: Licensed under the GNU General Public License v3.0 (GPLv3). See [LICENSE](LICENSE).
+The Android Photo Picker may return selected URIs in an order different from the visual selection order. This remains tracked as [a known bug](https://issuetracker.google.com/issues/264215151). Use the embedded picker, SAF, or reorder the images manually.
 
-## 🙏 Credits & Acknowledgments
+## Build and verification
 
-- **ImageToolbox**: Special thanks to the [ImageToolbox](https://github.com/T8RIN/ImageToolbox) project for the Embedded Picker, Fancy Slider, and Image Reorder Carousel components.
-- **Icon Design**: App icon designed by [Freepik](https://www.freepik.com/icon/animal_13228011).
-- **Copyright Notice**: Background assets and screenshots are sourced from the anime **"Bocchi the Rock!"**. All rights reserved to:
-  > ©HAMAJI AKI・Houbunsha/Bocchi the Rock! Production Committee
+Requirements:
 
-## 📚 Dependencies
+- JDK 21
+- Android SDK Platform 37
+- The repository's Gradle Wrapper
+
+```bash
+git clone --depth 1 https://github.com/ReRokutosei/Chimera.git
+cd Chimera
+./gradlew build -x detekt
+```
+
+Release builds use the debug signing key when no release keystore is configured. For distributable builds, provide `KEYSTORE_PATH`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, and `KEY_PASSWORD` through environment variables or user-level Gradle properties, then run `./gradlew assembleRelease`.
+
+## Privacy, warranty, and license
+
+- [Privacy Policy](PrivacyPolicy_EN.md)
+- [Disclaimer](Disclaimer_EN.md)
+- [GNU General Public License v3.0](../LICENSE)
+
+## Credits
+
+- Components derived from [ImageToolbox](https://github.com/T8RIN/ImageToolbox): Embedded Picker, Fancy Slider, and Image Reorder Carousel.
+- Application icon designed by [Freepik](https://www.freepik.com/icon/animal_13228011).
+- Some existing project screenshots and background assets reference *Bocchi the Rock!*. Those works remain the property of their respective rights holders. Attribution does not imply endorsement of this project.
+
+## Dependencies
 
 <details>
 <summary><strong>Click Here to View</strong></summary>

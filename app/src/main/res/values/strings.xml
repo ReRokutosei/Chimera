@@ -15,20 +15,20 @@
     <string name="embedded_picker_sub">Uses Image Toolbox\'s elegant image picker</string>
     
     <!-- Image Reorder Carousel Strings -->
-    <string name="images_order">Images Order</string>
+    <string name="images_order">Image Order</string>
     <string name="add">Add</string>
     <string name="remove">Remove</string>
     
     <!-- Open Source Licenses -->
     <string name="open_source_licenses">Open Source Licenses</string>
     <string name="gpl_license_header">License</string>
-    <string name="gpl_license_description">This project is licensed under the GNU General Public License v3.0.\nBy using this software, you agree to the terms of the license which\nIncludes conditions for copying, distribution, and modification.</string>
+    <string name="gpl_license_description">This project is licensed under the GNU General Public License v3.0.\nBy using this software, you agree to the terms of the license, which\ninclude conditions for copying, distribution, and modification.</string>
 
     <!-- Privacy Policy and Disclaimer -->
     <string name="privacy_policy_and_disclaimer">Privacy Policy and Disclaimer</string>
     <string name="privacy_policy_header">Privacy Policy</string>
     <string name="disclaimer_header">Disclaimer</string>
-    <string name="full_documents_info">For complete privacy policy, disclaimer, and license information, please visit our project page: \nhttps://github.com/ReRokutosei/Chimera</string>
+    <string name="full_documents_info">For the complete privacy policy, disclaimer, and license information, please visit our project page: \nhttps://github.com/ReRokutosei/Chimera</string>
     
     <!-- Welcome Dialog -->
     <string name="welcome_title">Welcome to Chimera</string>
@@ -62,19 +62,19 @@
     <string name="width_scaling">Width Scale:</string>
     <string name="height_scaling">Height Scale:</string>
     <string name="overlay_ratio">Overlay Area Ratio:</string>
-    <string name="image_spacing">Image Space:</string>
+    <string name="image_spacing">Image Spacing:</string>
     <string name="switch_theme">Switch Theme</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="version">Version</string>
     <string name="about">About</string>
-    <string name="developer_info">Application Developed\nby ReRokutosei</string>
-    <string name="icon_designer">Application Icon Designed\nby Freepik</string>
+    <string name="developer_info">Developed by ReRokutosei</string>
+    <string name="icon_designer">Icon designed by Freepik</string>
     <string name="developer_avatar">Developer Avatar</string>
     <string name="developer_information">Developer Information</string>
     <string name="display_settings">Display Settings</string>
     <string name="dynamic_colors">Dynamic Colors</string>
-    <string name="dark_mode_follow_system">Dark Mode Follow System</string>
+    <string name="dark_mode_follow_system">Dark Mode Follows System</string>
     <string name="slider_handle_icon">Slider Handle Icon</string>
     <string name="material_star_shape">Star</string>
     <string name="small_material_star_shape">Small Star</string>
@@ -90,11 +90,11 @@
     <string name="image_list_direction_desc">Choose the direction of preview images before stitching</string>
     <string name="auto">Auto</string>
     <string name="use_saf_picker">Use Storage Access Framework Picker</string>
-  <string name="use_saf_without_permission">Use Storage Access Framework to select images without permissions</string>
+  <string name="use_saf_without_permission">Use Storage Access Framework to select images without permission</string>
     <string name="default_picker_info">Your device uses this picker by default</string>
     <string name="image_output_settings">Image Output Settings</string>
     <string name="output_format">Output Image Format</string>
-    <string name="spacing_fill_color">Image Space Fill Color</string>
+    <string name="spacing_fill_color">Image Spacing Fill Color</string>
     <string name="black">Black</string>
     <string name="white">White</string>
     <string name="light_red">Light Red</string>
@@ -102,18 +102,18 @@
     <string name="light_blue">Light Blue</string>
     <string name="output_quality">Output Image Quality</string>
     <string name="back">Back</string>
-    <string name="other_settings">Other</string>
+    <string name="other_settings">Other Settings</string>
     <string name="log_level">Log Level</string>
     <string name="select_log_level">Select Log Level</string>
     <string name="performance_settings">Performance Settings</string>
     <string name="engine_selection">Engine Selection</string>
     <string name="select_stitching_engine">Select Image Stitching Engine</string>
-    <string name="multithreading">Multithreading Acceleration</string>
+    <string name="multithreading">Multithreading</string>
     <string name="multithreading_desc">Use multithreading to process images in parallel and improve stitching speed</string>
     <string name="high_memory_threshold">Increase Memory Threshold</string>
     <string name="high_memory_threshold_desc">Raise memory threshold to 80% of device\'s total RAM</string>
     <string name="stitching_result">Stitching Result</string>
-    <string name="no_valid_result">No valid image result generated</string>
+    <string name="no_valid_result">No valid image result was generated</string>
     <string name="stitching_failed">Stitching Failed</string>
     <string name="log_content">Log Content:\n</string>
     <string name="copy_log">Copy Log</string>
@@ -186,38 +186,35 @@
     <string name="cut_error_invalid_grid">The selected cut grid is invalid.</string>
     <string name="cut_error_split_failed">An image could not be cut. Check the log for details.</string>
     <string name="cut_error_unexpected">Cutting failed unexpectedly. Check the log for details.</string>
-    <string name="save_error_storage_unavailable">Gallery storage is unavailable.</string>
+    <string name="save_error_storage_unavailable">Unable to access gallery storage.</string>
     <string name="save_error_encoding_failed">The image could not be encoded.</string>
     <string name="save_error_write_failed">The image could not be written to the gallery.</string>
     <string name="save_error_unexpected">Saving failed unexpectedly. Check the log for details.</string>
 
     <!-- Help Content -->
-    <string name="help_card_title_mode_direct">✨ Normal Stitching</string>
-    <string name="help_card_content_mode_direct"> (Image Overlay Disabled)
-        \nStitch images directly according to the set direction (horizontal or vertical).
-        \nSupports adjusting the image spacing (0–50px) and the overall scaling mode (uniform width for vertical stitching, uniform height for horizontal stitching).
-        \n\nMin: Find the smallest alignment dimension (i.e., the minimum width or minimum height) among all images and scale all images proportionally to that size.
-        \n\nOriginal: Maintain the original dimensions of each individual image.
-        \n\nMax: Find the largest alignment dimension (i.e., the maximum width or maximum height) among all images and scale all images proportionally to that size.</string>
-    <string name="help_card_title_mode_overlay">✨ Overlay Stitching</string>
-    <string name="help_card_content_mode_overlay" formatted="false">Uses the first image as the base and overlaps the next image onto it. Useful for creating common video subtitle screenshots.
-    \nYou can adjust the percentage (0–100%) of the next image\`s area to be overlaid.</string>
-    <string name="help_card_title_format_limit">🔒 Image Format Limitations</string>
-    <string name="help_card_content_format_limit">Image stitching is subject to both the technical specifications of file formats and device memory limits.
-        \nPlease note:
-        \n\nJPEG: The theoretical maximum size is 65,535 × 65,535 pixels (16-bit limit).The app outputs JPEG format by default.
-        \n\nWebP: Whether lossless or lossy, its maximum size is typically limited to around 16,384 × 16,384 pixels.
-        \n\nPNG: The theoretical maximum size is as high as 4,294,967,295 × 4,294,967,295 pixels (32-bit unsigned integer limit), theoretically the highest.
-        \n\n❗If you have many images or large images, it is recommended to go to Settings and switch to PNG format, and enable the Increased Memory Threshold option.
-        \n\n❗❗❗ Regardless of the format, the ultimate limitations in practice are the device\`s memory (RAM) and the Android Virtual Machine mechanism.The memory required to decode a very large image (width * height * 4 bytes/pixel) can easily cause the app to crash (OOM Crash).</string>
-    <string name="help_card_title_setting_output">⚙️ Image Output Settings</string>
-    <string name="help_card_content_setting_output" formatted="false">Output Image Format: Supports PNG, JPEG, and WEBP.
-        \n\nOutput Image Quality: The slider (1%-100%) only takes effect when the output format is JPEG or WEBP, and higher values produce higher quality images with larger file sizes.</string>
-    <string name="help_card_title_setting_performance">🚀 Performance Settings</string>
-    <string name="help_card_content_setting_performance" formatted="false">Multithreading Acceleration: When enabled, image loading and stitching processes will be executed in parallel using Kotlin coroutines, which can significantly improve stitching speed.
-        \n\nIncrease Memory Threshold: Raises the memory allocation upper limit for the stitching canvas from the default 50% to 80%, allowing for processing larger images, but increases the risk of OOM (Out Of Memory).</string>
-    <string name="help_card_title_setting_picker">🖼️ File Picker Settings</string>
-    <string name="help_card_content_setting_picker">Auto Clear Selected Images: After stitching is complete, clear the selected images on the main page.
-        \n\nUse Storage Access Framework Picker (SAF): Access files using the system file picker without requiring storage permissions. Suitable for privacy-conscious users.
-        \n\nEmbedded Picker: A powerful embedded picker extracted from the excellent ImageToolbox project. Solves issues like the system Photo Picker not showing all albums or having incorrect URI order. However, it requires storage permissions, and the initial load of album data might take a few seconds.</string>
+    <string name="help_card_title_mode_direct">Direct Stitching</string>
+    <string name="help_card_content_mode_direct">Places images in the selected horizontal or vertical order without using overlay mode.
+        \nImage spacing can be set from 0 to 50 px. In vertical mode, scaling aligns image widths; in horizontal mode, it aligns image heights.
+        \n\nMinimum: Scale each image proportionally to the smallest alignment dimension in the current selection.
+        \n\nOriginal: Keep each image at its decoded dimensions. Images with different alignment dimensions are centered.
+        \n\nMaximum: Scale each image proportionally to the largest alignment dimension in the current selection. This mode can require substantially more memory.</string>
+    <string name="help_card_title_mode_overlay">Overlay Stitching</string>
+    <string name="help_card_content_mode_overlay" formatted="false">Keeps the first image in full, then appends a trailing section from each subsequent image. In essence, it refers to the elongated composite images commonly seen in film and television subtitling. This can be used to combine screenshots whose relevant content is near the bottom or right edge.
+        \n\nThe ratio controls how much of each subsequent image is retained. A larger ratio produces a larger output and may require more memory.</string>
+    <string name="help_card_title_format_limit">Output and Memory Limits</string>
+    <string name="help_card_content_format_limit">Output dimensions are checked against encoder and device limits.
+        \n\nJPEG: Each output dimension is limited to 65,535 pixels.
+        \n\nWebP: Each output dimension is limited to 16,383 pixels.
+        \n\nPNG: The JPEG and WebP limits do not apply, but Android Bitmap dimensions and available device memory still limit the result.
+        \n\nChanging the output format does not reduce the memory required by decoded source images or the stitching canvas. If processing fails, first reduce the number or dimensions of the input images. Bitmap processing generally requires about 2-4 bytes per pixel, in addition to source, intermediate, preview, and output bitmaps.</string>
+    <string name="help_card_title_setting_output">Image Output Settings</string>
+    <string name="help_card_content_setting_output" formatted="false">Output Format: Select JPEG, PNG, or WebP according to compatibility, transparency, and encoder dimension requirements.
+        \n\nOutput Quality: Applies only to JPEG and WebP. Higher values generally retain more detail and produce larger files. PNG output is not affected by this setting.</string>
+    <string name="help_card_title_setting_performance">Performance Settings</string>
+    <string name="help_card_content_setting_performance" formatted="false">Multithreading: Allows independent image decoding and scaling work to run concurrently with a bounded number of Kotlin coroutine workers. The benefit depends on image size, CPU cores, and available memory; small workloads may not improve.
+        \n\nIncrease Memory Threshold: Raises Chimera\'s preflight limit for the output canvas from 50% to 80% of reported device memory. It does not add RAM and can increase the risk of process termination or an out-of-memory failure.</string>
+    <string name="help_card_title_setting_picker">File Picker Settings</string>
+    <string name="help_card_content_setting_picker">Auto Clear Selected Images: Removes completed items from the selection list after stitching. It does not delete the source files.
+        \n\nStorage Access Framework (SAF): Selects files through the system document provider without broad media-library access.
+        \n\nEmbedded Picker: Provides album browsing and search through components derived from ImageToolbox. It requires the applicable media permission, and the initial media index may take time to load. The system Photo Picker can still be used when broad media access is not desired.</string>
 </resources>

@@ -13,6 +13,7 @@ docs/*
 !docs/README_CN.md
 !docs/README.md
 !docs/update_readme.py
+!docs/Performance_Baseline.md
 .externalNativeBuild
 .cxx
 local.properties
@@ -22,3 +23,4 @@ gradle/*
 !gradle/libs.versions.toml
 !gradle/wrapper/gradle-wrapper.properties
 /keystore/*
+.reasonix/

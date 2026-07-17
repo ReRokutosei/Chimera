@@ -1,135 +1,119 @@
-<div align="center">
-</br>
-<img src="../assets/cover.webp" width="2323" />
-</div>
+<p align="center">
+  <img src="../assets/cover.webp" width="960" alt="Chimera 应用界面预览" />
+</p>
 
-<div align="center">
-
-# Chimera
-</div>
+<h1 align="center">Chimera</h1>
 
 <p align="center">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-CD15ED?logo=kotlin&logoColor=white&style=for-the-badge"/>
   <img alt="Release" src="https://img.shields.io/github/v/release/ReRokutosei/Chimera?color=FF6598&include_prereleases&logo=github&style=for-the-badge&labelColor=FF6598"/>
-  </br>
+  <br>
   <img alt="GPLv3" src="https://img.shields.io/badge/GPL%20v3-008033?style=for-the-badge&logo=gnu&logoColor=white"/>
-  <img alt="API" src="https://img.shields.io/badge/Api%2029+-34A853?logo=android&logoColor=white&style=for-the-badge"/>
-  </br>
+  <img alt="API" src="https://img.shields.io/badge/ANdroid%2010+-34A853?logo=android&logoColor=white&style=for-the-badge"/>
+  <br>
   <img alt="Jetpack Compose" src="https://img.shields.io/static/v1?style=for-the-badge&message=Jetpack+Compose&color=4285F4&logo=Jetpack+Compose&logoColor=FFFFFF&label="/>
   <img alt="material" src="https://custom-icon-badges.demolab.com/badge/material%20you-6442D6?style=for-the-badge&logoColor=white&logo=material-you"/>
-  </br>
+  <br>
   <a href="https://deepwiki.com/ReRokutosei/Chimera"><img alt="DeepWiki" src="https://img.shields.io/badge/Ask%20DeepWiki-0D7FC0?style=for-the-badge&logoColor=white"/></a>
-  </br>
-  
+</p>
 
-<div align="center">
+<p align="center"><strong><a href="README.md">English</a> | 简体中文</strong></p>
 
-**[English](README.md) | 简体中文**
+## 项目概述
 
-## 🗺️ 项目概述
+Chimera 是一款用于图片拼接和宫格切图的 Android 应用，使用 Kotlin 与 Jetpack Compose 开发，支持 Android 10 及以上版本。
 
-Chimera 是一个现代化的 Android 图片拼接工具，基于 **Kotlin** 与 **Jetpack Compose** 开发，可将多张图片按照多种模式合成长图或宽图
-
-Chimera 支持处理 JPEG、PNG、WEBP，采用**全离线化设计**，无需任何权限即可完成拼接任务，并适配了 Material You 动态色彩
-
-</div>
+图片解码、拼接、切图和保存均在设备上完成。应用未声明 Android `INTERNET` 权限，不会将图片传输到开发者的任何服务器。
 
 > [!TIP]
-> 
-> 桌面端请前往 https://github.com/ReRokutosei/ChimeraWeb
+> 如需桌面端请前往 [ChimeraWeb](https://github.com/ReRokutosei/ChimeraWeb)
 
-## 🌟 核心功能
+## 功能
 
-### 图片选择方式
+### 图片访问方式
 
-![选择器](../assets/picker.webp)
+![图片选择界面](../assets/picker.webp)
 
-应用提供了三种选择器方案：
+- **系统照片选择器（Photo Picker）**：在平台支持时使用，仅授予所选媒体的访问权，不需要广泛的存储权限。
+- **存储访问框架（SAF）**：通过系统文档提供程序选择图片文件。
+- **嵌入式选择器（Embedded Picker）**：通过源自 ImageToolbox 的组件提供相册浏览和搜索。该方式需要对应的媒体访问权限，首次使用时可能需要等待媒体索引完成。
 
-- **系统照片选择器 (Photo Picker)**：推荐的现代化选择方式，无需任何权限，适用于 SDK 31+
-- **嵌入式选择器 (Embedded Picker)**：从 ImageToolbox 项目提取的高级选择器，支持搜索与相册分类，并解决了 Photo Picker 在部分场景下的 URI 乱序问题
-- **存储访问框架 (SAF)**：通过系统级文件管理安全访问图片，适用于 SDK 29-36
+### 拼接与切图
 
-### 拼接模式
+- 直接纵向或横向拼接，可配置图片间距和填充颜色。
+- 原始尺寸、最小对齐尺寸和最大对齐尺寸三种缩放模式。
+- 叠加模式保留每张后续图片中指定比例的尾部区域，可用于字幕截图组合等工作流。
+- 支持拖放调整已选图片顺序。
+- 支持 2 x 2 和 3 x 3 宫格切图及批量保存。
 
-- **直接拼接**：
-  - 支持横向（左到右）或纵向（上到下）排列
-  - 可自定义图片间隔（0-50px），支持自定义间隔填充颜色
-  - 支持三种缩放策略：缩放到最小、保持原始、缩放到最大尺寸
-  - 支持通过长按拖拽进行图片重排序
-- **叠加拼接**：
-  - 允许图片间存在重叠区域，适用于制作视频字幕截图等场景
-  - 可调节被叠加区域的占比（0-100%）
+### 显示与输出
 
-- **宫格切割模式**：
-  - 支持将图片切割为 2×2（四宫格）或 3×3（九宫格）
-  - 最多可批量处理 10 张图片
+- 浅色、深色和自动主题。
+- 在受支持的 Android 版本上使用 Material You 动态色彩；实际颜色取决于操作系统提供的壁纸信息。
+- 支持 JPEG、PNG 和 WebP 输出；质量设置仅作用于 JPEG 和 WebP。
+- 可选的多线程解码与缩放；实际收益取决于图片尺寸、设备核心数和可用内存。
 
-### 个性化与设置
+## 性能
 
-- **主题系统**：支持深色模式切换、基于系统壁纸的动态色彩（Material You），并内置了多款预定义配色方案
-  - 注意：如果你使用类似小米画报中的自动轮换壁纸，那么动态色彩将不能截取当前壁纸颜色，动态色彩只能截取由系统设置的桌面/锁屏壁纸颜色，这并非 BUG
-- **性能选项**：支持多线程加速计算，可根据设备性能手动提高应用内存分配阈值
-- **格式支持**：支持导出为 JPEG、PNG 及 WEBP 格式，并可调节输出质量
+下列结果比较了同一 Pixel 9 Pro AVD、Android 15、x86_64、ART `speed` 编译环境中的串行缩放和有界并行缩放。数据为固定合成数据集的中位数，仅用于同环境前后对比，不构成对实体设备性能的保证。
 
-## ⚠️ 技术限制说明
+| 场景 | 串行 | 多线程 | 变化 |
+| --- | ---: | ---: | ---: |
+| 10 张中图横向直接拼接，MIN | 78.47 ms | 46.28 ms | -41.0% |
+| 50 张小图纵向直接拼接，MAX | 83.53 ms | 51.45 ms | -38.4% |
+| 10 张中图纵向叠加拼接，MIN | 54.99 ms | 32.47 ms | -41.0% |
 
-<details>
-<summary><strong>点击查看详细的内存与格式限制</strong></summary>
+完整数据集、阶段计时、编码测试、执行命令和适用限制见[图片处理性能基线](Performance_Baseline.md)。
 
-### 图片格式限制
-拼接图片的规模受限于文件格式的规格上限：
-- **JPEG**：最大尺寸为 65,535 × 65,535 像素
-- **WebP**：最大尺寸通常限制在 16,384 × 16,384 像素左右
-- **PNG**：理论上限极高（32位整数限制），适用于超大规模合成
+## 技术限制
 
-### 内存限制 (OOM)
-由于 Android 虚拟机（VM）机制的限制，处理超大尺寸图片（宽 × 高 × 4 字节/像素）需要极高的内存开销，若处理大量大尺寸图片导致崩溃，建议：
-1. 前往设置开启“提高内存阈值”
-2. 将输出格式调整为 PNG
-3. 对于极端超大规模的任务，建议移步至桌面端进行处理
+### 输出尺寸
 
-### 已知问题
-- **Photo Picker 乱序**：由于 Google 尚未修复的[平台问题](https://issuetracker.google.com/issues/264215151)，Photo Picker 返回的 URI 顺序可能不符合选择顺序，若对此敏感，请改用“嵌入式选择器”或“SAF”
-</details>
+- JPEG 输出按单边最大 65,535 像素进行校验。
+- WebP 输出按单边最大 16,383 像素进行校验。
+- PNG 不受上述两项编码器尺寸限制，但仍受 Android Bitmap 尺寸和设备可用内存限制。
 
-## 🔨 构建项目
+更改输出格式不会减少解码后的源图或拼接画布所需的内存。
 
-<details>
-<summary><strong>点击查看开发环境要求与构建步骤</strong></summary>
+### 内存
 
-### 环境要求
-- **Android Studio Panda 4| 2025.3.4** 或更高版本
-- **JDK 21**
-- **Android SDK**
+Bitmap 处理通常需要约 2-4 字节/像素，此外还要同时容纳源图、缩放中间图、预览图和输出图。因此，不能只根据最终文件大小估算峰值内存。
 
-### 构建步骤
-1. **源码获取**：`git clone --depth 1 https://github.com/ReRokutosei/Chimera.git`
-2. **SDK 配置**：在根目录 `local.properties` 中指定 `sdk.dir`
-3. **签名配置**：在用户目录的 `gradle.properties`（Windows: `~/.gradle/gradle.properties`）中添加如下签名信息：
-   ```properties
-   KEYSTORE_PATH=../keystore/Chimera.jks
-   KEYSTORE_PASSWORD=yourpassword
-   KEY_ALIAS=chimera_release
-   KEY_PASSWORD=yourpassword
-   ```
-4. **编译导出**：运行 `./gradlew assembleRelease`
-</details>
+如果处理因内存压力失败，应首先减少输入图片数量或尺寸，并关闭其他占用大量内存的应用。“提高内存阈值”仅放宽 Chimera 的内部预检限制，不会增加设备 RAM，并可能提高进程被终止或发生内存溢出的风险。
 
-## 🔐 法律与隐私
+### Photo Picker 顺序
 
-- **隐私政策**：本应用不请求网络权限，不收集任何用户隐私，所有操作均在本地完成，详见 [隐私政策](PrivacyPolicy_CN.md)
-- **免责声明**：应用按现状提供，不提供任何形式的担保，详见 [免责声明](Disclaimer_CN.md)
-- **许可证**：本项目采用 GNU 通用公共许可证第3.0版（GPLv3）授权，详见 [LICENSE](LICENSE)
+Android Photo Picker 返回的 URI 顺序可能与界面中的选择顺序不同。该行为仍记录为 [BUG](https://issuetracker.google.com/issues/264215151)。推荐使用嵌入式选择器、SAF，或手动调整图片顺序。
 
-## 🙏 资源与致谢
+## 构建与验证
 
-- **ImageToolbox**：感谢 [ImageToolbox (Apache License 2.0)](https://github.com/T8RIN/ImageToolbox) 提供的 Embedded Picker、Fancy Slider 及 Image Reorder Carousel 组件
-- **图标设计**：应用图标由 [Freepik](https://www.freepik.com/icon/animal_13228011) 设计
-- **版权声明**：本应用及其文档中所展示的背景图片及截图均来源于动画 **《ぼっち・ざ・ろっく！》**，其版权归属于：
-  > ©はまじあき・芳文社／ぼっち・ざ・ろっく！製作委員会
+环境要求：
 
-## 📚 依赖库
+- JDK 21
+- Android SDK Platform 37
+- 仓库内的 Gradle Wrapper
+
+```bash
+git clone --depth 1 https://github.com/ReRokutosei/Chimera.git
+cd Chimera
+./gradlew build -x detekt
+```
+
+未配置发布密钥库时，Release 构建会使用 debug 签名。用于正式分发时，请通过环境变量或用户级 Gradle 属性提供 `KEYSTORE_PATH`、`KEYSTORE_PASSWORD`、`KEY_ALIAS` 和 `KEY_PASSWORD`，然后运行 `./gradlew assembleRelease`。
+
+## 隐私、担保与许可证
+
+- [隐私政策](PrivacyPolicy_CN.md)
+- [免责声明](Disclaimer_CN.md)
+- [GNU 通用公共许可证第三版](../LICENSE)
+
+## 致谢
+
+- [ImageToolbox](https://github.com/T8RIN/ImageToolbox)：从该项目抽取了三个组件：Embedded Picker、Fancy Slider 和 Image Reorder Carousel。
+- 应用图标由 [Freepik](https://www.freepik.com/icon/animal_13228011) 设计。
+- 项目现有的部分截图和背景素材涉及《ぼっち・ざ・ろっく！》。相关作品的权利归各自权利人所有；此处的署名不代表权利人认可或支持本项目。
+
+## 依赖库
 
 <details>
 <summary><strong>点击查看</strong></summary>

@@ -77,7 +77,7 @@
     <string name="image_list_direction_desc">选择拼接前预览图片的方向</string>
     <string name="auto">自动</string>
     <string name="use_saf_picker">使用存储访问框架选择器</string>
-    <string name="use_saf_without_permission">使用无需权限的 Storage Access Framework 选择图片</string>
+    <string name="use_saf_without_permission">使用 Storage Access Framework 选择图片，无需授予权限</string>
     <string name="default_picker_info">您的设备默认使用此选择器</string>
     <string name="image_output_settings">图片输出设置</string>
     <string name="output_format">输出图片格式</string>
@@ -95,7 +95,7 @@
     <string name="performance_settings">性能设置</string>
     <string name="engine_selection">引擎选择</string>
     <string name="select_stitching_engine">选择图片拼接引擎</string>
-    <string name="multithreading">多线程加速计算</string>
+    <string name="multithreading">多线程</string>
     <string name="multithreading_desc">使用多线程并行处理图片，提高拼接速度</string>
     <string name="high_memory_threshold">提高内存阈值</string>
     <string name="high_memory_threshold_desc">将内存阈值提升到设备总 RAM 的 80%</string>
@@ -126,7 +126,7 @@
     <string name="images_sorted_time_desc">已按时间排序：从新到旧</string>
     <string name="images_sorted_name_asc">已按名称排序：A-Z</string>
     <string name="images_sorted_name_desc">已按名称排序：Z-A</string>
-    <string name="select_two_or_more_images">请选择两张及其以上的图片</string>
+    <string name="select_two_or_more_images">请至少选择两张图片</string>
     <string name="estimated_resolution">预计分辨率: %1$d × %2$d</string>
     <string name="resolution_limit_exceeded">分辨率超出限制！\n请在设置中选择PNG格式</string>
     <string name="estimated_resolution_unavailable">无法估算分辨率</string>
@@ -151,7 +151,7 @@
         \n\n政策更新：
         \n本隐私政策的任何修订将在项目的GitHub页面发布，并随应用更新生效，恕不另行通知。</string>
     <string name="disclaimer_header">免责声明</string>
-    <string name="disclaimer_summary">本应用按现状提供，不提供任何形式的明示或暗示的担保，包括但不限于对适用性、特定目的的适用性及不侵权的担保。
+    <string name="disclaimer_summary">本应用以「现况」方式提供，不提供任何形式的明示或暗示的担保，包括但不限于对适用性、特定目的的适用性及不侵权的担保。
         \n\n风险自担：
         \n使用本应用所产生的所有风险由您自行承担。应用功能的准确性和完整性不做担保。
         \n\n责任限制：
@@ -191,34 +191,30 @@
     <string name="save_error_unexpected">保存时发生意外错误，请查看日志了解详情。</string>
     
     <!-- Help Content -->
-    <string name="help_card_title_mode_direct">✨ 普通拼接</string>
-    <string name="help_card_content_mode_direct">(即不启用图片叠加)
-        \n按照设定的方向（横向或纵向）直接拼接图片。
-        \n支持调节图片间隔（0–50px）和整体缩放模式（垂直拼接统一宽度，水平拼接统一高度）。
-        \n\n最小：查找所有图片中的最小对齐尺寸（即最小宽度或最小高度），将所有图片都等比例缩放。
-        \n\n原始：保持所有图片各自的原始尺寸。
-        \n\n最大：查找所有图片中的最大对齐尺寸（即最大宽度或最大高度），将所有图片都等比例缩放。
-        \n\n选择图片之后，可以长按拖动已选图片改变顺序</string>
-    <string name="help_card_title_mode_overlay">✨ 叠加拼接</string>
-    <string name="help_card_content_mode_overlay" formatted="false">以第一张图片为基准，与下一张图片进行重叠绘制，可以用来制作常见的视频字幕截图。
-        \n您可以调节下一张图的被叠加区域占比（0–100%）</string>
-    <string name="help_card_title_format_limit">🔒 图片格式的限制</string>
-    <string name="help_card_content_format_limit">拼接图片受文件格式的技术规范和设备内存的双重限制。
-        \n请注意：
-        \nJPEG：技术理论最大尺寸为 65,535 × 65,535 像素（16 位限制），App默认输出 JPEG 格式。
-        \n\nWebP：无论是无损还是有损，其最大尺寸通常被限制在 16,384 × 16,384 像素左右。
-        \n\nPNG：技术理论最大尺寸高达 4,294,967,295 × 4,294,967,295 像素（32 位无符号整数限制），理论上是最高的。
-        \n\n❗ 如果图片较多或图片较大，建议前往设置调整为 PNG 格式，并开启提高内存阈值。
-        \n\n❗❗❗ 无论格式如何，实际操作中最大的限制是设备内存(RAM)和安卓虚拟机机制限制。超大图解码所需的内存（宽 * 高 * 4 字节/像素）很容易导致应用崩溃（OOM Crash）。</string>
-    <string name="help_card_title_setting_output">⚙️ 图片输出设置</string>
-    <string name="help_card_content_setting_output" formatted="false">输出图片格式：支持 PNG、JPEG 和 WEBP。
-        \n\n输出图片质量：滑块（1%-100%）仅在输出格式为 JPEG 或 WEBP 时生效，值越大生成的图片体积越大。</string>
-    <string name="help_card_title_setting_performance">🚀 性能设置</string>
-    <string name="help_card_content_setting_performance" formatted="false">多线程加速计算：开启后，图片加载和拼接等处理将使用 Kotlin 协程并行执行，可显著提高拼接速度。
-        \n\n提高内存阈值：将用于拼接画布分配的内存上限从默认的 50% 提高到 80%，允许处理更大的图片，但增加了 OOM（内存溢出）的风险。</string>
-    <string name="help_card_title_setting_picker">🖼️ 文件选择设置</string>
-    <string name="help_card_content_setting_picker">自动清理已选图片：完成拼接后，删除主页面已选的图片。
-        \n\n使用存储访问框架选择器（SAF）：无需请求存储权限，通过系统文件选择器访问文件，适合注重隐私的用户。
-        \n\n嵌入式选择器：从优秀强大的ImageToolbox项目抽取的高级嵌入式选择器。解决了系统 Photo Picker 无法查看全部相册或 URI 顺序错乱等问题。但需要存储权限，且初次加载相册数据可能需要几秒钟时间。</string>
+    <string name="help_card_title_mode_direct">直接拼接</string>
+    <string name="help_card_content_mode_direct">不使用叠加模式，按照所选横向或纵向顺序排列图片。
+        \n图片间距可设为 0 至 50 px。纵向拼接按宽度对齐，横向拼接按高度对齐。
+        \n\n最小：将每张图片按比例缩放至当前所选图片中的最小对齐尺寸。
+        \n\n原始：保持每张图片解码后的尺寸。对齐尺寸不同时，图片会居中放置。
+        \n\n最大：将每张图片按比例缩放至当前所选图片中的最大对齐尺寸。该模式可能需要更多内存。</string>
+    <string name="help_card_title_mode_overlay">叠加拼接</string>
+    <string name="help_card_content_mode_overlay" formatted="false">完整保留第一张图片，随后从每张后续图片中截取尾部区域并追加到结果中。通俗理解就是常见的影视字幕长拼图。该模式可用于组合有效内容位于底部或右侧的截图。
+        \n\n比例用于控制每张后续图片保留的区域大小。比例越大，输出尺寸通常越大，并可能需要更多内存。</string>
+    <string name="help_card_title_format_limit">输出与内存限制</string>
+    <string name="help_card_content_format_limit">输出尺寸会按照编码器和设备限制进行校验。
+        \n\nJPEG：输出的每个维度最大为 65,535 像素。
+        \n\nWebP：输出的每个维度最大为 16,383 像素。
+        \n\nPNG：不受上述 JPEG 和 WebP 限制，但仍受 Android Bitmap 尺寸和设备可用内存限制。
+        \n\n更改输出格式不会减少解码后的源图或拼接画布所需的内存。如果处理失败，应首先减少输入图片数量或尺寸。Bitmap 处理通常需要约 2-4 字节/像素，此外还要同时容纳源图、中间图、预览图和输出图。</string>
+    <string name="help_card_title_setting_output">图片输出设置</string>
+    <string name="help_card_content_setting_output" formatted="false">输出格式：可根据兼容性、透明度和编码器尺寸要求选择 JPEG、PNG 或 WebP。
+        \n\n输出质量：仅作用于 JPEG 和 WebP。较高的数值通常会保留更多细节并生成更大的文件；PNG 不受此设置影响。</string>
+    <string name="help_card_title_setting_performance">性能设置</string>
+    <string name="help_card_content_setting_performance" formatted="false">多线程：允许相互独立的图片解码和缩放任务通过数量受限的 Kotlin 工作协程并发执行。实际收益取决于图片尺寸、CPU 核心数和可用内存；较小的任务不一定更快。
+        \n\n提高内存阈值：将 Chimera 对输出画布的预检限制从设备报告内存的 50% 提高到 80%。该设置不会增加设备 RAM，并可能提高进程被终止或发生内存溢出的风险。</string>
+    <string name="help_card_title_setting_picker">文件选择设置</string>
+    <string name="help_card_content_setting_picker">自动清理已选图片：拼接完成后从选择列表中移除已处理项目，不会删除源文件。
+        \n\n存储访问框架（SAF）：通过系统文档提供程序选择文件，不需要广泛访问媒体库。
+        \n\n嵌入式选择器：通过源自 ImageToolbox 的组件提供相册浏览和搜索。该方式需要对应的媒体访问权限，首次建立媒体索引时可能需要等待。如果不希望授予广泛的媒体权限，仍可使用系统 Photo Picker。</string>
 
 </resources>
