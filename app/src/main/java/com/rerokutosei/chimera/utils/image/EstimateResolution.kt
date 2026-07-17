@@ -308,7 +308,6 @@ class EstimateResolution(private val bitmapLoader: BitmapLoader) {
  */
 sealed class ResolutionValidationResult {
     object NotNeeded : ResolutionValidationResult()
-    object InProgress : ResolutionValidationResult()
     data class Valid(val width: Long, val height: Long) : ResolutionValidationResult()
     data class Invalid(val width: Long, val height: Long, val formatName: String, val limit: Int) : ResolutionValidationResult()
 }

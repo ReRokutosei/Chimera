@@ -91,29 +91,6 @@ class BitmapLoader(private val context: Context) {
     }
     
     /**
-     * 预估图片尺寸，仅读取图片头部信息
-     */
-    fun estimateImageSize(uri: Uri): Pair<Int, Int>? {
-        val options = BitmapFactory.Options().apply {
-            inJustDecodeBounds = true
-        }
-        
-        try {
-            context.contentResolver.openInputStream(uri)?.use { stream ->
-                BitmapFactory.decodeStream(stream, null, options)
-            }
-            return if (options.outWidth > 0 && options.outHeight > 0) {
-                Pair(options.outWidth, options.outHeight)
-            } else {
-                null
-            }
-        } catch (e: Exception) {
-            logManager.error(TAG, "预估图片尺寸失败: $uri", e)
-            return null
-        }
-    }
-
-    /**
      * 预估经过采样（缩放）后的图片尺寸，模拟真实加载的逻辑但仅读取元数据。
      * 以最小的内存开销，更准确地获取到图片加载到内存后的实际尺寸。
      *

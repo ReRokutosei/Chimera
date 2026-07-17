@@ -360,9 +360,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 is ResolutionValidationResult.NotNeeded -> {
                     _resolutionValidationState.value = ResolutionValidationState.NotNeeded
                 }
-                is ResolutionValidationResult.InProgress -> {
-                    _resolutionValidationState.value = ResolutionValidationState.InProgress
-                }
                 is ResolutionValidationResult.Valid -> {
                     _resolutionValidationState.value = ResolutionValidationState.Valid(
                         width = validationResult.width,

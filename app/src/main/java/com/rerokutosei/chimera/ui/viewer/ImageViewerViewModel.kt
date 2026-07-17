@@ -22,14 +22,10 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
 import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.stitch.StitchResult
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import java.io.File
 
 class ImageViewerViewModel(application: Application) : AndroidViewModel(application) {
     private val logManager = LogManager.getInstance(application)
@@ -59,8 +55,6 @@ class ImageViewerViewModel(application: Application) : AndroidViewModel(applicat
     private val _currentCutIndex = MutableStateFlow(0)
     val currentCutIndex = _currentCutIndex.asStateFlow()
 
-    private var tempStitchFile: File? = null
-
     fun setCutMode(
         imageUris: List<Uri>,
         gridCols: Int,
@@ -86,14 +80,12 @@ class ImageViewerViewModel(application: Application) : AndroidViewModel(applicat
             is Bitmap -> {
                 logManager.debug("ImageViewerViewModel", "设置新的位图结果.")
                 clearBitmap()
-                releaseTempFile()
                 _isCutMode.value = false
                 _previewSource.value = PreviewSource.FromBitmap(result)
             }
             is StitchResult.BitmapResult -> {
                 logManager.debug("ImageViewerViewModel", "设置Bitmap结果.")
                 clearBitmap()
-                releaseTempFile()
                 _isCutMode.value = false
                 _previewSource.value = PreviewSource.FromBitmap(result.bitmap)
             }
@@ -121,10 +113,7 @@ class ImageViewerViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun releaseTempFile() {
-        tempStitchFile?.let {
-             logManager.debug("ImageViewerViewModel", "释放临时文件跟踪: ${it.absolutePath}")
-        }
-        tempStitchFile = null
+        // 拼接结果直接以 Bitmap 预览，无临时文件需要释放
     }
 
     private fun clearBitmap() {
@@ -136,19 +125,9 @@ class ImageViewerViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    fun clearAllCutBitmaps() {
-        // no-op: bitmaps managed externally
-    }
-
     override fun onCleared() {
         super.onCleared()
         logManager.debug("ImageViewerViewModel", "ViewModel已清除.")
-        tempStitchFile?.let {
-            if (it.exists()) {
-                logManager.debug("ImageViewerViewModel", "删除未保存的临时文件: ${it.absolutePath}")
-                it.delete()
-            }
-        }
         clearBitmap()
     }
 }
