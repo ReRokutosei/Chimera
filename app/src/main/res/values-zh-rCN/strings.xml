@@ -12,7 +12,7 @@
     <string name="pick_image">选择图片</string>
     <string name="file_provider">com.t8rin.embeddedpicker.fileprovider</string>
     <string name="embedded_picker">使用嵌入式选择器</string>
-    <string name="embedded_picker_sub">使用 Image Toolbox 的高级图片选择器</string>
+    <string name="embedded_picker_sub">在应用内浏览媒体库。Android 14+ 需授权查看，建议选“允许全部”</string>
 
     <!-- Image Reorder Carousel Strings -->
     <string name="images_order">图片顺序</string>
@@ -36,7 +36,7 @@
     <string name="unknown_type">未知类型</string>
     <string name="move_up">向上移动</string>
     <string name="move_down">向下移动</string>
-    <string name="storage_permission_required">需要存储权限才能访问图片</string>
+    <string name="storage_permission_required">需要照片访问权限才能浏览图片</string>
     <string name="error">错误</string>
     <string name="ok">确定</string>
     <string name="select_images">选择图片</string>

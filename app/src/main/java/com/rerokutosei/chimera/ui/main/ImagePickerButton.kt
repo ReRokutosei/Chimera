@@ -20,7 +20,6 @@ package com.rerokutosei.chimera.ui.main
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,9 +35,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import com.rerokutosei.chimera.R
 import com.rerokutosei.chimera.utils.common.ToastUtil
+import com.t8rin.embeddedpicker.permissions.MediaAccessPermissions
 
 
 @Composable
@@ -79,21 +78,16 @@ fun ImagePickerButton(
 
     // 为 Embedded Picker 权限请求创建 launcher
     val embeddedPickerPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) {
+        if (MediaAccessPermissions.accessLevel(context).isGranted) {
             showEmbeddedPicker()
         } else {
             ToastUtil.showShort(context, context.getString(R.string.storage_permission_required))
         }
     }
 
-    val supportsEmbeddedPicker = Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2
-    val hasEmbeddedPickerPermission = supportsEmbeddedPicker &&
-        ContextCompat.checkSelfPermission(
-            context,
-            android.Manifest.permission.READ_EXTERNAL_STORAGE
-        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+    val hasEmbeddedPickerPermission = MediaAccessPermissions.accessLevel(context).isGranted
 
     Button(
         onClick = {
@@ -103,20 +97,23 @@ fun ImagePickerButton(
                         safPickerLauncher.launch(arrayOf("image/*"))
                     }
 
-                    useEmbeddedPicker && supportsEmbeddedPicker -> {
+                    useEmbeddedPicker -> {
                         if (hasEmbeddedPickerPermission) {
                             showEmbeddedPicker()
                         } else {
-                            embeddedPickerPermissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                            embeddedPickerPermissionLauncher.launch(
+                                MediaAccessPermissions.permissionsForRequest()
+                            )
                         }
                     }
-                    // 对于 SDK 29-32 的设备，如果 Photo Picker 不可用，则使用 Embedded Picker
-                    !ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(context) &&
-                        supportsEmbeddedPicker -> {
+                    // 如果 Photo Picker 不可用，则使用 Embedded Picker
+                    !ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(context) -> {
                         if (hasEmbeddedPickerPermission) {
                             showEmbeddedPicker()
                         } else {
-                            embeddedPickerPermissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                            embeddedPickerPermissionLauncher.launch(
+                                MediaAccessPermissions.permissionsForRequest()
+                            )
                         }
                     }
 

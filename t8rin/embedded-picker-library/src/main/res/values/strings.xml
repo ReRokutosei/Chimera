@@ -3,14 +3,14 @@
     <string name="pick_multiple_media">Pick</string>
     <string name="pick_single_media">Pick</string>
     <string name="close">Close</string>
-    <string name="no_permissions">No permissions</string>
-    <string name="request">Request</string>
+    <string name="no_permissions">Photo access has not been granted</string>
+    <string name="request">Grant access</string>
     <string name="all">All</string>
     <string name="grant_camera_permission_to_capture_image">Grant camera permission to capture image</string>
     <string name="pick_image">Pick image</string>
     <string name="file_provider">com.t8rin.embeddedpicker.fileprovider</string>
     <string name="embedded_picker">Embedded picker</string>
-    <string name="embedded_picker_sub">Uses Image Toolbox\'s elegant image picker</string>
+    <string name="embedded_picker_sub">Browse photos available through the current system photo access</string>
     <string name="search_here">Search here</string>
     <string name="exit">Exit</string>
     <string name="nothing_found_by_search">Nothing found by search</string>

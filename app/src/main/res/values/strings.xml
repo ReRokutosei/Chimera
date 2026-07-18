@@ -12,7 +12,7 @@
     <string name="pick_image">Pick image</string>
     <string name="file_provider">com.t8rin.embeddedpicker.fileprovider</string>
     <string name="embedded_picker">Use Embedded Picker</string>
-    <string name="embedded_picker_sub">Uses Image Toolbox\'s elegant image picker</string>
+    <string name="embedded_picker_sub">Browse media in Chimera. Android 14+ restricts access; please choose Allow all to view everything.</string>
 
     <!-- Image Reorder Carousel Strings -->
     <string name="images_order">Image Order</string>
@@ -49,7 +49,7 @@
     <string name="unknown_type">Unknown Type</string>
     <string name="move_up">Move Up</string>
     <string name="move_down">Move Down</string>
-    <string name="storage_permission_required">Storage permission required to access images</string>
+    <string name="storage_permission_required">Photo access is required to browse images</string>
     <string name="error">Error</string>
     <string name="ok">OK</string>
     <string name="select_images">Select Images</string>

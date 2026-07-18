@@ -3,14 +3,14 @@
     <string name="pick_multiple_media">选择</string>
     <string name="pick_single_media">选择</string>
     <string name="close">关闭</string>
-    <string name="no_permissions">无权限</string>
-    <string name="request">请求</string>
+    <string name="no_permissions">尚未授予照片访问权限</string>
+    <string name="request">授予权限</string>
     <string name="all">全部</string>
     <string name="grant_camera_permission_to_capture_image">授予相机权限以拍摄照片</string>
     <string name="pick_image">选择图片</string>
     <string name="file_provider">com.t8rin.embeddedpicker.fileprovider</string>
     <string name="embedded_picker">嵌入式选择器</string>
-    <string name="embedded_picker_sub">使用Image Toolbox的精美选择器</string>
+    <string name="embedded_picker_sub">浏览当前系统照片权限允许访问的图片</string>
     <string name="search_here">在此搜索</string>
     <string name="exit">退出</string>
     <string name="nothing_found_by_search">未找到搜索结果</string>

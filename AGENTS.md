@@ -96,6 +96,8 @@ utils/common/     — LogManager, MemoryLimitCalculator, ToastUtil, LinkTextUtil
 - Cut-save decoding belongs on `Dispatchers.IO`; bitmap splitting belongs on `Dispatchers.Default`
 - Cut saving is driven by `ImageViewerViewModel` through `SaveCutImagesUseCase`; process and recycle one generated piece at a time.
 - `ImageSaver.saveToGallery()` returns `ImageSaveResult`; do not reintroduce callback-based save APIs.
+- Embedded Picker permission decisions must use `MediaAccessPermissions`: Android 12L and below use `READ_EXTERNAL_STORAGE`, Android 13 uses `READ_MEDIA_IMAGES`, and Android 14+ accepts either full access or `READ_MEDIA_VISUAL_USER_SELECTED` partial access.
+- Embedded Picker remains available on every supported Android version; do not hide or disable it solely because the system Photo Picker is available.
 - Performance changes must be supported by the fixed benchmark datasets and documented in `docs/Performance_Baseline.md`.
 - Estimated result memory uses a conservative ARGB_8888 calculation; `ResolutionMemoryRisk` marks results at or above 512 MiB as `Risky`.
 - `Risky` changes the estimated-resolution capsule to the theme error color and adds an accessibility state description, but must not disable stitching; only `Invalid` blocks the start action.

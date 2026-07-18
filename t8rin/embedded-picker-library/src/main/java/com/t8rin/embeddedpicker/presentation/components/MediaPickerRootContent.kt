@@ -21,10 +21,6 @@
 
 package com.t8rin.embeddedpicker.presentation.components
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -52,13 +48,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import com.t8rin.embeddedpicker.R
 import com.t8rin.embeddedpicker.domain.model.AlbumsState
 import com.t8rin.embeddedpicker.domain.model.AllowedMedia
 import com.t8rin.embeddedpicker.domain.model.Media
 import com.t8rin.embeddedpicker.domain.model.MediaState
 import com.t8rin.embeddedpicker.icons.BrokenImageAlt
+import com.t8rin.embeddedpicker.permissions.MediaAccessPermissions
 
 // 将internal改为public
 @Composable
@@ -76,12 +72,12 @@ fun MediaPickerRootContent(
 ) {
     val context = LocalContext.current
     var isPermissionAllowed by remember {
-        mutableStateOf(checkPermissions(context))
+        mutableStateOf(MediaAccessPermissions.accessLevel(context).isGranted)
     }
     val requestPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        isPermissionAllowed = isGranted
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) {
+        isPermissionAllowed = MediaAccessPermissions.accessLevel(context).isGranted
     }
     
     // 移除Scaffold，避免与外部容器产生间距
@@ -104,9 +100,7 @@ fun MediaPickerRootContent(
         } else {
             PermissionDeniedScreen(
                 onRequestPermission = {
-                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-                        requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                    }
+                    requestPermissionLauncher.launch(MediaAccessPermissions.permissionsForRequest())
                 }
             )
         }
@@ -144,12 +138,4 @@ private fun PermissionDeniedScreen(
             Text(stringResource(id = R.string.request))
         }
     }
-}
-
-private fun checkPermissions(context: Context): Boolean {
-    return Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2 &&
-        ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
 }

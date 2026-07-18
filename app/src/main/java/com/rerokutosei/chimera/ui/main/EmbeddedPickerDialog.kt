@@ -18,10 +18,6 @@
 
 package com.rerokutosei.chimera.ui.main
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -51,12 +47,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rerokutosei.chimera.R
 import com.t8rin.embeddedpicker.data.AndroidMediaRetriever
 import com.t8rin.embeddedpicker.domain.model.AllowedMedia
+import com.t8rin.embeddedpicker.permissions.MediaAccessPermissions
 import com.t8rin.embeddedpicker.presentation.MediaPickerViewModel
 import com.t8rin.embeddedpicker.presentation.components.MediaPickerRootContent
 
@@ -68,16 +64,18 @@ fun EmbeddedPickerDialog(
 ) {
     val context = LocalContext.current
     val sheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden)
-    var hasPermission by remember { mutableStateOf(checkPermissions(context)) }
+    var hasPermission by remember {
+        mutableStateOf(MediaAccessPermissions.accessLevel(context).isGranted)
+    }
     val requestPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        hasPermission = isGranted
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) {
+        hasPermission = MediaAccessPermissions.accessLevel(context).isGranted
     }
 
     LaunchedEffect(Unit) {
-        if (!hasPermission && Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+        if (!hasPermission) {
+            requestPermissionLauncher.launch(MediaAccessPermissions.permissionsForRequest())
         }
     }
 
@@ -169,12 +167,4 @@ private fun EmbeddedPickerContent(
             )
         }
     }
-}
-
-private fun checkPermissions(context: Context): Boolean {
-    return Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2 &&
-        ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
 }

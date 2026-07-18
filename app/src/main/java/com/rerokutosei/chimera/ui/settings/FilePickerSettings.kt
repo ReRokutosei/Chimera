@@ -18,8 +18,6 @@
 
 package com.rerokutosei.chimera.ui.settings
 
-import android.Manifest
-import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -47,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.rerokutosei.chimera.R
 import com.rerokutosei.chimera.data.model.ImageListDirectionMode
+import com.t8rin.embeddedpicker.permissions.MediaAccessPermissions
 
 @Composable
 fun FilePickerSettingsSection(
@@ -59,9 +58,9 @@ fun FilePickerSettingsSection(
 
     // 为 Embedded Picker 权限请求创建 launcher
     val embeddedPickerPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) {
+        if (MediaAccessPermissions.accessLevel(context).isGranted) {
             viewModel.setUseEmbeddedPicker(true)
         } else {
             viewModel.setUseEmbeddedPicker(false)
@@ -190,51 +189,52 @@ fun FilePickerSettingsSection(
         )
     }
 
-    // Android 13+ 使用系统 Photo Picker，避免申请全库照片访问权限。
-    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-        ListItem(
-            supportingContent = {
-                Text(
-                    text = stringResource(R.string.embedded_picker_sub),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            },
-            trailingContent = {
-                Switch(
-                    checked = uiState.useEmbeddedPicker,
-                    onCheckedChange = { enabled ->
-                        if (enabled) {
-                            if (viewModel.checkEmbeddedPickerPermissions()) {
-                                viewModel.setUseEmbeddedPicker(true)
-                            } else {
-                                embeddedPickerPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                            }
-                        } else {
-                            viewModel.setUseEmbeddedPicker(false)
-                        }
-                    }
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    if (!uiState.useEmbeddedPicker) {
+    ListItem(
+        supportingContent = {
+            Text(
+                text = stringResource(R.string.embedded_picker_sub),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        },
+        trailingContent = {
+            Switch(
+                checked = uiState.useEmbeddedPicker,
+                onCheckedChange = { enabled ->
+                    if (enabled) {
                         if (viewModel.checkEmbeddedPickerPermissions()) {
                             viewModel.setUseEmbeddedPicker(true)
                         } else {
-                            embeddedPickerPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                            embeddedPickerPermissionLauncher.launch(
+                                MediaAccessPermissions.permissionsForRequest()
+                            )
                         }
                     } else {
                         viewModel.setUseEmbeddedPicker(false)
                     }
                 }
-        ) {
-            Text(
-                text = stringResource(R.string.embedded_picker),
-                style = MaterialTheme.typography.bodyLarge
             )
-        }
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                if (!uiState.useEmbeddedPicker) {
+                    if (viewModel.checkEmbeddedPickerPermissions()) {
+                        viewModel.setUseEmbeddedPicker(true)
+                    } else {
+                        embeddedPickerPermissionLauncher.launch(
+                            MediaAccessPermissions.permissionsForRequest()
+                        )
+                    }
+                } else {
+                    viewModel.setUseEmbeddedPicker(false)
+                }
+            }
+    ) {
+        Text(
+            text = stringResource(R.string.embedded_picker),
+            style = MaterialTheme.typography.bodyLarge
+        )
     }
 
     HorizontalDivider(

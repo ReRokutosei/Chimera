@@ -36,7 +36,7 @@ Image decoding, stitching, cutting, and saving are performed on the device. The 
 
 - **System Photo Picker**: Uses the platform picker when available and grants access only to selected media, without broad storage permission.
 - **Storage Access Framework (SAF)**: Selects image files through the system document provider.
-- **Embedded Picker**: Provides album browsing and search through components derived from ImageToolbox. It requires the applicable media permission and may need time to index media on first use.
+- **Embedded Picker**: Provides album browsing and search through components derived from ImageToolbox. It requires the applicable media permission and may need time to index media on first use. On Android 14 and later, granting selected-photo access limits the embedded library to those photos.
 
 ### Stitching and cutting
 
@@ -62,6 +62,15 @@ The following results compare sequential and bounded parallel scaling on the sam
 | Direct horizontal, 10 medium images, MIN | 78.47 ms | 46.28 ms | -41.0% |
 | Direct vertical, 50 small images, MAX | 83.53 ms | 51.45 ms | -38.4% |
 | Overlay vertical, 10 medium images, MIN | 54.99 ms | 32.47 ms | -41.0% |
+
+Physical-device app-flow measurements were also collected on a Xiaomi Mi 10 Ultra running Android 13, with eight iterations per case. The mandatory first-launch agreement countdown was completed before measurement and is not included in startup timing.
+
+| Scenario | No compilation | Current Baseline Profile | Median change |
+| --- | ---: | ---: | ---: |
+| Cold startup, time to initial display | 433.7 ms | 423.6 ms | -2.3% |
+| Settings flow | 6,296.4 ms | 6,177.7 ms | -1.9% |
+
+The current Baseline Profile provides a small measurable benefit on this device. A larger regenerated profile was rejected because it increased the rule count without improving the Settings flow and regressed cold startup.
 
 See [Image Processing Performance Baseline](Performance_Baseline.md) for datasets, stage timings, codec measurements, commands, and limitations.
 

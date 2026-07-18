@@ -19,7 +19,6 @@
 package com.rerokutosei.chimera.ui.settings
 
 import android.app.Application
-import android.os.Build
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
@@ -27,6 +26,7 @@ import com.rerokutosei.chimera.data.local.StitchSettingsManager
 import com.rerokutosei.chimera.data.model.ImageListDirectionMode
 import com.rerokutosei.chimera.data.model.ThemeMode
 import com.rerokutosei.chimera.data.repository.ThemeRepository
+import com.t8rin.embeddedpicker.permissions.MediaAccessPermissions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -284,11 +284,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
      */
     fun checkEmbeddedPickerPermissions(): Boolean {
         val context = getApplication<Application>().applicationContext
-        return Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2 &&
-            androidx.core.content.ContextCompat.checkSelfPermission(
-                context,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE
-            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        return MediaAccessPermissions.accessLevel(context).isGranted
     }
 
     fun setSliderThumbShape(shape: Int) {
