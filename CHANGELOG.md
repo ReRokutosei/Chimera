@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.1](https://github.com/ReRokutosei/Chimera/compare/v1.5.0...v1.5.1) (2026-07-18)
+
+
+### Features
+
+* **picker:** restore embedded picker media access ([4f2ff95](https://github.com/ReRokutosei/Chimera/commit/4f2ff9505ad88e9a0076488fb4433bdb6e2c7a3a))
+
 ## [1.5.0](https://github.com/ReRokutosei/Chimera/compare/v1.4.0...v1.5.0) (2026-07-18)
 
 
