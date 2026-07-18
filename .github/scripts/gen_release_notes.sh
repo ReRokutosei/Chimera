@@ -22,37 +22,37 @@ to_handle() {
   email_lc="${email,,}"
 
   # Canonical bot/assistant aliases
-  if [[ "$email_lc" == "199175422+chatgpt-codex-connector[bot]@users.noreply.github.com" ]] || [[ "$name_lc" == "chatgpt-codex-connector[bot]" ]]; then
+  if [[ "$email_lc" == "199175422+chatgpt-codex-connector[bot]@users.noreply.github.com" || "$name_lc" == "chatgpt-codex-connector[bot]" || "$email_lc" == "noreply@openai.com" || "$name_lc" == "codex" ]]; then
     echo "@codex"
     return
   fi
 
-  if [[ "$email_lc" == "29139614+renovate[bot]@users.noreply.github.com" ]] || [[ "$name_lc" == "renovate[bot]" ]]; then
+  if [[ "$email_lc" == "29139614+renovate[bot]@users.noreply.github.com" || "$name_lc" == "renovate[bot]" ]]; then
     echo "@renovatebot"
     return
   fi
 
-  if [[ "$email_lc" == "175728472+copilot@users.noreply.github.com" ]] || [[ "$name_lc" == "copilot" ]]; then
+  if [[ "$email_lc" == "175728472+copilot@users.noreply.github.com" || "$name_lc" == "copilot" ]]; then
     echo "@MicrosoftCopilot"
     return
   fi
 
-  if [[ "$email_lc" == "136622811+coderabbitai[bot]@users.noreply.github.com" ]] || [[ "$name_lc" == "coderabbitai[bot]" ]]; then
+  if [[ "$email_lc" == "136622811+coderabbitai[bot]@users.noreply.github.com" || "$name_lc" == "coderabbitai[bot]" ]]; then
     echo "@coderabbitai"
     return
   fi
 
-  if [[ "$email_lc" == "qwen-coder@alibabacloud.com" ]] || [[ "$name_lc" == "qwen-coder" ]]; then
+  if [[ "$email_lc" == "qwen-coder@alibabacloud.com" || "$name_lc" == "qwen-coder" ]]; then
     echo "@QwenLM"
     return
   fi
 
-  if [[ "$email_lc" == "176961590+gemini-code-assist[bot]@users.noreply.github.com" ]] || [[ "$email_lc" == "noreply@google.com" ]] || [[ "$name_lc" == *"gemini"* ]]; then
+  if [[ "$email_lc" == "176961590+gemini-code-assist[bot]@users.noreply.github.com" || "$email_lc" == "noreply@google.com" || "$name_lc" == *"gemini"* ]]; then
     echo "@gemini-code-assist"
     return
   fi
 
-  if [[ "$email_lc" == *"@anthropic.com" ]] || [[ "$name_lc" == *"claude"* ]]; then
+  if [[ "$email_lc" == *"@anthropic.com" || "$name_lc" == *"claude"* ]]; then
     echo "@claude"
     return
   fi
@@ -119,7 +119,35 @@ append_line() {
   printf -v "$var_name" '%s%s\n' "${!var_name}" "$line"
 }
 
-user_visible=""
+emit_section() {
+  local title="$1"
+  local content="$2"
+
+  [[ -z "$content" ]] && return
+
+  echo "## $title"
+  printf "%s" "$content"
+  echo
+}
+
+emit_subsection() {
+  local title="$1"
+  local content="$2"
+
+  [[ -z "$content" ]] && return
+
+  echo "### $title"
+  printf "%s" "$content"
+  echo
+}
+
+count_lines() {
+  local content="$1"
+  printf "%s" "$content" | awk 'END { print NR }'
+}
+
+features=""
+performance=""
 bug_fixes=""
 dependencies=""
 maintenance=""
@@ -137,40 +165,45 @@ for sha in $(git rev-list --reverse "$range"); do
     is_renovate=true
   fi
 
-  if [[ "$subject" =~ ^(feat|perf|ui)(\(.+\))?: ]]; then
-    append_line user_visible "$line"
+  if $is_renovate || [[ "$subject" =~ ^(fix|chore)\(deps\): ]]; then
+    append_line dependencies "$line"
+  elif [[ "$subject" =~ ^(feat|ui)(\(.+\))?: ]]; then
+    append_line features "$line"
+  elif [[ "$subject" =~ ^perf(\(.+\))?: ]]; then
+    append_line performance "$line"
   elif [[ "$subject" =~ ^fix(\(.+\))?: ]]; then
-    if [[ "$subject" =~ ^fix\(deps\): ]] || $is_renovate; then
-      append_line dependencies "$line"
+    if [[ "$subject" =~ ^fix\((ci|build|compile|deprecation|docs|inspection|lint|release|test|workflow|workflows)\): ]] ||
+      [[ "$subject" =~ ^fix(\(.+\))?:.*(^|[[:space:][:punct:]])(ci|build|compile|deprecation|docs|inspection|lint|test|workflow|workflows)($|[[:space:][:punct:]]) ]]; then
+      append_line maintenance "$line"
     else
       append_line bug_fixes "$line"
     fi
-  elif [[ "$subject" =~ ^(refactor|docs|test|ci|build|chore)(\(.+\))?: ]]; then
-    if [[ "$subject" =~ ^chore\(deps\): ]] || $is_renovate; then
-      append_line dependencies "$line"
-    else
-      append_line maintenance "$line"
-    fi
+  elif [[ "$subject" =~ ^chore\(release\): ]]; then
+    continue
+  elif [[ "$subject" =~ ^(refactor|docs|test|ci|build|chore|style)(\(.+\))?: ]]; then
+    append_line maintenance "$line"
   fi
 done
 shopt -u nocasematch
 
 {
-  echo "## User Visible"
-  printf "%s" "$user_visible"
-  echo
+  emit_section "Features & Improvements" "$features"
+  emit_section "Performance" "$performance"
+  emit_section "Bug Fixes" "$bug_fixes"
 
-  echo "## Bug Fixes"
-  printf "%s" "$bug_fixes"
-  echo
+  if [[ -n "$maintenance" || -n "$dependencies" ]]; then
+    maintenance_count="$(count_lines "$maintenance")"
+    dependency_count="$(count_lines "$dependencies")"
+    technical_count=$((maintenance_count + dependency_count))
 
-  echo "## Dependencies"
-  printf "%s" "$dependencies"
-  echo
-
-  echo "## Maintenance"
-  printf "%s" "$maintenance"
-  echo
+    echo "<details>"
+    echo "<summary>Maintenance and Dependencies (${technical_count} changes)</summary>"
+    echo
+    emit_subsection "Maintenance" "$maintenance"
+    emit_subsection "Dependencies" "$dependencies"
+    echo "</details>"
+    echo
+  fi
 
   echo "**Full Changelog**: https://github.com/${repo}/compare/${range}"
 } > "$out"

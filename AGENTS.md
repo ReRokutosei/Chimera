@@ -104,6 +104,17 @@ utils/common/     — LogManager, MemoryLimitCalculator, ToastUtil, LinkTextUtil
 - StitchSettingsManager uses generic `getPref<T>()` / `setPref<T>()` helpers for DataStore access
 - Use `LogManager.debug(tag) { ... }` for interpolated messages in loops or other hot paths
 
+## Commit Convention
+
+- All commits must follow Conventional Commits: `<type>(<optional-scope>): <description>`.
+- Allowed types are `feat`, `fix`, `perf`, `refactor`, `docs`, `test`, `build`, `ci`, `chore`, `style`, and `revert`.
+- Use a scope whenever it clarifies classification, especially `deps`, `release`, `lint`, `build`, `ci`, `docs`, and `test`.
+- Reserve unscoped `fix:` for product defects. Internal corrections must use an explicit scope such as `fix(lint):`, `fix(build):`, or `fix(ci):` so release notes classify them as maintenance.
+- Dependency updates use `fix(deps):` or `chore(deps):`; version-release commits use `chore(release):`.
+- Keep the subject concise, imperative, and without a trailing period. Use the body to explain motivation, constraints, or non-obvious tradeoffs.
+- Mark breaking changes with `!` after the type/scope and include a `BREAKING CHANGE:` footer.
+- Codex-assisted commits must include `Co-Authored-By: Codex <noreply@openai.com>`.
+
 ## DataStore Keys (StitchSettingsManager)
 
 | Key | Type | Default |
