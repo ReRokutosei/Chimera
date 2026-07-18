@@ -14,6 +14,9 @@
 
 # Compile the Android processing benchmarks
 ./gradlew :app:compileBenchmarkAndroidTestKotlin
+
+# Run Android image correctness tests on a connected device
+./gradlew :integrationtest:connectedDebugAndroidTest
 ```
 
 - `compileSdk` = 37, `targetSdk` = 36, `minSdk` = 29, `applicationId` = `com.rerokutosei.chimera`
@@ -29,7 +32,7 @@
 
 - **Single Activity** (`MainActivity`) → Jetpack Compose, no Fragments
 - **No Services, no BroadcastReceivers** (except per-user request)
-- Gradle modules: `:app`, `:baselineprofile` (Macrobenchmark baseline profile generator), and three library modules under `t8rin/` (fancy-slider, embedded-picker, image-reorder-carousel)
+- Gradle modules: `:app`, `:baselineprofile` (Macrobenchmark and baseline profile generator), `:integrationtest` (device-side correctness tests), and three library modules under `t8rin/` (fancy-slider, embedded-picker, image-reorder-carousel)
 - Navigation: type-safe via `@Serializable sealed class Route` in `ui/navigation/Route.kt` — routes: `Main`, `Settings`, `ImageViewer(...)`
 - State: `ViewModel` + `MutableStateFlow` + DataStore Preferences; no Room, no network
 - Four ViewModels: `MainViewModel`, `SettingsViewModel`, `StitchViewModel` (stitch orchestration), `ImageViewerViewModel` (viewer and cut-save orchestration)
@@ -83,7 +86,8 @@ utils/common/     — LogManager, MemoryLimitCalculator, ToastUtil, LinkTextUtil
 
 ## Conventions
 
-- String resources must be added to both `values/strings.xml` (EN) and `values-zh-rCN/strings.xml` (ZH)
+- String resources must be added to both `values/strings.xml` (English) and `values-zh-rCN/strings.xml` (Simplified Chinese)
+- English and Simplified Chinese are the only maintained app languages; do not add Traditional Chinese, Japanese, Spanish, or other locale resource directories
 - `CustomSegmentedButtonRow` in `ui/main/CustomSegmentedButton.kt` is reused for mode/grid selection
 - ParameterSettingsCard is hidden in cut mode; its state auto-preserves when switching back to stitch mode
 - `PreviewSource.FromBitmapWithGrid(bitmap, cols, rows)` for cut grid preview

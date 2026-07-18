@@ -48,6 +48,9 @@ class DirectStitchingStrategy(
     }
 
     override suspend fun stitch(bitmaps: List<Bitmap>, options: StitchingOptions): StitchResult {
+        if (bitmaps.isEmpty()) {
+            return StitchResult.ErrorResult(StitchFailure.NoImages)
+        }
         logManager.debug(
             TAG,
             "开始拼接，图片数量: ${bitmaps.size}，方向: ${if (isVertical) "垂直" else "水平"}，宽度缩放: ${options.widthScale}"

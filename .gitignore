@@ -1,9 +1,8 @@
 .idea/
 *.iml
-.gradle
+/.gradle/
 .DS_Store
-build/*
-/baselineprofile/build/
+**/build/
 docs/*
 !docs/LICENSE
 !Disclaimer_CN.md
@@ -17,7 +16,7 @@ docs/*
 .externalNativeBuild
 .cxx
 local.properties
-.kotlin/*
+/.kotlin/
 gradle/*
 !gradle/wrapper
 !gradle/libs.versions.toml

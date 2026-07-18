@@ -24,6 +24,7 @@ dependencyResolutionManagement {
 rootProject.name = "Chimera"
 include(":app")
 include(":baselineprofile")
+include(":integrationtest")
 include(":t8rin:fancy-slider-library")
 include(":t8rin:embedded-picker-library")
 include(":t8rin:image-reorder-carousel-library")
