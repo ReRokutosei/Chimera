@@ -36,14 +36,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.data.local.StitchSettingsManager
-import com.rerokutosei.chimera.data.repository.ThemeRepository
 import com.rerokutosei.chimera.ui.main.MainScreen
 import com.rerokutosei.chimera.ui.main.MainViewModel
 import com.rerokutosei.chimera.ui.main.OverlayMode
 import com.rerokutosei.chimera.ui.main.StitchMode
 import com.rerokutosei.chimera.ui.main.WidthScale
 import com.rerokutosei.chimera.ui.settings.SettingsScreen
-import com.rerokutosei.chimera.ui.settings.SettingsViewModel
 import com.rerokutosei.chimera.ui.stitch.StitchState
 import com.rerokutosei.chimera.ui.stitch.StitchViewModel
 import com.rerokutosei.chimera.ui.viewer.ImageViewerScreen
@@ -95,23 +93,8 @@ fun AppNavGraph(
             val mainUiState by mainViewModel.uiState.collectAsStateWithLifecycle()
 
             val context = LocalContext.current
-            val themeSettingsManager = remember { ThemeRepository.getInstance(context) }
-            val darkTheme by themeSettingsManager.getDarkThemeFlow()
-                .collectAsStateWithLifecycle(initialValue = false)
-            val followSystemTheme by themeSettingsManager.getFollowSystemThemeFlow()
-                .collectAsStateWithLifecycle(initialValue = true)
-
-            val isSystemInDarkThemeVal = isSystemInDarkTheme()
-            val effectiveDarkTheme = when {
-                !followSystemTheme -> darkTheme
-                else -> isSystemInDarkThemeVal
-            }
-
-            val settingsViewModel: SettingsViewModel = viewModel()
-
             MainScreen(
                 viewModel = mainViewModel,
-                settingsViewModel = settingsViewModel,
                 onNavigateToStitch = {
                     val imageUris = mainUiState.selectedImages.map { it.uri }
                     mainViewModel.setPendingStitchUris(imageUris)

@@ -29,7 +29,6 @@ import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
 import androidx.exifinterface.media.ExifInterface
-import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.performance.ProcessingPerformance
 import com.rerokutosei.chimera.utils.performance.ProcessingStage
@@ -53,7 +52,6 @@ class BitmapLoader(private val context: Context) {
     }
 
     private val logManager = LogManager.getInstance(context)
-    private val imageSettingsManager = ImageSettingsManager.getInstance(context)
 
     // 用于跟踪正在使用的位图
     private val activeBitmaps = ConcurrentHashMap<String, Bitmap>()
@@ -445,20 +443,6 @@ class BitmapLoader(private val context: Context) {
         }
 
         return inSampleSize
-    }
-
-    /**
-     * 清空内存缓存
-     */
-    fun clearCache() {
-        bitmapLock.write {
-            // 回收所有活跃位图
-            activeBitmaps.values.filter { !it.isRecycled }.forEach { bitmap ->
-                bitmap.recycle()
-            }
-            activeBitmaps.clear()
-            logManager.debug(TAG, "清空活跃位图集合")
-        }
     }
 
     /**

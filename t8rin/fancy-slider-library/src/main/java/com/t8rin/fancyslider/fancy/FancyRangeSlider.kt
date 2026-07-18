@@ -123,7 +123,7 @@ fun FancyRangeSlider(
                 }
                 .then(
                     if (drawContainer) {
-                        Modifier.Companion
+                        Modifier
                             .container(
                                 shape = CircleShape,
                                 autoShadowElevation = animateDpAsState(

@@ -102,7 +102,7 @@ fun Modifier.container(
             shape = resultShape
         )
 
-    Modifier.Companion
+    Modifier
         .materialShadow(
             shape = resultShape,
             elevation = animateDpAsState(

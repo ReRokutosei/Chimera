@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 class StitchViewModel(application: Application) : AndroidViewModel(application) {
 
     private val imageStitcher = ImageStitcher(application)
-    private val logManager = LogManager.Companion.getInstance(application)
+    private val logManager = LogManager.getInstance(application)
 
     private val _uiState = MutableStateFlow(StitchUiState())
     val uiState: StateFlow<StitchUiState> = _uiState.asStateFlow()

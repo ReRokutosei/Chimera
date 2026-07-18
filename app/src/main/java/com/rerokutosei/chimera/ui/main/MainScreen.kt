@@ -61,19 +61,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rerokutosei.chimera.R
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.data.model.ImageListDirectionMode
-import com.rerokutosei.chimera.data.repository.ThemeRepository
-import com.rerokutosei.chimera.ui.settings.SettingsViewModel
 import com.rerokutosei.chimera.utils.common.ShowToast
 import com.t8rin.imagereordercarousel.CarouselScrollDirection
 import com.t8rin.imagereordercarousel.ImageReorderCarousel
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel,
-    settingsViewModel: SettingsViewModel,
     onNavigateToSettings: () -> Unit,
     onNavigateToStitch: () -> Unit,
     onNavigateToCut: () -> Unit = {},
@@ -84,7 +82,7 @@ fun MainScreen(
     var isPageEntered by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        delay(100)
+        delay(100.milliseconds)
         isPageEntered = true
     }
 
@@ -92,7 +90,6 @@ fun MainScreen(
 
     // 获取设置项状态
     val imageSettingsManager = ImageSettingsManager.getInstance(context)
-    val themeSettingsManager = ThemeRepository.getInstance(context)
     val useSafPicker by imageSettingsManager.getUseSafPickerFlow()
         .collectAsStateWithLifecycle(initialValue = false)
     val useEmbeddedPicker by imageSettingsManager.getUseEmbeddedPickerFlow()

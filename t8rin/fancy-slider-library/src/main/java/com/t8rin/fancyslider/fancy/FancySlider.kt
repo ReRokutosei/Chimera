@@ -155,7 +155,7 @@ fun FancySlider(
                 }
                 .then(
                     if (drawContainer) {
-                        Modifier.Companion
+                        Modifier
                             .container(
                                 shape = CircleShape,
                                 autoShadowElevation = animateDpAsState(
@@ -193,7 +193,7 @@ fun FancySlider(
                     colors = colors.toCustom(),
                     trackHeight = 38.dp,
                     enabled = enabled,
-                    modifier = Modifier.Companion.trackOverslide(value = sliderFraction) { overslide ->
+                    modifier = Modifier.trackOverslide(value = sliderFraction) { overslide ->
                         transformOrigin = TransformOrigin(
                             pivotFractionX = when (isLtr) {
                                 true -> if (sliderFraction < .5f) 2f else -1f
