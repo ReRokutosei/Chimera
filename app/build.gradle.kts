@@ -183,6 +183,7 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
+    implementation(libs.exifinterface)
     // 添加DataStore数据存储库
     implementation(libs.androidx.datastore.preferences)
     // 添加AppCompat支持

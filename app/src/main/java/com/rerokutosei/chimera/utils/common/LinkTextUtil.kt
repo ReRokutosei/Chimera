@@ -38,9 +38,9 @@ import java.util.regex.Pattern
  */
 @Composable
 fun AnnotatedLinkText(
+    modifier: Modifier = Modifier,
     text: String,
     style: TextStyle = TextStyle(),
-    modifier: Modifier = Modifier
 ) {
     val uriHandler = LocalUriHandler.current
     val urlPattern = Pattern.compile("https?://[\\w.-]+(?:/[\\w.-]*)*")

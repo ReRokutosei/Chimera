@@ -127,7 +127,6 @@ class ImageViewerViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     override fun onCleared() {
-        super.onCleared()
         logManager.debug("ImageViewerViewModel", "ViewModel已清除.")
     }
 }

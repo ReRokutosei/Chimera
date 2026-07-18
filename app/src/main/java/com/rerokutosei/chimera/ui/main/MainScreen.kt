@@ -71,12 +71,12 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
+    modifier: Modifier = Modifier,
     viewModel: MainViewModel,
     settingsViewModel: SettingsViewModel,
     onNavigateToSettings: () -> Unit,
     onNavigateToStitch: () -> Unit,
     onNavigateToCut: () -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()

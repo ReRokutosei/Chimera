@@ -180,10 +180,10 @@ private fun DrawScope.drawDynamicColorScheme(
 
 @Composable
 fun RainbowColorCircle(
+    modifier: Modifier = Modifier,
     isSelected: Boolean,
     onClick: () -> Unit,
     isDark: Boolean = isSystemInDarkTheme(),
-    modifier: Modifier = Modifier
 ) {
     val containerColor =
         if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface

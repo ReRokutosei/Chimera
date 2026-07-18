@@ -25,7 +25,9 @@ import androidx.core.content.FileProvider
 import com.rerokutosei.chimera.R
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.utils.common.LogManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -72,10 +74,12 @@ class ImageSharer(private val context: Context) {
 
             val cachePath = File(context.cacheDir, "images")
             cachePath.mkdirs()
-            val file = File(cachePath, "shared_image.$extension")
-
-            FileOutputStream(file).use { outputStream ->
-                bitmap.compress(compressFormat, quality, outputStream)
+            val file = withContext(Dispatchers.IO) {
+                val f = File(cachePath, "shared_image.$extension")
+                FileOutputStream(f).use { outputStream ->
+                    bitmap.compress(compressFormat, quality, outputStream)
+                }
+                f
             }
 
             val contentUri = FileProvider.getUriForFile(
