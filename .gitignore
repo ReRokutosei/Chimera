@@ -5,6 +5,7 @@
 **/build/
 docs/*
 !docs/LICENSE
+!docs/todo.md
 !Disclaimer_CN.md
 !Disclaimer_EN.md
 !docs/PrivacyPolicy_CN.md

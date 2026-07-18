@@ -78,7 +78,8 @@ utils/stitch/engine/  — KotlinStitchingEngine
 utils/stitch/layout/  — Pure Kotlin layout calculation and output-format validation
 utils/stitch/strategy/— StitchingStrategy + StitchingOptions, BaseStitchingStrategy,
                         DirectStitchingStrategy, OverlayStitchingStrategy
-utils/image/      — BitmapLoader, ImageSaver, ImageSharer, ImageSplitter, EstimateResolution
+utils/image/      — BitmapLoader, ImageSaver, ImageSharer, ImageSplitter, EstimateResolution,
+                    ResolutionMemoryRisk
 utils/performance/— ProcessingPerformance stage timing and Trace sections
 utils/color/      — ColorUtils
 utils/common/     — LogManager, MemoryLimitCalculator, ToastUtil, LinkTextUtil
@@ -96,6 +97,9 @@ utils/common/     — LogManager, MemoryLimitCalculator, ToastUtil, LinkTextUtil
 - Cut saving is driven by `ImageViewerViewModel` through `SaveCutImagesUseCase`; process and recycle one generated piece at a time.
 - `ImageSaver.saveToGallery()` returns `ImageSaveResult`; do not reintroduce callback-based save APIs.
 - Performance changes must be supported by the fixed benchmark datasets and documented in `docs/Performance_Baseline.md`.
+- Estimated result memory uses a conservative ARGB_8888 calculation; `ResolutionMemoryRisk` marks results at or above 512 MiB as `Risky`.
+- `Risky` changes the estimated-resolution capsule to the theme error color and adds an accessibility state description, but must not disable stitching; only `Invalid` blocks the start action.
+- Deferred crash recovery, logging, memory-budget, process-death recovery, and adaptive-layout ideas are tracked in `docs/todo.md`.
 - Spacing fill color stored as hex string (e.g. `"#FF000000"`) in DataStore
 - StitchSettingsManager uses generic `getPref<T>()` / `setPref<T>()` helpers for DataStore access
 - Use `LogManager.debug(tag) { ... }` for interpolated messages in loops or other hot paths

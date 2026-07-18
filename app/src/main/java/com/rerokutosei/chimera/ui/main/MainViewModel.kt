@@ -33,6 +33,7 @@ import com.rerokutosei.chimera.data.repository.ImageRepository
 import com.rerokutosei.chimera.utils.common.LogManager
 import com.rerokutosei.chimera.utils.image.BitmapLoader
 import com.rerokutosei.chimera.utils.image.EstimateResolution
+import com.rerokutosei.chimera.utils.image.ResolutionMemoryRisk
 import com.rerokutosei.chimera.utils.image.ResolutionValidationResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -386,10 +387,22 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 }
 
                 is ResolutionValidationResult.Valid -> {
-                    _resolutionValidationState.value = ResolutionValidationState.Valid(
-                        width = validationResult.width,
-                        height = validationResult.height
-                    )
+                    _resolutionValidationState.value = if (
+                        ResolutionMemoryRisk.isHighRisk(
+                            width = validationResult.width,
+                            height = validationResult.height
+                        )
+                    ) {
+                        ResolutionValidationState.Risky(
+                            width = validationResult.width,
+                            height = validationResult.height
+                        )
+                    } else {
+                        ResolutionValidationState.Valid(
+                            width = validationResult.width,
+                            height = validationResult.height
+                        )
+                    }
                 }
 
                 is ResolutionValidationResult.Invalid -> {
@@ -509,6 +522,7 @@ sealed class ResolutionValidationState {
     object NotNeeded : ResolutionValidationState()
     object InProgress : ResolutionValidationState()
     data class Valid(val width: Long, val height: Long) : ResolutionValidationState()
+    data class Risky(val width: Long, val height: Long) : ResolutionValidationState()
     data class Invalid(val width: Long, val height: Long, val formatName: String, val limit: Int) :
         ResolutionValidationState()
 

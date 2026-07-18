@@ -39,6 +39,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.rerokutosei.chimera.R
 import com.rerokutosei.chimera.utils.common.ShowToast
@@ -107,6 +109,41 @@ fun EstimatedResolutionCard(
                                 ),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    }
+                }
+
+                is ResolutionValidationState.Risky -> {
+                    val highMemoryRiskDescription =
+                        stringResource(R.string.estimated_resolution_high_memory_risk)
+                    OutlinedCard(
+                        onClick = { },
+                        modifier = Modifier
+                            .height(40.dp)
+                            .semantics {
+                                stateDescription = highMemoryRiskDescription
+                            },
+                        shape = RoundedCornerShape(20.dp),
+                        colors = CardDefaults.outlinedCardColors(
+                            containerColor = MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 12.dp),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(
+                                    R.string.estimated_resolution,
+                                    targetState.width,
+                                    targetState.height
+                                ),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.onError
                             )
                         }
                     }
