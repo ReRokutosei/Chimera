@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/ReRokutosei/Chimera/compare/v1.4.0...v1.5.0) (2026-07-18)
+
+
+### Features
+
+* flag high-memory stitch estimates ([3fbea19](https://github.com/ReRokutosei/Chimera/commit/3fbea1939c0e64936e7e2328d044e648a389b97c))
+
+
+### Bug Fixes
+
+* **deps:** update aboutlibraries to v14.2.1 ([#112](https://github.com/ReRokutosei/Chimera/issues/112)) ([9187db7](https://github.com/ReRokutosei/Chimera/commit/9187db7e7ccc5739532a895c99ee1270ce1b2694))
+* **deps:** update aboutlibraries to v15 ([#136](https://github.com/ReRokutosei/Chimera/issues/136)) ([8cdd6b9](https://github.com/ReRokutosei/Chimera/commit/8cdd6b9f7fe45e66ce3e244199bf539dfe6882a7))
+* **deps:** update animation to v1.11.1 ([#116](https://github.com/ReRokutosei/Chimera/issues/116)) ([22ac1a6](https://github.com/ReRokutosei/Chimera/commit/22ac1a626e29a198fee7bab7db3afd296d487670))
+* **deps:** update animation to v1.11.2 ([#123](https://github.com/ReRokutosei/Chimera/issues/123)) ([cd755f8](https://github.com/ReRokutosei/Chimera/commit/cd755f8e9e14c3c6da8f70fb152b8c8d22dc5778))
+* **deps:** update animation to v1.11.3 ([#129](https://github.com/ReRokutosei/Chimera/issues/129)) ([1d3848c](https://github.com/ReRokutosei/Chimera/commit/1d3848c30320abf06cc21317e128fd907c009f6c))
+* **deps:** update colorpickercompose to v1.2.0 ([#128](https://github.com/ReRokutosei/Chimera/issues/128)) ([11d8833](https://github.com/ReRokutosei/Chimera/commit/11d8833ba065aea80dcdfbf792da11a86272ca1b))
+* **deps:** update composebom to v2026.06.00 ([#131](https://github.com/ReRokutosei/Chimera/issues/131)) ([366a464](https://github.com/ReRokutosei/Chimera/commit/366a4641d1486f91d830395f8f8dafd95bc2a6c3))
+* **deps:** update corektx to v1.19.0 ([#127](https://github.com/ReRokutosei/Chimera/issues/127)) ([be29660](https://github.com/ReRokutosei/Chimera/commit/be2966097dbb762db925ac3c99d5292fbe6a5af1))
+* **deps:** update dependency androidx.benchmark:benchmark-macro-junit4 to v1.5.0-alpha06 ([#117](https://github.com/ReRokutosei/Chimera/issues/117)) ([9d6ca93](https://github.com/ReRokutosei/Chimera/commit/9d6ca93e29962acfa31d61c8799dfd60403dd447))
+* **deps:** update dependency androidx.benchmark:benchmark-macro-junit4 to v1.5.0-alpha07 ([#138](https://github.com/ReRokutosei/Chimera/issues/138)) ([2eca1f8](https://github.com/ReRokutosei/Chimera/commit/2eca1f89c214e41347f627140b11d47f65a486ba))
+* **deps:** update dependency androidx.compose:compose-bom to v2026.05.00 ([#120](https://github.com/ReRokutosei/Chimera/issues/120)) ([4342a3b](https://github.com/ReRokutosei/Chimera/commit/4342a3b4ba4bbf1a55bf11940ade61e494efbda5))
+* **deps:** update dependency androidx.compose:compose-bom to v2026.05.01 ([#124](https://github.com/ReRokutosei/Chimera/issues/124)) ([a2e5cf0](https://github.com/ReRokutosei/Chimera/commit/a2e5cf03d024cf5943db13a1a7ecde43df6e2080))
+* **deps:** update dependency androidx.compose:compose-bom to v2026.06.01 ([#139](https://github.com/ReRokutosei/Chimera/issues/139)) ([e5adb56](https://github.com/ReRokutosei/Chimera/commit/e5adb56e3a08c2bd1b392fc20f63a5083a953987))
+* **deps:** update dependency androidx.compose.animation:animation-core to v1.11.4 ([#140](https://github.com/ReRokutosei/Chimera/issues/140)) ([b482a74](https://github.com/ReRokutosei/Chimera/commit/b482a743de5672bf4f5f1c944266f081360915bf))
+* **deps:** update dependency androidx.compose.material3:material3 to v1.5.0-alpha23 ([#141](https://github.com/ReRokutosei/Chimera/issues/141)) ([1f438a9](https://github.com/ReRokutosei/Chimera/commit/1f438a97a951d1914f251b995a8e87b588af7606))
+* **deps:** update dependency androidx.compose.material3:material3 to v1.5.0-alpha24 ([#147](https://github.com/ReRokutosei/Chimera/issues/147)) ([0fea767](https://github.com/ReRokutosei/Chimera/commit/0fea767cbeea2e2e547b35e2fa14795ff5ec812c))
+* **deps:** update dependency androidx.compose.ui:ui to v1.11.1 ([#119](https://github.com/ReRokutosei/Chimera/issues/119)) ([a1b44df](https://github.com/ReRokutosei/Chimera/commit/a1b44dfa2de703947575377f05ca77c3070b68c7))
+* **deps:** update dependency androidx.compose.ui:ui to v1.11.2 ([#125](https://github.com/ReRokutosei/Chimera/issues/125)) ([79717ae](https://github.com/ReRokutosei/Chimera/commit/79717ae35e822e232ee066514edaf7420733a848))
+* **deps:** update dependency androidx.compose.ui:ui to v1.11.4 ([#142](https://github.com/ReRokutosei/Chimera/issues/142)) ([6ed65e0](https://github.com/ReRokutosei/Chimera/commit/6ed65e004327810afe48cef28f8639b352aaff64))
+* **deps:** update dependency androidx.test.uiautomator:uiautomator to v2.4.0 ([#143](https://github.com/ReRokutosei/Chimera/issues/143)) ([2dcb1cc](https://github.com/ReRokutosei/Chimera/commit/2dcb1cc7ece764094b16e754ed34e84938fcfdee))
+* **deps:** update dependency com.github.skydoves:colorpicker-compose to v1.1.4 ([#113](https://github.com/ReRokutosei/Chimera/issues/113)) ([d3cf270](https://github.com/ReRokutosei/Chimera/commit/d3cf270b726d23db28000de9d6ebfa301a24da1b))
+* **deps:** update kotlinx-coroutines monorepo to v1.11.0 ([#121](https://github.com/ReRokutosei/Chimera/issues/121)) ([b485065](https://github.com/ReRokutosei/Chimera/commit/b485065c04b855c8a744297f88efbfd806a1fff7))
+* **deps:** update lifecycleruntimektx to v2.11.0 ([#132](https://github.com/ReRokutosei/Chimera/issues/132)) ([b8e9560](https://github.com/ReRokutosei/Chimera/commit/b8e9560add9a7ffd5def0fd2240457bc2d1d1a69))
+* **deps:** update material3alpha to v1.5.0-alpha22 ([#118](https://github.com/ReRokutosei/Chimera/issues/118)) ([284b59a](https://github.com/ReRokutosei/Chimera/commit/284b59aebdc9ff0a4d70455fa283083fb6418f03))
+* **deps:** update materialdesign to v1.14.0 ([#122](https://github.com/ReRokutosei/Chimera/issues/122)) ([08a00f6](https://github.com/ReRokutosei/Chimera/commit/08a00f666f072547e9de99688c636c32c989d807))
+* **deps:** update ui to v1.11.3 ([#130](https://github.com/ReRokutosei/Chimera/issues/130)) ([e4ccb0c](https://github.com/ReRokutosei/Chimera/commit/e4ccb0c0b238e09d29c27a49db1499594e2e3256))
+* resolve actionable inspection findings ([68b3236](https://github.com/ReRokutosei/Chimera/commit/68b323609f721bb836794c72729694a84f7f69b6))
+* resolve deprecation warnings and reformat-induced compile errors ([d1b2b37](https://github.com/ReRokutosei/Chimera/commit/d1b2b37de7f473196187ab6da8baf0f665a2fc73))
+* resolve IDE inspection warnings across the project ([49bbd40](https://github.com/ReRokutosei/Chimera/commit/49bbd40a30461452a7498caeeb799e2a4763e4de))
+
 ## [1.4.0](https://github.com/ReRokutosei/Chimera/compare/v1.3.0...v1.4.0) (2026-04-28)
 
 
