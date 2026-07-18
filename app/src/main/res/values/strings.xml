@@ -111,7 +111,7 @@
     <string name="multithreading">Multithreading</string>
     <string name="multithreading_desc">Use multithreading to process images in parallel and improve stitching speed</string>
     <string name="high_memory_threshold">Increase Memory Threshold</string>
-    <string name="high_memory_threshold_desc">Raise memory threshold to 80% of device\'s total RAM</string>
+    <string name="high_memory_threshold_desc" formatted="false">Raise memory threshold to 80% of device\'s total RAM</string>
     <string name="stitching_result">Stitching Result</string>
     <string name="no_valid_result">No valid image result was generated</string>
     <string name="stitching_failed">Stitching Failed</string>
@@ -127,7 +127,10 @@
     <string name="save_failed">Save failed</string>
     <string name="failed_to_read_log_file">Failed to read log file: %1$s</string>
     <string name="log_file_not_exist">Log file does not exist</string>
-    <string name="images_selected">%1$d new images selected</string>
+    <plurals name="images_selected">
+        <item quantity="one">%1$d new image selected</item>
+        <item quantity="other">%1$d new images selected</item>
+    </plurals>
     <string name="sort_images">Sort Images</string>
     <string name="sort_by_time">By Time</string>
     <string name="sort_by_name">By Name</string>

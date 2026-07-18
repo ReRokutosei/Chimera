@@ -29,8 +29,7 @@ import androidx.appcompat.app.AppCompatActivity
 internal fun ComponentActivity.sendMediaAsResult(selectedMedia: List<Uri>) {
     val intent = if (selectedMedia.size == 1) {
         Intent(Intent.ACTION_SEND).apply {
-            type = "image/*"
-            data = selectedMedia.first()
+            setDataAndType(selectedMedia.first(), "image/*")
             putExtra(Intent.EXTRA_STREAM, selectedMedia.first())
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }

@@ -21,13 +21,13 @@
 
 package com.t8rin.embeddedpicker.presentation
 
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.core.net.toUri
 import com.t8rin.embeddedpicker.data.AndroidMediaRetriever
 import com.t8rin.embeddedpicker.domain.model.AllowedMedia
 import com.t8rin.embeddedpicker.presentation.components.MediaPickerRootContent
@@ -61,7 +61,7 @@ class MediaPickerActivity : ComponentActivity() {
             allowMultiple = allowMultiple,
             onMediaSelected = { media ->
                 // 返回结果
-                sendMediaAsResult(media.map { Uri.parse(it.uri) })
+                sendMediaAsResult(media.map { it.uri.toUri() })
             },
             onDismiss = {
                 finish()

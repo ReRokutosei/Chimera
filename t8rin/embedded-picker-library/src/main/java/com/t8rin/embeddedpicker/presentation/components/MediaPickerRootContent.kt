@@ -23,11 +23,8 @@ package com.t8rin.embeddedpicker.presentation.components
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
-import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
@@ -44,7 +41,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -82,41 +78,12 @@ fun MediaPickerRootContent(
     var isPermissionAllowed by remember {
         mutableStateOf(checkPermissions(context))
     }
-    var isManagePermissionAllowed by remember {
-        mutableStateOf(true)
-    }
-    var invalidator by remember {
-        mutableIntStateOf(0)
-    }
-
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         isPermissionAllowed = isGranted
     }
     
-    val managePermissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        invalidator++
-    }
-    
-    val requestManagePermission = {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            try {
-                managePermissionLauncher.launch(
-                    Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
-                        data = Uri.parse("package:${context.packageName}")
-                    }
-                )
-            } catch (e: Exception) {
-                managePermissionLauncher.launch(
-                    Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
-                )
-            }
-        }
-    }
-
     // 移除Scaffold，避免与外部容器产生间距
     AnimatedContent(
         targetState = isPermissionAllowed,
@@ -128,8 +95,6 @@ fun MediaPickerRootContent(
                 mediaState = mediaState,
                 allowedMedia = allowedMedia,
                 allowMultiple = allowMultiple,
-                isManagePermissionAllowed = isManagePermissionAllowed,
-                onRequestManagePermission = requestManagePermission,
                 onMediaSelected = onMediaSelected,
                 onDismiss = onDismiss,
                 onAlbumSelected = onAlbumSelected,
@@ -139,9 +104,7 @@ fun MediaPickerRootContent(
         } else {
             PermissionDeniedScreen(
                 onRequestPermission = {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
-                    } else {
+                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
                         requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
                     }
                 }
@@ -184,15 +147,9 @@ private fun PermissionDeniedScreen(
 }
 
 private fun checkPermissions(context: Context): Boolean {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.READ_MEDIA_IMAGES
-        ) == PackageManager.PERMISSION_GRANTED
-    } else {
+    return Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2 &&
         ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.READ_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
-    }
 }

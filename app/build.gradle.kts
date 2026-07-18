@@ -179,7 +179,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     // 直接指定使用带 Expressive 功能的 Material 3 alpha 版本
-    implementation(libs.androidx.compose.material3.alpha)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
@@ -192,9 +192,8 @@ dependencies {
     implementation(libs.androidx.compose.animation)
     implementation(libs.androidx.compose.animation.core)
 
-    // 添加Material3支持
+    // 添加 Material 组件支持
     implementation(libs.material.design)
-    implementation(libs.androidx.material3)
     // 添加SubsamplingScaleImageView库用于大图显示
     implementation(libs.subsampling.scale.image.view)
 

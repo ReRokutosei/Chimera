@@ -27,7 +27,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 /**
  * Represents the local container background color state.
  */
-val SafeLocalContainerColor = staticCompositionLocalOf { false }
+val LocalSafeContainerColor = staticCompositionLocalOf { false }
 
 /**
  * Represents local settings for the slider component.

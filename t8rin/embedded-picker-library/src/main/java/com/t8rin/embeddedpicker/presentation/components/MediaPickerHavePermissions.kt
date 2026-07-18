@@ -54,6 +54,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -82,15 +83,13 @@ internal fun MediaPickerHavePermissions(
     mediaState: MediaState,
     allowedMedia: AllowedMedia,
     allowMultiple: Boolean,
-    isManagePermissionAllowed: Boolean,
-    onRequestManagePermission: () -> Unit,
     onMediaSelected: (List<Media>) -> Unit,
     onDismiss: () -> Unit,
     onAlbumSelected: (Long) -> Unit,
     onMediaClick: (Media) -> Unit,
     onClearSelection: () -> Unit
 ) {
-    var selectedAlbumId by remember { mutableStateOf(-1L) }
+    var selectedAlbumId by remember { mutableLongStateOf(-1L) }
     var isSearching by rememberSaveable { mutableStateOf(false) }
     
     Column(

@@ -19,7 +19,9 @@
 package com.rerokutosei.chimera.utils.stitch
 
 import android.content.Context
+import android.graphics.Color
 import android.net.Uri
+import androidx.core.graphics.toColorInt
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.data.local.StitchSettingsManager
 import com.rerokutosei.chimera.domain.error.StitchFailure
@@ -76,9 +78,9 @@ class ImageStitcher(private val context: Context) {
                 val highMemoryLimitEnabled = imageSettingsManager.getHighMemoryLimitFlow().first()
                 val spacingColorHex = stitchSettingsManager.getImageSpacingColorFlow().first()
                 val spacingColor = try {
-                    android.graphics.Color.parseColor(spacingColorHex)
+                    spacingColorHex.toColorInt()
                 } catch (_: Exception) {
-                    android.graphics.Color.BLACK
+                    Color.BLACK
                 }
 
                 val options = StitchingOptions(

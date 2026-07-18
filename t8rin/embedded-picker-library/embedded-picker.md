@@ -80,15 +80,12 @@ ViewModel 负责管理 UI 状态，包括：
 AndroidMediaRetriever 类负责从设备媒体存储中检索媒体文件和相册信息，并提供了缓存机制来提高性能。
 
 ### 5. 权限管理
-库会自动处理必要的存储权限：
-- Android 13+：`READ_MEDIA_IMAGES`
-- Android 12及以下：`READ_EXTERNAL_STORAGE`
+该库仅用于 Android 12L 及以下的兼容选择流程，需要 `READ_EXTERNAL_STORAGE`。Android 13 及以上应由宿主应用使用系统 Photo Picker，避免申请全库照片访问权限。
 
 ## 使用方法
 
 1. 在 AndroidManifest.xml 中添加必要的权限：
 ```xml
-<uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
     android:maxSdkVersion="32" />
 ```

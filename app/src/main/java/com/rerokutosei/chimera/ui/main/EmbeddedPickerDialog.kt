@@ -76,12 +76,8 @@ fun EmbeddedPickerDialog(
     }
 
     LaunchedEffect(Unit) {
-        if (!hasPermission) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
-            } else {
-                requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-            }
+        if (!hasPermission && Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
     }
 
@@ -176,15 +172,9 @@ private fun EmbeddedPickerContent(
 }
 
 private fun checkPermissions(context: Context): Boolean {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.READ_MEDIA_IMAGES
-        ) == PackageManager.PERMISSION_GRANTED
-    } else {
+    return Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2 &&
         ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.READ_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
-    }
 }

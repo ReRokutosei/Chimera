@@ -98,7 +98,7 @@
     <string name="multithreading">多线程</string>
     <string name="multithreading_desc">使用多线程并行处理图片，提高拼接速度</string>
     <string name="high_memory_threshold">提高内存阈值</string>
-    <string name="high_memory_threshold_desc">将内存阈值提升到设备总 RAM 的 80%</string>
+    <string name="high_memory_threshold_desc" formatted="false">将内存阈值提升到设备总 RAM 的 80%</string>
     <string name="stitching_result">拼接结果</string>
     <string name="no_valid_result">未生成有效的图片结果</string>
     <string name="stitching_failed">拼接失败</string>
@@ -114,7 +114,9 @@
     <string name="save_failed">保存失败</string>
     <string name="failed_to_read_log_file">无法读取日志文件: %1$s</string>
     <string name="log_file_not_exist">日志文件不存在</string>
-    <string name="images_selected">已选择%1$d张新图片</string>
+    <plurals name="images_selected">
+        <item quantity="other">已选择%1$d张新图片</item>
+    </plurals>
     <string name="sort_images">排序图片</string>
     <string name="sort_by_time">按时间</string>
     <string name="sort_by_name">按名称</string>

@@ -68,10 +68,6 @@ dependencies {
     // Kotlin Coroutines
     implementation(libs.kotlinx.coroutines.android)
     
-    // Android Core
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.material3)
-
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }

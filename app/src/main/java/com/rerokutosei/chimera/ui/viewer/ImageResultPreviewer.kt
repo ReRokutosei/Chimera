@@ -26,13 +26,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.core.graphics.get
+import androidx.core.graphics.scale
 
 private fun chooseGridLineColor(bitmap: Bitmap): Int {
-    val thumb = Bitmap.createScaledBitmap(bitmap, 16, 16, true)
+    val thumb = bitmap.scale(16, 16)
     var totalBrightness = 0L
     for (y in 0 until 16) {
         for (x in 0 until 16) {
-            val pixel = thumb.getPixel(x, y)
+            val pixel = thumb[x, y]
             val r = Color.red(pixel)
             val g = Color.green(pixel)
             val b = Color.blue(pixel)

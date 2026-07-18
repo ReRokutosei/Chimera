@@ -1,11 +1,1 @@
-# Proguard rules for image-reorder-carousel-library
-# Keep public classes and methods
--keep public class com.t8rin.imagereordercarousel.** {
-    public *;
-}
-
-# Keep annotations
--keepattributes *Annotation*
-
-# Keep parameter names
--keepparameternames
+# No consumer rules are required. Reachable public APIs are retained by the consuming app.

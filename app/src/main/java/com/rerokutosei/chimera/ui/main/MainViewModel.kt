@@ -148,8 +148,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
                 if (newImages.isNotEmpty()) {
                     setToastMessage(
-                        getApplication<Application>().getString(
-                            R.string.images_selected,
+                        getApplication<Application>().resources.getQuantityString(
+                            R.plurals.images_selected,
+                            newImages.size,
                             newImages.size
                         )
                     )

@@ -284,17 +284,11 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
      */
     fun checkEmbeddedPickerPermissions(): Boolean {
         val context = getApplication<Application>().applicationContext
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            androidx.core.content.ContextCompat.checkSelfPermission(
-                context,
-                android.Manifest.permission.READ_MEDIA_IMAGES
-            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-        } else {
+        return Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2 &&
             androidx.core.content.ContextCompat.checkSelfPermission(
                 context,
                 android.Manifest.permission.READ_EXTERNAL_STORAGE
             ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-        }
     }
 
     fun setSliderThumbShape(shape: Int) {

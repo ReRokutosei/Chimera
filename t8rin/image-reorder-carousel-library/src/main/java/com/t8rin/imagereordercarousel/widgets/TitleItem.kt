@@ -38,8 +38,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun TitleItem(
     text: String,
-    icon: ImageVector? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    icon: ImageVector? = null
 ) {
     Row(
         modifier = modifier

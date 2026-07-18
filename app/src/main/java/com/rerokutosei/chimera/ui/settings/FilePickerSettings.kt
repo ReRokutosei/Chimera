@@ -190,9 +190,8 @@ fun FilePickerSettingsSection(
         )
     }
 
-    // 使用Embedded Picker
-    // 对于SDK 29-32的设备，Embedded Picker是默认且必需的选项
-    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S) {
+    // Android 13+ 使用系统 Photo Picker，避免申请全库照片访问权限。
+    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
         ListItem(
             supportingContent = {
                 Text(
@@ -209,11 +208,7 @@ fun FilePickerSettingsSection(
                             if (viewModel.checkEmbeddedPickerPermissions()) {
                                 viewModel.setUseEmbeddedPicker(true)
                             } else {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                    embeddedPickerPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
-                                } else {
-                                    embeddedPickerPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                                }
+                                embeddedPickerPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
                             }
                         } else {
                             viewModel.setUseEmbeddedPicker(false)
@@ -228,40 +223,12 @@ fun FilePickerSettingsSection(
                         if (viewModel.checkEmbeddedPickerPermissions()) {
                             viewModel.setUseEmbeddedPicker(true)
                         } else {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                embeddedPickerPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
-                            } else {
-                                embeddedPickerPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                            }
+                            embeddedPickerPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
                         }
                     } else {
                         viewModel.setUseEmbeddedPicker(false)
                     }
                 }
-        ) {
-            Text(
-                text = stringResource(R.string.embedded_picker),
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-    } else {
-        // 对于SDK 29-32设备，显示为默认启用状态
-        ListItem(
-            supportingContent = {
-                Text(
-                    text = stringResource(R.string.default_picker_info),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            },
-            trailingContent = {
-                Switch(
-                    checked = true,
-                    onCheckedChange = null, // 禁用切换
-                    enabled = false
-                )
-            },
-            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
                 text = stringResource(R.string.embedded_picker),

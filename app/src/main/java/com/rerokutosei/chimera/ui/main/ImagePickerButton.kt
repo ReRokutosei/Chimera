@@ -33,15 +33,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.rerokutosei.chimera.R
 import com.rerokutosei.chimera.utils.common.ToastUtil
 
@@ -93,25 +88,12 @@ fun ImagePickerButton(
         }
     }
 
-    var hasEmbeddedPickerPermission by remember { mutableStateOf(false) }
-    var checkEmbeddedPickerPermission by remember { mutableStateOf(false) }
-
-    LaunchedEffect(checkEmbeddedPickerPermission) {
-        if (checkEmbeddedPickerPermission) {
-            hasEmbeddedPickerPermission =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    ActivityCompat.checkSelfPermission(
-                        context,
-                        android.Manifest.permission.READ_MEDIA_IMAGES
-                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-                } else {
-                    ActivityCompat.checkSelfPermission(
-                        context,
-                        android.Manifest.permission.READ_EXTERNAL_STORAGE
-                    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-                }
-        }
-    }
+    val supportsEmbeddedPicker = Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2
+    val hasEmbeddedPickerPermission = supportsEmbeddedPicker &&
+        ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
 
     Button(
         onClick = {
@@ -121,14 +103,16 @@ fun ImagePickerButton(
                         safPickerLauncher.launch(arrayOf("image/*"))
                     }
 
-                    useEmbeddedPicker -> {
-                        showEmbeddedPicker()
+                    useEmbeddedPicker && supportsEmbeddedPicker -> {
+                        if (hasEmbeddedPickerPermission) {
+                            showEmbeddedPicker()
+                        } else {
+                            embeddedPickerPermissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                        }
                     }
-                    // 对于SDK 29-32的设备，如果PhotoPicker不可用，则自动使用Embedded Picker
+                    // 对于 SDK 29-32 的设备，如果 Photo Picker 不可用，则使用 Embedded Picker
                     !ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(context) &&
-                        Build.VERSION.SDK_INT <= Build.VERSION_CODES.S -> {
-                        // 检查权限后再使用Embedded Picker
-                        checkEmbeddedPickerPermission = true
+                        supportsEmbeddedPicker -> {
                         if (hasEmbeddedPickerPermission) {
                             showEmbeddedPicker()
                         } else {
