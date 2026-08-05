@@ -33,7 +33,6 @@ Image decoding, stitching, cutting, and saving are performed on the device. The 
 ### Image access
 
 ![Image selection interface](../assets/picker.webp)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FReRokutosei%2FChimera.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FReRokutosei%2FChimera?ref=badge_shield)
 
 - **System Photo Picker**: Uses the platform picker when available and grants access only to selected media, without broad storage permission.
 - **Storage Access Framework (SAF)**: Selects image files through the system document provider.
@@ -97,6 +96,8 @@ The Android Photo Picker may return selected URIs in an order different from the
 
 ## Build and verification
 
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FReRokutosei%2FChimera.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FReRokutosei%2FChimera?ref=badge_shield)
+
 Requirements:
 
 - JDK 21
@@ -117,8 +118,11 @@ Release builds use the debug signing key when no release keystore is configured.
 - [Disclaimer](Disclaimer_EN.md)
 - [GNU General Public License v3.0](../LICENSE)
 
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FReRokutosei%2FChimera.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FReRokutosei%2FChimera?ref=badge_large)
+<p align="center">
+  <a href="https://app.fossa.com/projects/git%2Bgithub.com%2FReRokutosei%2FChimera?ref=badge_large">
+    <img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2FReRokutosei%2FChimera.svg?type=large" alt="FOSSA Status" />
+  </a>
+</p>
 
 ## Credits
 

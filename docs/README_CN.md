@@ -96,6 +96,8 @@ Android Photo Picker 返回的 URI 顺序可能与界面中的选择顺序不同
 
 ## 构建与验证
 
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FReRokutosei%2FChimera.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FReRokutosei%2FChimera?ref=badge_shield)
+
 环境要求：
 
 - JDK 21
@@ -115,6 +117,12 @@ cd Chimera
 - [隐私政策](PrivacyPolicy_CN.md)
 - [免责声明](Disclaimer_CN.md)
 - [GNU 通用公共许可证第三版](../LICENSE)
+
+<p align="center">
+  <a href="https://app.fossa.com/projects/git%2Bgithub.com%2FReRokutosei%2FChimera?ref=badge_large">
+    <img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2FReRokutosei%2FChimera.svg?type=large" alt="FOSSA Status" />
+  </a>
+</p>
 
 ## 致谢
 
