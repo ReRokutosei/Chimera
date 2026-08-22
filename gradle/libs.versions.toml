@@ -30,7 +30,7 @@ androidxTestRunner = "1.7.0"
 androidxTestExtJunit = "1.3.0"
 uiautomator = "2.4.0"
 junit4 = "4.13.2"
-tracing = "1.3.0"
+tracing = "2.0.0"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
