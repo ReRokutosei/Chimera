@@ -75,6 +75,42 @@ fun ImageResultPreviewer(
                     val y = rowSegs[i].start
                     canvas.drawLine(0f, y.toFloat(), copy.width.toFloat(), y.toFloat(), paint)
                 }
+
+                // Draw sequence index badges (01, 02, 03, ...)
+                val badgeHeight = (copy.width.coerceAtMost(copy.height) * 0.05f).coerceIn(36f, 120f)
+                val textPaint = Paint().apply {
+                    color = Color.WHITE
+                    textSize = badgeHeight * 0.62f
+                    isAntiAlias = true
+                    typeface = android.graphics.Typeface.DEFAULT_BOLD
+                    textAlign = Paint.Align.CENTER
+                }
+                val bgPaint = Paint().apply {
+                    color = Color.argb(180, 0, 0, 0)
+                    isAntiAlias = true
+                    style = Paint.Style.FILL
+                }
+
+                for (r in 0 until source.rows) {
+                    for (c in 0 until source.cols) {
+                        val segX = colSegs[c]
+                        val segY = rowSegs[r]
+                        val idx = r * source.cols + c + 1
+                        val badgeText = "%02d".format(idx)
+
+                        val pad = badgeHeight * 0.25f
+                        val bx = segX.start + pad
+                        val by = segY.start + pad
+                        val bw = badgeHeight * 1.3f
+                        val bh = badgeHeight
+                        val rect = android.graphics.RectF(bx, by, bx + bw, by + bh)
+                        canvas.drawRoundRect(rect, 10f, 10f, bgPaint)
+
+                        val textY = by + (bh / 2f) - ((textPaint.descent() + textPaint.ascent()) / 2f)
+                        canvas.drawText(badgeText, bx + (bw / 2f), textY, textPaint)
+                    }
+                }
+
                 canvas.setBitmap(null)
                 copy
             }
