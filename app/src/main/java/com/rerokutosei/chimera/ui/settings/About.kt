@@ -38,8 +38,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -80,6 +82,7 @@ fun AboutSection(
     }
 
     ListItem(
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent)
     ) {
         Text(
             text = stringResource(R.string.version) + LocalContext.current.packageManager
@@ -91,6 +94,7 @@ fun AboutSection(
     // 添加开源许可证项
     var showLicensesDialog by remember { mutableStateOf(false) }
     ListItem(
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         modifier = Modifier
             .fillMaxWidth()
             .clickable { showLicensesDialog = true }
@@ -111,6 +115,7 @@ fun AboutSection(
     // 隐私政策和免责声明项
     var showPrivacyPolicyDialog by remember { mutableStateOf(false) }
     ListItem(
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         modifier = Modifier
             .fillMaxWidth()
             .clickable { showPrivacyPolicyDialog = true }

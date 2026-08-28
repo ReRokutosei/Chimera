@@ -37,6 +37,7 @@ import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -83,6 +84,7 @@ fun ImageOutputSettingsSection(
 
     // 输出图片格式选择
     ListItem(
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         supportingContent = {
             Row(
                 modifier = Modifier
@@ -137,6 +139,7 @@ fun ImageOutputSettingsSection(
     )
 
     ListItem(
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         supportingContent = {
             var showColorPicker by remember { mutableStateOf(false) }
             val currentColor = ColorUtils.parseColorSafely(uiState.imageSpacingColor, Color.Black)
@@ -189,6 +192,7 @@ fun ImageOutputSettingsSection(
     // 输出图片质量滑块 (仅在 JPEG 或 WEBP 格式时显示)
     if (uiState.outputImageFormat == 1 || uiState.outputImageFormat == 2) {
         ListItem(
+            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
             supportingContent = {
                 FancySlider(
                     value = uiState.outputImageQuality.toFloat(),

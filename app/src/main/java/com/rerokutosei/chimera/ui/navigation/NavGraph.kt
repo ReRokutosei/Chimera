@@ -27,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -134,8 +135,24 @@ fun AppNavGraph(
             )
         }
 
-        composable<Route.Settings> {
-            val mainViewModel: MainViewModel = viewModel()
+        composable<Route.Settings> { backStackEntry ->
+            val mainViewModel: MainViewModel = viewModel(
+                viewModelStoreOwner = remember(backStackEntry) {
+                    navController.getBackStackEntry(Route.Main)
+                }
+            )
+            val windowInfo = androidx.compose.ui.platform.LocalWindowInfo.current
+            val density = androidx.compose.ui.platform.LocalDensity.current
+            val containerWidth = with(density) { windowInfo.containerSize.width.toDp() }
+            val isWorkstationMode = containerWidth >= 840.dp
+
+            LaunchedEffect(isWorkstationMode) {
+                if (isWorkstationMode) {
+                    mainViewModel.setShowSettingsInCanvas(true)
+                    navController.popBackStack(Route.Main, inclusive = false)
+                }
+            }
+
             SettingsScreen(
                 mainViewModel = mainViewModel
             )

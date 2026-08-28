@@ -213,6 +213,13 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
         _uiState.value = _uiState.value.copy(stitchMode = mode)
     }
 
+    fun clearStitchState() {
+        _uiState.value = _uiState.value.copy(
+            stitchState = StitchState.Idle,
+            progress = 0
+        )
+    }
+
     override fun onCleared() {
         recycleCurrentResult()
         logManager.debug("StitchViewModel", "ViewModel已清除")

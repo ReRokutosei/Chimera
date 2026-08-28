@@ -33,12 +33,14 @@ import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -86,7 +88,7 @@ fun FilePickerSettingsSection(
 
     // 自动清理已选图片开关
     ListItem(
-
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         supportingContent = {
             Text(
                 text = stringResource(R.string.clear_after_stitching),
@@ -111,7 +113,7 @@ fun FilePickerSettingsSection(
     }
 
     ListItem(
-
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         supportingContent = {
             Column(
                 modifier = Modifier
@@ -164,7 +166,7 @@ fun FilePickerSettingsSection(
 
     // 使用存储访问框架选择器
     ListItem(
-
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         supportingContent = {
             Text(
                 text = stringResource(R.string.use_saf_without_permission),
@@ -189,6 +191,7 @@ fun FilePickerSettingsSection(
     }
 
     ListItem(
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         supportingContent = {
             Text(
                 text = stringResource(R.string.embedded_picker_sub),

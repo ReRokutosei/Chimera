@@ -28,6 +28,7 @@ import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.rerokutosei.chimera.R
@@ -66,6 +68,7 @@ fun OtherSettingsSection(
 
     // 日志等级选择
     ListItem(
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         trailingContent = {
             var showLogLevelMenu by remember { mutableStateOf(false) }
             val selectedLogLevel = when (uiState.logLevel) {

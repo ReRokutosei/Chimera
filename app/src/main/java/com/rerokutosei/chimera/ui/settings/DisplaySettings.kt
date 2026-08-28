@@ -48,10 +48,12 @@ import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
@@ -124,7 +126,7 @@ fun ThemeModeSettings(
 ) {
     // 主题模式设置
     ListItem(
-
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         supportingContent = null,
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -184,7 +186,7 @@ fun ThemeColorSettings(
 
     // 主题颜色设置
     ListItem(
-
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         supportingContent = {
             var showCustomColorPicker by remember { mutableStateOf(false) }
 
@@ -377,7 +379,7 @@ fun SliderHandleIconSettings(
     val surface = MaterialTheme.colorScheme.surface
     val outline = MaterialTheme.colorScheme.outline
     ListItem(
-
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         supportingContent = {
             Row(
                 modifier = Modifier

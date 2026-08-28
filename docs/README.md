@@ -44,10 +44,11 @@ Image decoding, stitching, cutting, and saving are performed on the device. The 
 - Original, minimum-alignment, and maximum-alignment scaling modes.
 - Overlay mode that keeps a configurable trailing section from each subsequent image; this is intended for workflows such as combining subtitle screenshots.
 - Drag-and-drop ordering of selected images.
-- 2 x 2 and 3 x 3 grid cutting, including batch saving.
+- 2 x 2 and 3 x 3 grid cutting, as well as 1 x 3 and 1 x 4 panoramic equal-width splitting with batch saving.
 
 ### Display and output
 
+- Adaptive Multi-Form-Factor Layout.
 - Light, dark, and automatic themes.
 - Material You dynamic color on supported Android versions; results depend on the wallpaper information exposed by the operating system.
 - JPEG, PNG, and WebP output. The quality setting applies to JPEG and WebP.

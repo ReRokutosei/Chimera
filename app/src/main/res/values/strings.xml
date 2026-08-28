@@ -200,6 +200,10 @@
     <string name="save_error_encoding_failed">The image could not be encoded.</string>
     <string name="save_error_write_failed">The image could not be written to the gallery.</string>
     <string name="save_error_unexpected">Saving failed unexpectedly. Check the log for details.</string>
+    <string name="canvas_hint_stitch_empty">Add images from the left panel to start</string>
+    <string name="canvas_hint_stitch_ready">Click \"Start Stitching\" on the left to preview here</string>
+    <string name="canvas_hint_cut_empty">Add images from the left panel to start</string>
+    <string name="canvas_hint_cut_ready">Click \"Start Cutting\" on the left to preview here</string>
 
     <!-- Help Content -->
     <string name="help_card_title_mode_direct">Direct Stitching</string>

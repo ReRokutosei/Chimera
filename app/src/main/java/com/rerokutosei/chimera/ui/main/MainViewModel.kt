@@ -67,8 +67,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _resolutionValidationState.asStateFlow()
     private val _showResolutionErrorToast = MutableStateFlow<String?>(null)
     val showResolutionErrorToast: StateFlow<String?> = _showResolutionErrorToast.asStateFlow()
+    private val _showSettingsInCanvas = MutableStateFlow(false)
+    val showSettingsInCanvas: StateFlow<Boolean> = _showSettingsInCanvas.asStateFlow()
     private var resolutionValidationJob: Job? = null
     private var resolutionValidationVersion: Long = 0
+
+    fun setShowSettingsInCanvas(show: Boolean) {
+        _showSettingsInCanvas.value = show
+    }
 
     init {
         loadSettings()

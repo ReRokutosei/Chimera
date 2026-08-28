@@ -333,7 +333,7 @@ private fun stitchFailureMessage(failure: StitchFailure): String = when (failure
 }
 
 @Composable
-private fun cutSaveIssueMessage(issue: CutSaveIssue): String = when (issue) {
+internal fun cutSaveIssueMessage(issue: CutSaveIssue): String = when (issue) {
     is CutSaveIssue.Cut -> when (issue.failure) {
         CutFailure.NoImages -> stringResource(R.string.cut_error_no_images)
         CutFailure.DecodeFailed -> stringResource(R.string.cut_error_decode_failed)
@@ -413,7 +413,7 @@ private fun ErrorDialog(errorMessage: String, onBackClick: () -> Unit, context: 
 }
 
 @Composable
-private fun SaveResultDialog(message: String, onDismiss: () -> Unit) {
+internal fun SaveResultDialog(message: String, onDismiss: () -> Unit) {
     androidx.compose.material3.AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.save_result)) },
