@@ -144,7 +144,7 @@ fun MainScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
     ) {
         LazyColumn(
             modifier = Modifier
@@ -154,12 +154,11 @@ fun MainScreen(
                     translationX = if (isPageEntered) 0f else 100f
                 }
                 .animateContentSize(),
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(top = 16.dp, bottom = 88.dp),
             userScrollEnabled = !isCarouselInteracting
         ) {
             item {
                 TopAppBar(
-                    isCutMode = uiState.isCutMode,
-                    onToggleCutMode = { viewModel.toggleCutMode() },
                     onNavigateToSettings = onNavigateToSettings
                 )
 
@@ -399,5 +398,15 @@ fun MainScreen(
                 }
             }
         }
+
+        FloatingModeNavigationBar(
+            isCutMode = uiState.isCutMode,
+            onToggleCutMode = { isCut ->
+                if (isCut != uiState.isCutMode) {
+                    viewModel.toggleCutMode()
+                }
+            },
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }

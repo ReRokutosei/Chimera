@@ -70,9 +70,8 @@ import com.rerokutosei.chimera.utils.common.ToastUtil
 
 @Composable
 fun TopAppBar(
-    isCutMode: Boolean,
-    onToggleCutMode: () -> Unit,
-    onNavigateToSettings: () -> Unit
+    onNavigateToSettings: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     var showHelpSheet by remember { mutableStateOf(false) }
     var lastClickTime by remember { mutableLongStateOf(0L) }
@@ -84,14 +83,12 @@ fun TopAppBar(
     val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End,
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 6.dp),
+            modifier = Modifier.padding(start = 6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
@@ -150,45 +147,8 @@ fun TopAppBar(
         }
 
         Row(
-            modifier = Modifier.padding(end = 2.dp),
-            horizontalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            val modes = listOf(false, true)
-            modes.forEach { mode ->
-                Button(
-                    onClick = {
-                        val isCut = mode
-                        if (isCut != isCutMode) onToggleCutMode()
-                    },
-                    modifier = Modifier.height(32.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
-                    colors = if (mode == isCutMode) {
-                        ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        )
-                    } else {
-                        ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                            contentColor = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                ) {
-                    Text(
-                        text = if (mode) stringResource(R.string.cut_mode) else stringResource(R.string.stitch_mode),
-                        style = MaterialTheme.typography.labelLarge.copy(
-                            letterSpacing = (-0.5).sp,
-                            fontSize = 13.sp
-                        ),
-                        maxLines = 1
-                    )
-                }
-            }
-        }
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(0.dp)
+            horizontalArrangement = Arrangement.spacedBy(0.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = { showHelpSheet = true }) {
                 Icon(
