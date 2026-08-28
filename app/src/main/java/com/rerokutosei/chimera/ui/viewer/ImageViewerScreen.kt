@@ -194,10 +194,11 @@ fun ImageViewerScreen(
 
             val cutSaveMessage = when (val state = cutSaveState) {
                 CutSaveState.Idle, CutSaveState.Saving -> null
-                is CutSaveState.Success -> if (cutGridCols == 2) {
-                    stringResource(R.string.cut_completed_4)
-                } else {
-                    stringResource(R.string.cut_completed_9)
+                is CutSaveState.Success -> when {
+                    cutGridCols == 2 && cutGridRows == 2 -> stringResource(R.string.cut_completed_4)
+                    cutGridCols == 3 && cutGridRows == 3 -> stringResource(R.string.cut_completed_9)
+                    cutGridRows == 1 -> stringResource(R.string.cut_completed_x)
+                    else -> stringResource(R.string.cut_completed_generic)
                 }
 
                 is CutSaveState.Failure -> cutSaveIssueMessage(state.issue)

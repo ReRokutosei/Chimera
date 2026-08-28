@@ -122,7 +122,7 @@ fun AppNavGraph(
                     navController.navigate(
                         Route.ImageViewer(
                             isCutMode = "true",
-                            cutGrid = mainUiState.cutGrid.toString()
+                            cutGrid = mainUiState.cutPreset.id
                         )
                     ) {
                         popUpTo(Route.Main) { inclusive = false }
@@ -170,11 +170,11 @@ fun AppNavGraph(
 
             LaunchedEffect(isCutModeParam, cutGridParam, pendingStitchUris) {
                 if (isCutModeParam == "true" && pendingStitchUris.isNotEmpty()) {
-                    val grid = cutGridParam?.toIntOrNull() ?: 3
+                    val preset = com.rerokutosei.chimera.data.model.CutPreset.fromId(cutGridParam)
                     imageViewerViewModel.setCutMode(
                         imageUris = pendingStitchUris,
-                        gridCols = grid,
-                        gridRows = grid
+                        gridCols = preset.cols,
+                        gridRows = preset.rows
                     )
                 }
             }

@@ -189,23 +189,51 @@ fun MainScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 if (uiState.isCutMode) {
-                    val cutGridOptions = listOf(2, 3)
-                    Row(
+                    Card(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        CustomSegmentedButtonRow(
-                            options = cutGridOptions,
-                            selectedOption = uiState.cutGrid,
-                            onOptionSelected = { viewModel.updateCutGrid(it) },
-                            optionDisplayName = {
-                                when (it) {
-                                    2 -> stringResource(R.string.cut_grid_4)
-                                    else -> stringResource(R.string.cut_grid_9)
-                                }
-                            }
+                        shape = MaterialTheme.shapes.large,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer
                         )
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.cut_mode),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            CustomSegmentedButtonRow(
+                                options = listOf(
+                                    com.rerokutosei.chimera.data.model.CutPreset.GRID_4,
+                                    com.rerokutosei.chimera.data.model.CutPreset.GRID_9
+                                ),
+                                selectedOption = uiState.cutPreset,
+                                onOptionSelected = { viewModel.updateCutPreset(it) },
+                                optionDisplayName = { stringResource(it.titleRes) }
+                            )
+
+                            CustomSegmentedButtonRow(
+                                options = listOf(
+                                    com.rerokutosei.chimera.data.model.CutPreset.X_3,
+                                    com.rerokutosei.chimera.data.model.CutPreset.X_4
+                                ),
+                                selectedOption = uiState.cutPreset,
+                                onOptionSelected = { viewModel.updateCutPreset(it) },
+                                optionDisplayName = { stringResource(it.titleRes) }
+                            )
+
+                            Text(
+                                text = stringResource(uiState.cutPreset.hintRes),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 } else {
                     ParameterSettingsCard(

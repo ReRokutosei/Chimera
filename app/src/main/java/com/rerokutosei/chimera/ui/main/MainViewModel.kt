@@ -83,6 +83,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             val imageSpacing = stitchSettingsManager.getImageSpacingFlow().first()
             val imageSpacingColor = stitchSettingsManager.getImageSpacingColorFlow().first()
             val cutGrid = stitchSettingsManager.getCutGridFlow().first()
+            val cutPreset = stitchSettingsManager.getCutPresetFlow().first()
             val autoClearImages = imageSettingsManager.getAutoClearImagesFlow().first()
 
             _uiState.value = _uiState.value.copy(
@@ -93,6 +94,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 imageSpacing = imageSpacing,
                 imageSpacingColor = imageSpacingColor,
                 cutGrid = cutGrid,
+                cutPreset = cutPreset,
                 autoClearImages = autoClearImages
             )
 
@@ -336,6 +338,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun updateCutPreset(preset: com.rerokutosei.chimera.data.model.CutPreset) {
+        _uiState.value = _uiState.value.copy(cutPreset = preset, cutGrid = preset.cols)
+        viewModelScope.launch {
+            stitchSettingsManager.setCutPreset(preset)
+        }
+    }
+
     fun onStartStitching() {
         if (_uiState.value.selectedImages.size < 2) {
             setErrorMessage(getApplication<Application>().getString(R.string.select_two_or_more_images))
@@ -513,7 +522,8 @@ data class MainUiState(
     val autoClearImages: Boolean = true,
     val currentSortMode: ImageSortMode? = null,
     val isCutMode: Boolean = false,
-    val cutGrid: Int = 3
+    val cutGrid: Int = 3,
+    val cutPreset: com.rerokutosei.chimera.data.model.CutPreset = com.rerokutosei.chimera.data.model.CutPreset.X_4
 )
 
 // 添加尺寸验证状态的密封类

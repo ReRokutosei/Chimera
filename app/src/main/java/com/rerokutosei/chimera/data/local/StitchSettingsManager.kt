@@ -63,6 +63,7 @@ class StitchSettingsManager private constructor(private val context: Context) {
         val IMAGE_SPACING = intPreferencesKey("image_spacing")
         val IMAGE_SPACING_COLOR = stringPreferencesKey("image_spacing_color")
         val CUT_GRID = intPreferencesKey("cut_grid")
+        val CUT_PRESET = stringPreferencesKey("cut_preset")
         val MULTI_THREAD_ENABLED = booleanPreferencesKey("multi_thread_enabled")
     }
 
@@ -131,6 +132,15 @@ class StitchSettingsManager private constructor(private val context: Context) {
 
     fun getCutGridFlow(): Flow<Int> = context.dataStore.getPref(PreferencesKeys.CUT_GRID, 3)
     suspend fun setCutGrid(grid: Int) = context.dataStore.setPref(PreferencesKeys.CUT_GRID, grid)
+
+    fun getCutPresetFlow(): Flow<com.rerokutosei.chimera.data.model.CutPreset> {
+        return context.dataStore.getPref(PreferencesKeys.CUT_PRESET, "x_4")
+            .map { com.rerokutosei.chimera.data.model.CutPreset.fromId(it) }
+    }
+
+    suspend fun setCutPreset(preset: com.rerokutosei.chimera.data.model.CutPreset) {
+        context.dataStore.setPref(PreferencesKeys.CUT_PRESET, preset.id)
+    }
 
     fun getMultiThreadEnabledFlow(): Flow<Boolean> =
         context.dataStore.getPref(PreferencesKeys.MULTI_THREAD_ENABLED, false)

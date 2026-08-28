@@ -65,14 +65,14 @@ fun ImageResultPreviewer(
                     strokeWidth = 20f
                     style = Paint.Style.STROKE
                 }
-                val cellW = copy.width / source.cols
-                val cellH = copy.height / source.rows
+                val colSegs = com.rerokutosei.chimera.utils.image.ImageSplitter.computeSegments(copy.width, source.cols)
+                val rowSegs = com.rerokutosei.chimera.utils.image.ImageSplitter.computeSegments(copy.height, source.rows)
                 for (i in 1 until source.cols) {
-                    val x = i * cellW
+                    val x = colSegs[i].start
                     canvas.drawLine(x.toFloat(), 0f, x.toFloat(), copy.height.toFloat(), paint)
                 }
                 for (i in 1 until source.rows) {
-                    val y = i * cellH
+                    val y = rowSegs[i].start
                     canvas.drawLine(0f, y.toFloat(), copy.width.toFloat(), y.toFloat(), paint)
                 }
                 canvas.setBitmap(null)

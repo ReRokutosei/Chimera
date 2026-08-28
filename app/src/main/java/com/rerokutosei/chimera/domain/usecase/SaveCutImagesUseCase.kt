@@ -61,11 +61,18 @@ class SaveCutImagesUseCase(
                             )
                         }
 
+                        val indexInImage = row * cols + col + 1
+                        val suffix = if (rows == 1 && (cols == 3 || cols == 4)) {
+                            if (imageUris.size > 1) "cut_${imageIndex + 1}_X_%02d".format(indexInImage) else "X_%02d".format(indexInImage)
+                        } else {
+                            if (imageUris.size > 1) "cut_${imageIndex + 1}_grid_%02d".format(indexInImage) else "grid_%02d".format(indexInImage)
+                        }
+
                         val saveResult = try {
                             imageSaver.saveToGallery(
                                 bitmap = piece,
                                 options = options,
-                                nameSuffix = "cut_${imageIndex + 1}_${row * cols + col + 1}"
+                                nameSuffix = suffix
                             )
                         } finally {
                             if (!piece.isRecycled) piece.recycle()
