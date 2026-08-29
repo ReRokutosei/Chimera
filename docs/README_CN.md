@@ -1,8 +1,6 @@
-<p align="center">
-  <img src="../assets/cover.webp" width="960" alt="Chimera 应用界面预览" />
-</p>
-
-<h1 align="center">Chimera</h1>
+<div align="center">
+<img src="images/chimera.svg" alt="logo" width="150">
+</div>
 
 <p align="center">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-CD15ED?logo=kotlin&logoColor=white&style=for-the-badge"/>
@@ -28,11 +26,37 @@ Chimera 是一款用于图片拼接和宫格切图的 Android 应用，使用 Ko
 > [!TIP]
 > 如需桌面端请前往 [ChimeraWeb](https://github.com/ReRokutosei/ChimeraWeb)
 
+## 界面预览
+
+### 手机端
+
+<div align="center">
+  <img src="./images/phone/cn/phone_01.webp" alt="手机端界面 1" width="32%">
+  <img src="./images/phone/cn/phone_02.webp" alt="手机端界面 2" width="32%">
+  <img src="./images/phone/cn/phone_03.webp" alt="手机端界面 3" width="32%">
+</div>
+
+### 平板端
+
+<div align="center">
+  <img src="./images/table/cn_tab01.webp" alt="平板端界面 1">
+  <br>
+  <img src="./images/table/cn_tab02.webp" alt="平板端界面 2">
+  <br>
+  <img src="./images/table/cn_tab03.webp" alt="平板端界面 3">
+</div>
+
 ## 功能
 
 ### 图片访问方式
 
-![图片选择界面](../assets/picker.webp)
+<div align="center">
+  <img src="./images/phone/cn/phone_05.webp" alt="Photo Picker" width="32%">
+  <img src="./images/phone/cn/phone_04.webp" alt="SAF" width="32%">
+  <img src="./images/phone/cn/phone_06.webp" alt="Embedded Picker" width="32%">
+</div>
+
+提供 3 种选择器：
 
 - **系统照片选择器（Photo Picker）**：在平台支持时使用，仅授予所选媒体的访问权，不需要广泛的存储权限。
 - **存储访问框架（SAF）**：通过系统文档提供程序选择图片文件。

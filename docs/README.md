@@ -1,8 +1,6 @@
-<p align="center">
-  <img src="../assets/cover.webp" width="960" alt="Chimera application preview" />
-</p>
-
-<h1 align="center">Chimera</h1>
+<div align="center">
+<img src="images/chimera.svg" alt="logo" width="150">
+</div>
 
 <p align="center">
   <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-CD15ED?logo=kotlin&logoColor=white&style=for-the-badge"/>
@@ -28,11 +26,37 @@ Image decoding, stitching, cutting, and saving are performed on the device. The 
 > [!TIP]
 > If you need the desktop version, please go to the [ChimeraWeb](https://github.com/ReRokutosei/ChimeraWeb).
 
+## UI Preview
+
+### Mobile
+
+<div align="center">
+  <img src="./images/phone/en/phone_01.webp" alt="Mobile UI 1" width="32%">
+  <img src="./images/phone/en/phone_02.webp" alt="Mobile UI 2" width="32%">
+  <img src="./images/phone/en/phone_03.webp" alt="Mobile UI 3" width="32%">
+</div>
+
+### Tablet
+
+<div align="center">
+  <img src="./images/table/en_tab01.webp" alt="Tablet UI 1">
+  <br>
+  <img src="./images/table/en_tab02.webp" alt="Tablet UI 2">
+  <br>
+  <img src="./images/table/en_tab03.webp" alt="Tablet UI 3">
+</div>
+
 ## Features
 
 ### Image access
 
-![Image selection interface](../assets/picker.webp)
+<div align="center">
+  <img src="./images/phone/en/phone_05.webp" alt="Photo Picker" width="32%">
+  <img src="./images/phone/en/phone_04.webp" alt="SAF" width="32%">
+  <img src="./images/phone/en/phone_06.webp" alt="Embedded Picker" width="32%">
+</div>
+
+Three selectors are provided:
 
 - **System Photo Picker**: Uses the platform picker when available and grants access only to selected media, without broad storage permission.
 - **Storage Access Framework (SAF)**: Selects image files through the system document provider.

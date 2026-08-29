@@ -4,6 +4,7 @@
 .DS_Store
 **/build/
 docs/*
+!docs/images
 !docs/LICENSE
 !docs/todo.md
 !Disclaimer_CN.md
