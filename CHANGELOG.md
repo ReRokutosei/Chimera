@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/ReRokutosei/Chimera/compare/v1.5.1...v1.6.0) (2026-08-29)
+
+
+### Features
+
+* **cut:** add horizontal pager and prev/next navigation to cut preview ([f9fb45e](https://github.com/ReRokutosei/Chimera/commit/f9fb45e79759c7ecef095790469a2fd385332f0e))
+* **cut:** add single image slice saving and clarify batch save actions ([9202ac6](https://github.com/ReRokutosei/Chimera/commit/9202ac6cf558f41e541d9efc7b194e386ccb41be))
+* **split:** support 4 cut presets with exact integer segment distribution ([65a059b](https://github.com/ReRokutosei/Chimera/commit/65a059b7a58aec6cdc61179c700b945eac11f576))
+* **ui:** add adaptive workstation layout and embedded settings ([16f5cdf](https://github.com/ReRokutosei/Chimera/commit/16f5cdff3778f8c5f50a9cc71cff3c9dee09269c))
+* **viewer:** add sequence badges and result messages for X seamless split ([0800c8a](https://github.com/ReRokutosei/Chimera/commit/0800c8abf6226571c1f6c9a788692bc9c7de726f))
+
+
+### Bug Fixes
+
+* **deps:** update aboutlibraries to v15.1.1 ([#163](https://github.com/ReRokutosei/Chimera/issues/163)) ([a26fc2a](https://github.com/ReRokutosei/Chimera/commit/a26fc2a2c20c3ad4fb031ef6c98c7e31e7f0816c))
+* **deps:** update animation to v1.12.0 ([#157](https://github.com/ReRokutosei/Chimera/issues/157)) ([c21dda8](https://github.com/ReRokutosei/Chimera/commit/c21dda838f8f17113a501db23d86cd9f48a38e7d))
+* **deps:** update benchmarkmacro to v1.5.0-beta01 ([#150](https://github.com/ReRokutosei/Chimera/issues/150)) ([de0dd80](https://github.com/ReRokutosei/Chimera/commit/de0dd80cf7f58b315698d10c8b9854a057c604bb))
+* **deps:** update benchmarkmacro to v1.5.0-rc01 ([#155](https://github.com/ReRokutosei/Chimera/issues/155)) ([8cf5b96](https://github.com/ReRokutosei/Chimera/commit/8cf5b964464f12138822a44de3991720a1badc12))
+* **deps:** update benchmarkmacro to v1.5.0-rc02 ([#167](https://github.com/ReRokutosei/Chimera/issues/167)) ([2e3e7c3](https://github.com/ReRokutosei/Chimera/commit/2e3e7c3ca587dfe6416e7b3cadbf030abaab7cf0))
+* **deps:** update dependency androidx.appcompat:appcompat to v1.8.0 ([#158](https://github.com/ReRokutosei/Chimera/issues/158)) ([5199328](https://github.com/ReRokutosei/Chimera/commit/5199328dbf64178120a405df235668dd9a082716))
+* **deps:** update dependency androidx.compose:compose-bom to v2026.08.00 ([#159](https://github.com/ReRokutosei/Chimera/issues/159)) ([bcbdd4d](https://github.com/ReRokutosei/Chimera/commit/bcbdd4dccf90dd403f01431d4ba2b72e99bfa16a))
+* **deps:** update dependency androidx.compose.material3:material3 to v1.5.0-alpha25 ([#151](https://github.com/ReRokutosei/Chimera/issues/151)) ([46c4264](https://github.com/ReRokutosei/Chimera/commit/46c426446f6e744346cc5929d4ee76596abac45e))
+* **deps:** update dependency androidx.compose.material3:material3 to v1.5.0-alpha26 ([#156](https://github.com/ReRokutosei/Chimera/issues/156)) ([35bfa33](https://github.com/ReRokutosei/Chimera/commit/35bfa3338a34abc9f93ca7b063e46ae846e82e74))
+* **deps:** update dependency androidx.compose.material3:material3 to v1.5.0-alpha27 ([#168](https://github.com/ReRokutosei/Chimera/issues/168)) ([1d1f4d0](https://github.com/ReRokutosei/Chimera/commit/1d1f4d0098a9894fc1c70a1cf35cfe725a060e33))
+* **deps:** update dependency androidx.compose.ui:ui to v1.12.0 ([#160](https://github.com/ReRokutosei/Chimera/issues/160)) ([9a6ee78](https://github.com/ReRokutosei/Chimera/commit/9a6ee78933ba4da3dfe5543be9b58c7f6cb62430))
+* **deps:** update dependency androidx.navigation:navigation-compose to v2.10.0 ([#169](https://github.com/ReRokutosei/Chimera/issues/169)) ([a42596b](https://github.com/ReRokutosei/Chimera/commit/a42596b0e4180077235fbf43e6b6772dee24d73f))
+* **deps:** update dependency androidx.tracing:tracing to v2 ([#161](https://github.com/ReRokutosei/Chimera/issues/161)) ([1f04424](https://github.com/ReRokutosei/Chimera/commit/1f04424e0475bd1106a5d218fac542f328228d38))
+* **i18n:** externalize hardcoded strings in canvas, privacy policy and log copying ([bdf23d1](https://github.com/ReRokutosei/Chimera/commit/bdf23d1399b54396fb86d646247ecee48603075b))
+
 ### [1.5.1](https://github.com/ReRokutosei/Chimera/compare/v1.5.0...v1.5.1) (2026-07-18)
 
 
