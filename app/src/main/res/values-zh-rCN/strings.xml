@@ -202,6 +202,7 @@
     <string name="canvas_hint_stitch_ready">点击左侧「开始拼接」在此生成大图</string>
     <string name="canvas_hint_cut_empty">从左侧添加图片以开启切图</string>
     <string name="canvas_hint_cut_ready">点击左侧「开始切割」在此生成预览</string>
+    <string name="generating_stitched_image">正在生成拼接大图... %1$d%%</string>
 
     <!-- Help Content -->
     <string name="help_card_title_mode_direct">直接拼接</string>

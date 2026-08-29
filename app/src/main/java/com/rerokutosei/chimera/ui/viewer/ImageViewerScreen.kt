@@ -397,7 +397,10 @@ private fun ErrorDialog(errorMessage: String, onBackClick: () -> Unit, context: 
                     } else {
                         val clipboard =
                             context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                        val clip = android.content.ClipData.newPlainText("日志内容", logContent)
+                        val clip = android.content.ClipData.newPlainText(
+                            context.getString(R.string.log_content),
+                            logContent
+                        )
                         clipboard.setPrimaryClip(clip)
                     }
                 }) {

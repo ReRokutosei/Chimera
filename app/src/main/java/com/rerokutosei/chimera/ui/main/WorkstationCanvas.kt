@@ -108,7 +108,7 @@ fun WorkstationCanvas(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "正在生成拼接大图... $stitchProgress%",
+                                text = stringResource(R.string.generating_stitched_image, stitchProgress),
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium
                             )

@@ -64,7 +64,7 @@ fun PrivacyPolicyDialog(
                         IconButton(onClick = onDismiss) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                                contentDescription = "返回"
+                                contentDescription = stringResource(R.string.back)
                             )
                         }
                     }

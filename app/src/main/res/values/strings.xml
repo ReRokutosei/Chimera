@@ -204,6 +204,7 @@
     <string name="canvas_hint_stitch_ready">Click \"Start Stitching\" on the left to preview here</string>
     <string name="canvas_hint_cut_empty">Add images from the left panel to start</string>
     <string name="canvas_hint_cut_ready">Click \"Start Cutting\" on the left to preview here</string>
+    <string name="generating_stitched_image">Generating stitched image... %1$d%%</string>
 
     <!-- Help Content -->
     <string name="help_card_title_mode_direct">Direct Stitching</string>
