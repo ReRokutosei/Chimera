@@ -76,9 +76,24 @@ class ImageViewerViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun saveCutImages() {
-        if (_cutSaveState.value is CutSaveState.Saving) return
+        saveAllCutImages()
+    }
 
-        val imageUris = _cutImageUris.value
+    fun saveAllCutImages() {
+        saveCutImagesInternal(_cutImageUris.value)
+    }
+
+    fun saveCurrentCutImage(index: Int = _currentCutIndex.value) {
+        val uris = _cutImageUris.value
+        if (index in uris.indices) {
+            saveCutImagesInternal(listOf(uris[index]))
+        }
+    }
+
+    private fun saveCutImagesInternal(imageUris: List<Uri>) {
+        if (_cutSaveState.value is CutSaveState.Saving) return
+        if (imageUris.isEmpty()) return
+
         val cols = _cutGridCols.value
         val rows = _cutGridRows.value
         viewModelScope.launch {

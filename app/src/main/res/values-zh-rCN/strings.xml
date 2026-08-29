@@ -205,6 +205,9 @@
     <string name="generating_stitched_image">正在生成拼接大图... %1$d%%</string>
     <string name="prev_image">上一张</string>
     <string name="next_image">下一张</string>
+    <string name="save_slices">保存切图</string>
+    <string name="save_current_slices">保存此图切片</string>
+    <string name="save_all_slices">全部切图保存</string>
 
     <!-- Help Content -->
     <string name="help_card_title_mode_direct">直接拼接</string>

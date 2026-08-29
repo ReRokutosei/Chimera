@@ -207,6 +207,9 @@
     <string name="generating_stitched_image">Generating stitched image... %1$d%%</string>
     <string name="prev_image">Prev</string>
     <string name="next_image">Next</string>
+    <string name="save_slices">Save Slices</string>
+    <string name="save_current_slices">Save Current Slices</string>
+    <string name="save_all_slices">Save All Images</string>
 
     <!-- Help Content -->
     <string name="help_card_title_mode_direct">Direct Stitching</string>

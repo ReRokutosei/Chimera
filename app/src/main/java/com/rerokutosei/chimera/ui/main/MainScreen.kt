@@ -516,7 +516,7 @@ fun MainScreen(
                                         }
                                     }
                                 },
-                                onSaveCut = {
+                                onSaveCutAll = {
                                     val uris = uiState.selectedImages.map { it.uri }
                                     if (uris.isNotEmpty()) {
                                         imageViewerViewModel.setCutMode(
@@ -524,7 +524,19 @@ fun MainScreen(
                                             gridCols = uiState.cutPreset.cols,
                                             gridRows = uiState.cutPreset.rows
                                         )
-                                        imageViewerViewModel.saveCutImages()
+                                        imageViewerViewModel.saveAllCutImages()
+                                    }
+                                },
+                                onSaveCutCurrent = { page ->
+                                    val uris = uiState.selectedImages.map { it.uri }
+                                    if (uris.isNotEmpty() && page in uris.indices) {
+                                        imageViewerViewModel.setCutMode(
+                                            imageUris = uris,
+                                            gridCols = uiState.cutPreset.cols,
+                                            gridRows = uiState.cutPreset.rows,
+                                            startIndex = page
+                                        )
+                                        imageViewerViewModel.saveCurrentCutImage(page)
                                     }
                                 }
                             )

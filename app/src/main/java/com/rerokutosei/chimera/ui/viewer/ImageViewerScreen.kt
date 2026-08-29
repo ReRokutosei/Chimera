@@ -18,8 +18,10 @@
 package com.rerokutosei.chimera.ui.viewer
 
 import android.content.Context
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -210,10 +212,12 @@ fun ImageViewerScreen(
                 SaveResultDialog(it, viewModel::clearCutSaveState)
             }
 
-            // 切割模式：显示 上一张、保存、下一张 按钮组合
+            // 切割模式：显示 上一张、保存此图切片(主色)、全部切图保存(次色)、下一张 按钮组合
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (cutImageUris.size > 1) {
@@ -225,43 +229,53 @@ fun ImageViewerScreen(
                                 }
                             }
                         },
-                        enabled = pagerState.currentPage > 0 && cutSaveState !is CutSaveState.Saving
+                        enabled = pagerState.currentPage > 0 && cutSaveState !is CutSaveState.Saving,
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = null,
+                            contentDescription = stringResource(R.string.prev_image),
                             modifier = Modifier.size(18.dp)
                         )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(stringResource(R.string.prev_image))
                     }
-                }
 
-                Button(
-                    onClick = viewModel::saveCutImages,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = Color.White
-                    ),
-                    enabled = cutSaveState !is CutSaveState.Saving
-                ) {
-                    if (cutSaveState is CutSaveState.Saving) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp),
-                            color = Color.White
+                    // 主色按钮：保存此图切片
+                    Button(
+                        onClick = { viewModel.saveCurrentCutImage(pagerState.currentPage) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = Color.White
+                        ),
+                        enabled = cutSaveState !is CutSaveState.Saving,
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        if (cutSaveState is CutSaveState.Saving) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(16.dp),
+                                color = Color.White
+                            )
+                        } else {
+                            Icon(imageVector = Icons.Default.Save, contentDescription = null)
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            if (cutSaveState is CutSaveState.Saving) {
+                                stringResource(R.string.saving)
+                            } else {
+                                stringResource(R.string.save_current_slices)
+                            }
                         )
-                    } else {
-                        Icon(imageVector = Icons.Default.Save, contentDescription = null)
                     }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        if (cutSaveState is CutSaveState.Saving) stringResource(R.string.saving) else stringResource(
-                            R.string.save
-                        )
-                    )
-                }
 
-                if (cutImageUris.size > 1) {
+                    // 次级按钮：全部切图保存
+                    FilledTonalButton(
+                        onClick = { viewModel.saveAllCutImages() },
+                        enabled = cutSaveState !is CutSaveState.Saving,
+                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
+                    ) {
+                        Text(stringResource(R.string.save_all_slices))
+                    }
+
                     FilledTonalButton(
                         onClick = {
                             if (pagerState.currentPage < cutImageUris.size - 1) {
@@ -270,14 +284,40 @@ fun ImageViewerScreen(
                                 }
                             }
                         },
-                        enabled = pagerState.currentPage < cutImageUris.size - 1 && cutSaveState !is CutSaveState.Saving
+                        enabled = pagerState.currentPage < cutImageUris.size - 1 && cutSaveState !is CutSaveState.Saving,
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
                     ) {
-                        Text(stringResource(R.string.next_image))
-                        Spacer(modifier = Modifier.width(4.dp))
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.ArrowForward,
-                            contentDescription = null,
+                            contentDescription = stringResource(R.string.next_image),
                             modifier = Modifier.size(18.dp)
+                        )
+                    }
+                } else {
+                    Button(
+                        onClick = { viewModel.saveCurrentCutImage(0) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = Color.White
+                        ),
+                        enabled = cutSaveState !is CutSaveState.Saving,
+                        contentPadding = PaddingValues(horizontal = 18.dp, vertical = 8.dp)
+                    ) {
+                        if (cutSaveState is CutSaveState.Saving) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(16.dp),
+                                color = Color.White
+                            )
+                        } else {
+                            Icon(imageVector = Icons.Default.Save, contentDescription = null)
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            if (cutSaveState is CutSaveState.Saving) {
+                                stringResource(R.string.saving)
+                            } else {
+                                stringResource(R.string.save_slices)
+                            }
                         )
                     }
                 }

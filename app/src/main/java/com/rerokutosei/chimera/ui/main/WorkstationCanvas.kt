@@ -85,7 +85,8 @@ fun WorkstationCanvas(
     isStitching: Boolean,
     stitchProgress: Int,
     onSaveStitched: () -> Unit,
-    onSaveCut: () -> Unit,
+    onSaveCutAll: () -> Unit,
+    onSaveCutCurrent: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -250,28 +251,63 @@ fun WorkstationCanvas(
                                             fontSize = 14.sp
                                         )
                                     }
-                                }
+                                    // 主色按钮：保存此图切片
+                                    Button(
+                                        onClick = { onSaveCutCurrent(cutPagerState.currentPage) },
+                                        shape = CircleShape,
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = MaterialTheme.colorScheme.primary,
+                                            contentColor = MaterialTheme.colorScheme.onPrimary
+                                        ),
+                                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Download,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = stringResource(R.string.save_current_slices),
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 14.sp
+                                        )
+                                    }
 
-                                Button(
-                                    onClick = onSaveCut,
-                                    shape = CircleShape,
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.primary,
-                                        contentColor = MaterialTheme.colorScheme.onPrimary
-                                    ),
-                                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Download,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = stringResource(R.string.save),
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 14.sp
-                                    )
+                                    // 次级按钮：全部切图保存
+                                    FilledTonalButton(
+                                        onClick = onSaveCutAll,
+                                        shape = CircleShape,
+                                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.save_all_slices),
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 14.sp
+                                        )
+                                    }
+                                } else {
+                                    Button(
+                                        onClick = { onSaveCutCurrent(0) },
+                                        shape = CircleShape,
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = MaterialTheme.colorScheme.primary,
+                                            contentColor = MaterialTheme.colorScheme.onPrimary
+                                        ),
+                                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Download,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = stringResource(R.string.save_slices),
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 14.sp
+                                        )
+                                    }
                                 }
 
                                 if (cutImageUris.size > 1) {
