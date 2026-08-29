@@ -26,28 +26,40 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.ContentCut
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Layers
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -58,6 +70,10 @@ import com.rerokutosei.chimera.data.model.ImageInfo
 import com.rerokutosei.chimera.ui.viewer.AdaptiveImageDisplay
 import com.rerokutosei.chimera.ui.viewer.ImageResultPreviewer
 import com.rerokutosei.chimera.ui.viewer.PreviewSource
+import com.rerokutosei.chimera.utils.image.BitmapLoader
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun WorkstationCanvas(
@@ -65,13 +81,53 @@ fun WorkstationCanvas(
     selectedImages: List<ImageInfo>,
     cutPreset: CutPreset,
     stitchedBitmap: Bitmap?,
-    cutPreviewBitmap: Bitmap?,
+    isCutPreviewActive: Boolean,
     isStitching: Boolean,
     stitchProgress: Int,
     onSaveStitched: () -> Unit,
     onSaveCut: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val bitmapLoader = remember { BitmapLoader(context) }
+
+    val cutImageUris = remember(selectedImages) { selectedImages.map { it.uri } }
+    val cutPagerState = rememberPagerState(
+        initialPage = 0,
+        pageCount = { cutImageUris.size }
+    )
+    val cutBitmaps = remember(cutImageUris) {
+        mutableStateOf<Map<Int, Bitmap>>(emptyMap())
+    }
+
+    DisposableEffect(cutBitmaps) {
+        onDispose {
+            bitmapLoader.recycleBitmaps(cutBitmaps.value.values.toList())
+            cutBitmaps.value = emptyMap()
+        }
+    }
+
+    LaunchedEffect(cutPagerState.currentPage, cutImageUris, isCutPreviewActive) {
+        if (isCutPreviewActive && cutImageUris.isNotEmpty()) {
+            val idx = cutPagerState.currentPage.coerceIn(cutImageUris.indices)
+            val retainedIndices = (idx - 1..idx + 1).filter { it in cutImageUris.indices }.toSet()
+            val retainedBitmaps = cutBitmaps.value.filterKeys { it in retainedIndices }
+            val evictedBitmaps = cutBitmaps.value.filterKeys { it !in retainedIndices }.values.toList()
+            cutBitmaps.value = retainedBitmaps
+            bitmapLoader.recycleBitmaps(evictedBitmaps)
+
+            if (!cutBitmaps.value.containsKey(idx) && idx in cutImageUris.indices) {
+                val bitmap = withContext(Dispatchers.IO) {
+                    bitmapLoader.loadBitmapFromUri(cutImageUris[idx])
+                }
+                if (bitmap != null) {
+                    cutBitmaps.value = cutBitmaps.value + (idx to bitmap)
+                }
+            }
+        }
+    }
+
     Surface(
         modifier = modifier
             .fillMaxSize()
@@ -90,7 +146,7 @@ fun WorkstationCanvas(
                 targetState = Triple(
                     isCutMode,
                     isStitching,
-                    if (isCutMode) cutPreviewBitmap != null else stitchedBitmap != null
+                    if (isCutMode) (isCutPreviewActive && cutImageUris.isNotEmpty()) else stitchedBitmap != null
                 ),
                 transitionSpec = { fadeIn() togetherWith fadeOut() },
                 label = "canvas_content"
@@ -115,41 +171,135 @@ fun WorkstationCanvas(
                         }
                     }
 
-                    cutMode && cutPreviewBitmap != null -> {
+                    cutMode && isCutPreviewActive && cutImageUris.isNotEmpty() -> {
                         Box(modifier = Modifier.fillMaxSize()) {
-                            ImageResultPreviewer(
-                                source = PreviewSource.FromBitmapWithGrid(
-                                    bitmap = cutPreviewBitmap,
-                                    cols = cutPreset.cols,
-                                    rows = cutPreset.rows
-                                ),
+                            HorizontalPager(
+                                state = cutPagerState,
                                 modifier = Modifier.fillMaxSize()
-                            )
+                            ) { page ->
+                                val bitmap = cutBitmaps.value[page]
+                                if (bitmap != null) {
+                                    ImageResultPreviewer(
+                                        source = PreviewSource.FromBitmapWithGrid(
+                                            bitmap = bitmap,
+                                            cols = cutPreset.cols,
+                                            rows = cutPreset.rows
+                                        ),
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                } else {
+                                    Box(
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator(modifier = Modifier.size(48.dp))
+                                    }
+                                }
+                            }
 
-                            // 扁平保存按钮（无多余边框、无多余投影白底）
-                            Button(
-                                onClick = onSaveCut,
+                            // 页码指示徽标（多图时展示在顶部居中）
+                            if (cutImageUris.size > 1) {
+                                Surface(
+                                    modifier = Modifier
+                                        .align(Alignment.TopCenter)
+                                        .padding(top = 16.dp),
+                                    shape = CircleShape,
+                                    color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.85f),
+                                    tonalElevation = 3.dp
+                                ) {
+                                    Text(
+                                        text = "${cutPagerState.currentPage + 1} / ${cutImageUris.size}",
+                                        style = MaterialTheme.typography.labelLarge,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+                                    )
+                                }
+                            }
+
+                            // 扁平操作按钮组合（无多余边框、无多余投影白底）
+                            Row(
                                 modifier = Modifier
                                     .align(Alignment.BottomEnd)
                                     .padding(16.dp),
-                                shape = CircleShape,
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary
-                                ),
-                                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Download,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = stringResource(R.string.save),
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 14.sp
-                                )
+                                if (cutImageUris.size > 1) {
+                                    FilledTonalButton(
+                                        onClick = {
+                                            if (cutPagerState.currentPage > 0) {
+                                                coroutineScope.launch {
+                                                    cutPagerState.animateScrollToPage(cutPagerState.currentPage - 1)
+                                                }
+                                            }
+                                        },
+                                        shape = CircleShape,
+                                        enabled = cutPagerState.currentPage > 0,
+                                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(
+                                            text = stringResource(R.string.prev_image),
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 14.sp
+                                        )
+                                    }
+                                }
+
+                                Button(
+                                    onClick = onSaveCut,
+                                    shape = CircleShape,
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary,
+                                        contentColor = MaterialTheme.colorScheme.onPrimary
+                                    ),
+                                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Download,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = stringResource(R.string.save),
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 14.sp
+                                    )
+                                }
+
+                                if (cutImageUris.size > 1) {
+                                    FilledTonalButton(
+                                        onClick = {
+                                            if (cutPagerState.currentPage < cutImageUris.size - 1) {
+                                                coroutineScope.launch {
+                                                    cutPagerState.animateScrollToPage(cutPagerState.currentPage + 1)
+                                                }
+                                            }
+                                        },
+                                        shape = CircleShape,
+                                        enabled = cutPagerState.currentPage < cutImageUris.size - 1,
+                                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.next_image),
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 14.sp
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Rounded.ArrowForward,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }

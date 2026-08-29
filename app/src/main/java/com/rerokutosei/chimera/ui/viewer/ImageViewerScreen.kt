@@ -33,6 +33,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
@@ -41,6 +43,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ContainedLoadingIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -207,11 +210,33 @@ fun ImageViewerScreen(
                 SaveResultDialog(it, viewModel::clearCutSaveState)
             }
 
-            // 切割模式：只显示水平居中的保存按钮
+            // 切割模式：显示 上一张、保存、下一张 按钮组合
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                if (cutImageUris.size > 1) {
+                    FilledTonalButton(
+                        onClick = {
+                            if (pagerState.currentPage > 0) {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                                }
+                            }
+                        },
+                        enabled = pagerState.currentPage > 0 && cutSaveState !is CutSaveState.Saving
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(stringResource(R.string.prev_image))
+                    }
+                }
+
                 Button(
                     onClick = viewModel::saveCutImages,
                     colors = ButtonDefaults.buttonColors(
@@ -234,6 +259,27 @@ fun ImageViewerScreen(
                             R.string.save
                         )
                     )
+                }
+
+                if (cutImageUris.size > 1) {
+                    FilledTonalButton(
+                        onClick = {
+                            if (pagerState.currentPage < cutImageUris.size - 1) {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                }
+                            }
+                        },
+                        enabled = pagerState.currentPage < cutImageUris.size - 1 && cutSaveState !is CutSaveState.Saving
+                    ) {
+                        Text(stringResource(R.string.next_image))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowForward,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
                 }
             }
         }

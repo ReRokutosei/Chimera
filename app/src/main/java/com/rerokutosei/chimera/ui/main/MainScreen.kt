@@ -130,7 +130,7 @@ fun MainScreen(
     val stitchUiState by stitchViewModel.uiState.collectAsStateWithLifecycle()
     val cutSaveState by imageViewerViewModel.cutSaveState.collectAsStateWithLifecycle()
 
-    var workstationCutBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var isCutPreviewActive by remember { mutableStateOf(false) }
     var workstationStitchedBitmap by remember { mutableStateOf<Bitmap?>(null) }
 
     LaunchedEffect(Unit) {
@@ -199,7 +199,7 @@ fun MainScreen(
         uiState.imageSpacing,
         uiState.imageSpacingColor
     ) {
-        workstationCutBitmap = null
+        isCutPreviewActive = false
         workstationStitchedBitmap = null
         stitchViewModel.clearStitchState()
     }
@@ -371,14 +371,7 @@ fun MainScreen(
                                         onStartCutting = {
                                             viewModel.setShowSettingsInCanvas(false)
                                             viewModel.onStartCutting()
-                                            val firstUri = uiState.selectedImages.firstOrNull()?.uri
-                                            if (firstUri != null) {
-                                                coroutineScope.launch {
-                                                    workstationCutBitmap = withContext(Dispatchers.IO) {
-                                                        bitmapLoader.loadBitmapFromUri(firstUri)
-                                                    }
-                                                }
-                                            }
+                                            isCutPreviewActive = true
                                         },
                                         onNavigateToStitch = {},
                                         isStartButtonEnabled = if (uiState.isCutMode) true else resolutionValidationState !is ResolutionValidationState.Invalid
@@ -504,7 +497,7 @@ fun MainScreen(
                                 selectedImages = uiState.selectedImages,
                                 cutPreset = uiState.cutPreset,
                                 stitchedBitmap = workstationStitchedBitmap,
-                                cutPreviewBitmap = workstationCutBitmap,
+                                isCutPreviewActive = isCutPreviewActive,
                                 isStitching = stitchUiState.stitchState is StitchState.Processing,
                                 stitchProgress = stitchUiState.progress,
                                 onSaveStitched = {
