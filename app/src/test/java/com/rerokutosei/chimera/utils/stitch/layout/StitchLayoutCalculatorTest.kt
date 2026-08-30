@@ -289,6 +289,16 @@ class StitchLayoutCalculatorTest {
         assertEquals(OutputImageFormat.JPEG, OutputImageFormat.fromCode(99))
     }
 
+    @Test
+    fun outputFormatsExposeCanonicalFileMetadata() {
+        assertEquals("png", OutputImageFormat.PNG.fileExtension)
+        assertEquals("image/png", OutputImageFormat.PNG.mimeType)
+        assertEquals("jpg", OutputImageFormat.JPEG.fileExtension)
+        assertEquals("image/jpeg", OutputImageFormat.JPEG.mimeType)
+        assertEquals("webp", OutputImageFormat.WEBP.fileExtension)
+        assertEquals("image/webp", OutputImageFormat.WEBP.mimeType)
+    }
+
     private fun calculate(
         images: List<ImageDimensions>,
         orientation: LayoutOrientation,

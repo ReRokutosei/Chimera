@@ -24,12 +24,13 @@ import androidx.core.content.FileProvider
 import com.rerokutosei.chimera.R
 import com.rerokutosei.chimera.data.local.ImageSettingsManager
 import com.rerokutosei.chimera.utils.common.LogManager
+import com.rerokutosei.chimera.utils.stitch.layout.OutputImageFormat
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 
 /**
  * 图片分享工具类
@@ -58,25 +59,30 @@ class ImageSharer(private val context: Context) {
             val formatCode = imageSettingsManager.getOutputImageFormatFlow().first()
             val quality = imageSettingsManager.getOutputImageQualityFlow().first()
 
-            val (extension, compressFormat) = when (formatCode) {
-                1 -> Pair("jpg", Bitmap.CompressFormat.JPEG)
-                2 -> Pair("webp",
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                Bitmap.CompressFormat.WEBP_LOSSY
-            } else {
-                @Suppress("DEPRECATION")
-                Bitmap.CompressFormat.WEBP
-            }
-        )
-                else -> Pair("png", Bitmap.CompressFormat.PNG)
+            val format = OutputImageFormat.fromCode(formatCode)
+            val compressFormat = when (format) {
+                OutputImageFormat.PNG -> Bitmap.CompressFormat.PNG
+                OutputImageFormat.JPEG -> Bitmap.CompressFormat.JPEG
+                OutputImageFormat.WEBP -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    Bitmap.CompressFormat.WEBP_LOSSY
+                } else {
+                    @Suppress("DEPRECATION")
+                    Bitmap.CompressFormat.WEBP
+                }
             }
 
             val cachePath = File(context.cacheDir, "images")
-            cachePath.mkdirs()
+            check(cachePath.exists() || cachePath.mkdirs()) {
+                "Unable to create image sharing cache directory"
+            }
             val file = withContext(Dispatchers.IO) {
-                val f = File(cachePath, "shared_image.$extension")
-                FileOutputStream(f).use { outputStream ->
+                val f = File(cachePath, "shared_image.${format.fileExtension}")
+                val encoded = FileOutputStream(f).use { outputStream ->
                     bitmap.compress(compressFormat, quality, outputStream)
+                }
+                if (!encoded) {
+                    f.delete()
+                    error("Bitmap encoder rejected the image")
                 }
                 f
             }
@@ -90,13 +96,15 @@ class ImageSharer(private val context: Context) {
             val shareIntent = android.content.Intent().apply {
                 action = android.content.Intent.ACTION_SEND
                 putExtra(android.content.Intent.EXTRA_STREAM, contentUri)
-                type = "image/${extension}"
+                type = format.mimeType
                 addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
 
             context.startActivity(android.content.Intent.createChooser(shareIntent, title))
             true
-        } catch (e: IOException) {
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
             logManager.error("ImageSharer", "位图分享失败", e)
             false
         }

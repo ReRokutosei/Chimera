@@ -114,6 +114,7 @@ fun ImageViewerScreen(
     var isSaving by remember { mutableStateOf(false) }
     var saveMessage by remember { mutableStateOf<String?>(null) }
     val shareText = stringResource(R.string.share_stitched_image)
+    val shareFailedText = stringResource(R.string.share_failed)
     val saveSuccessText = stringResource(R.string.image_saved_to_album)
     val saveFailedText = stringResource(R.string.save_failed)
 
@@ -387,10 +388,11 @@ fun ImageViewerScreen(
                 onShareClick = { source ->
                     coroutineScope.launch {
                         when (source) {
-                            is PreviewSource.FromBitmap -> imageSharer.shareBitmap(
-                                source.bitmap,
-                                shareText
-                            )
+                            is PreviewSource.FromBitmap -> {
+                                if (!imageSharer.shareBitmap(source.bitmap, shareText)) {
+                                    saveMessage = shareFailedText
+                                }
+                            }
 
                             else -> {}
                         }

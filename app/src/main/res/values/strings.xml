@@ -125,6 +125,7 @@
     <string name="share_stitched_image">Share Stitched Image</string>
     <string name="image_saved_to_album">Image saved to album</string>
     <string name="save_failed">Save failed</string>
+    <string name="share_failed">Unable to share image</string>
     <string name="failed_to_read_log_file">Failed to read log file: %1$s</string>
     <string name="log_file_not_exist">Log file does not exist</string>
     <plurals name="images_selected">

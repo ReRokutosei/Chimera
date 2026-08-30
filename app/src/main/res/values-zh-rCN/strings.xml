@@ -112,6 +112,7 @@
     <string name="share_stitched_image">分享拼接图片</string>
     <string name="image_saved_to_album">图片已保存到相册</string>
     <string name="save_failed">保存失败</string>
+    <string name="share_failed">无法分享图片</string>
     <string name="failed_to_read_log_file">无法读取日志文件: %1$s</string>
     <string name="log_file_not_exist">日志文件不存在</string>
     <plurals name="images_selected">

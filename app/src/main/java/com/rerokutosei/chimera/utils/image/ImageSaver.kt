@@ -84,10 +84,10 @@ class ImageSaver(private val context: Context) {
                 val timeStamp =
                     SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.getDefault()).format(Date())
                 val suffix = nameSuffix?.let { "_$it" }.orEmpty()
-                val fileName = "Chimera_${timeStamp}$suffix.${getImageExtension(options.format)}"
+                val fileName = "Chimera_${timeStamp}$suffix.${options.format.fileExtension}"
                 val contentValues = ContentValues().apply {
                     put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-                    put(MediaStore.MediaColumns.MIME_TYPE, getMimeType(options.format))
+                    put(MediaStore.MediaColumns.MIME_TYPE, options.format.mimeType)
                     put(
                         MediaStore.MediaColumns.RELATIVE_PATH,
                         Environment.DIRECTORY_PICTURES + "/Chimera"
@@ -142,27 +142,6 @@ class ImageSaver(private val context: Context) {
             .onFailure { logManager.error(TAG, "清理未完成的相册条目失败: $uri", it) }
     }
 
-    /**
-     * 根据格式获取文件扩展名
-     */
-    private fun getImageExtension(format: OutputImageFormat): String {
-        return when (format) {
-            OutputImageFormat.PNG -> "png"
-            OutputImageFormat.JPEG -> "jpg"
-            OutputImageFormat.WEBP -> "webp"
-        }
-    }
-
-    /**
-     * 根据格式获取MIME类型
-     */
-    private fun getMimeType(format: OutputImageFormat): String {
-        return when (format) {
-            OutputImageFormat.PNG -> "image/png"
-            OutputImageFormat.JPEG -> "image/jpeg"
-            OutputImageFormat.WEBP -> "image/webp"
-        }
-    }
 }
 
 data class ImageSaveOptions(

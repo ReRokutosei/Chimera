@@ -19,11 +19,13 @@ enum class LayoutMode {
 enum class OutputImageFormat(
     val code: Int,
     val displayName: String,
-    val maxDimension: Long?
+    val maxDimension: Long?,
+    val fileExtension: String,
+    val mimeType: String
 ) {
-    PNG(0, "PNG", Int.MAX_VALUE.toLong()),
-    JPEG(1, "JPEG", 65_535L),
-    WEBP(2, "WEBP", 16_383L);
+    PNG(0, "PNG", Int.MAX_VALUE.toLong(), "png", "image/png"),
+    JPEG(1, "JPEG", 65_535L, "jpg", "image/jpeg"),
+    WEBP(2, "WEBP", 16_383L, "webp", "image/webp");
 
     companion object {
         fun fromCode(code: Int): OutputImageFormat = entries.firstOrNull { it.code == code } ?: JPEG
