@@ -57,6 +57,7 @@ fun ParameterSettingsCard(
     uiState: MainUiState,
     isPageEntered: Boolean,
     isDataLoaded: Boolean,
+    isInteractionEnabled: Boolean = true,
     sliderThumbShape: Int,
     onUpdateStitchMode: (StitchMode) -> Unit,
     onUpdateOverlayMode: (OverlayMode) -> Unit,
@@ -65,6 +66,7 @@ fun ParameterSettingsCard(
     onUpdateImageSpacing: (Int) -> Unit,
     onUpdateImageSpacingColor: (String) -> Unit = {}
 ) {
+    val controlsEnabled = isPageEntered && isDataLoaded && isInteractionEnabled
     // 拼接参数设置
     Card(
         modifier = Modifier
@@ -100,7 +102,7 @@ fun ParameterSettingsCard(
                     options = stitchModes,
                     selectedOption = uiState.stitchMode,
                     onOptionSelected = {
-                        if (isPageEntered && isDataLoaded) {
+                        if (controlsEnabled) {
                             onUpdateStitchMode(it)
                         }
                     },
@@ -131,7 +133,7 @@ fun ParameterSettingsCard(
                     options = overlayModes,
                     selectedOption = uiState.overlayMode,
                     onOptionSelected = {
-                        if (isPageEntered && isDataLoaded) {
+                        if (controlsEnabled) {
                             onUpdateOverlayMode(it)
                         }
                     },
@@ -175,7 +177,7 @@ fun ParameterSettingsCard(
                         options = widthScales,
                         selectedOption = uiState.widthScale,
                         onOptionSelected = {
-                            if (isPageEntered && isDataLoaded) {
+                            if (controlsEnabled) {
                                 onUpdateWidthScale(it)
                             }
                         },
@@ -207,13 +209,13 @@ fun ParameterSettingsCard(
                 FancySlider(
                     value = uiState.overlayArea.toFloat(),
                     onValueChange = {
-                        if (isPageEntered && isDataLoaded) {
+                        if (controlsEnabled) {
                             onUpdateOverlayArea(it.toInt())
                         }
                     },
                     valueRange = 0f..100f,
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = isPageEntered && isDataLoaded,
+                    enabled = controlsEnabled,
                     colors = androidx.compose.material3.SliderDefaults.colors(
                         thumbColor = MaterialTheme.colorScheme.secondary,
                         activeTrackColor = MaterialTheme.colorScheme.primary,
@@ -252,7 +254,7 @@ fun ParameterSettingsCard(
                         options = widthScales,
                         selectedOption = uiState.widthScale,
                         onOptionSelected = {
-                            if (isPageEntered && isDataLoaded) {
+                            if (controlsEnabled) {
                                 onUpdateWidthScale(it)
                             }
                         },
@@ -288,7 +290,10 @@ fun ParameterSettingsCard(
                             spacingColor
                         ) else spacingColor
                     Row(
-                        modifier = Modifier.clickable { showColorPicker = true },
+                        modifier = Modifier.clickable(
+                            enabled = controlsEnabled,
+                            onClick = { showColorPicker = true }
+                        ),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Box(
@@ -317,13 +322,13 @@ fun ParameterSettingsCard(
                 FancySlider(
                     value = uiState.imageSpacing.toFloat(),
                     onValueChange = {
-                        if (isPageEntered && isDataLoaded) {
+                        if (controlsEnabled) {
                             onUpdateImageSpacing(it.toInt())
                         }
                     },
                     valueRange = 0f..50f,
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = isPageEntered && isDataLoaded,
+                    enabled = controlsEnabled,
                     colors = androidx.compose.material3.SliderDefaults.colors(
                         thumbColor = MaterialTheme.colorScheme.secondary,
                         activeTrackColor = MaterialTheme.colorScheme.primary,

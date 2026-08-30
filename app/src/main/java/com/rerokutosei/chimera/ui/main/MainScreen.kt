@@ -301,6 +301,7 @@ fun MainScreen(
                                         uiState = uiState,
                                         isPageEntered = isPageEntered,
                                         isDataLoaded = isDataLoaded,
+                                        isInteractionEnabled = stitchUiState.stitchState !is StitchState.Processing,
                                         sliderThumbShape = sliderThumbShape,
                                         onUpdateStitchMode = { viewModel.updateStitchMode(it) },
                                         onUpdateOverlayMode = { viewModel.updateOverlayMode(it) },
@@ -361,7 +362,12 @@ fun MainScreen(
                                             isCutPreviewActive = true
                                         },
                                         onNavigateToStitch = {},
-                                        isStartButtonEnabled = if (uiState.isCutMode) true else resolutionValidationState !is ResolutionValidationState.Invalid
+                                        isStartButtonEnabled = if (uiState.isCutMode) {
+                                            true
+                                        } else {
+                                            resolutionValidationState !is ResolutionValidationState.Invalid &&
+                                                stitchUiState.stitchState !is StitchState.Processing
+                                        }
                                     )
                                     Spacer(modifier = Modifier.height(16.dp))
                                 }
