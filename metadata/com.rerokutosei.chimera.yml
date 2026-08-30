@@ -1,0 +1,25 @@
+Categories:
+  - Graphics
+  - Multimedia
+License: GPL-3.0-only
+AuthorName: ReRokutosei
+SourceCode: https://github.com/ReRokutosei/Chimera
+IssueTracker: https://github.com/ReRokutosei/Chimera/issues
+Changelog: https://github.com/ReRokutosei/Chimera/blob/main/CHANGELOG.md
+AutoName: Chimera
+RepoType: git
+Repo: https://github.com/ReRokutosei/Chimera.git
+
+Binaries: https://github.com/ReRokutosei/Chimera/releases/download/v%v/Chimera-v%v.apk
+
+Builds:
+  - versionName: 1.6.0
+    versionCode: 10600
+    commit: v1.6.0
+    gradle: yes
+    output: app/build/outputs/apk/release/app-release-unsigned.apk
+
+AutoUpdateMode: Version v%v
+UpdateCheckMode: Tags
+CurrentVersion: 1.6.0
+CurrentVersionCode: 10600
