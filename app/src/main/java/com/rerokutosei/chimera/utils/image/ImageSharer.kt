@@ -45,6 +45,7 @@ class ImageSharer(private val context: Context) {
      * @param title 分享标题
      * @return 分享是否成功
      */
+    @Suppress("TooGenericExceptionCaught") // Sharing is a best-effort UI boundary.
     suspend fun shareBitmap(
         bitmap: Bitmap,
         title: String = context.getString(R.string.share_stitched_image)
