@@ -113,6 +113,8 @@ fun MainScreen(
     val containerWidth = with(density) { windowInfo.containerSize.width.toDp() }
     val isWideScreen = containerWidth >= 600.dp
     val isWorkstationMode = containerWidth >= 840.dp
+    val imageSavedMessage = stringResource(R.string.image_saved_to_album)
+    val saveFailedMessage = stringResource(R.string.save_failed)
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isDataLoaded by viewModel.isDataLoaded.collectAsStateWithLifecycle()
@@ -516,11 +518,11 @@ fun MainScreen(
                                             when (imageSaver.saveToGallery(bmp)) {
                                                 is ImageSaveResult.Success -> ToastUtil.showShort(
                                                     context,
-                                                    context.getString(R.string.image_saved_to_album)
+                                                    imageSavedMessage
                                                 )
                                                 is ImageSaveResult.Failure -> ToastUtil.showShort(
                                                     context,
-                                                    context.getString(R.string.save_failed)
+                                                    saveFailedMessage
                                                 )
                                             }
                                         }
