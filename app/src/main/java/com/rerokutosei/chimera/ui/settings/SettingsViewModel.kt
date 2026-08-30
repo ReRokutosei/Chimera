@@ -66,14 +66,6 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                 }
 
                 launch {
-                    imageSettingsManager.getDeleteOriginalImageFlow()
-                        .collect { deleteOriginalImage ->
-                            _uiState.value =
-                                _uiState.value.copy(deleteOriginalImage = deleteOriginalImage)
-                        }
-                }
-
-                launch {
                     stitchSettingsManager.getMultiThreadEnabledFlow()
                         .collect { multiThreadEnabled ->
                             _uiState.value =
@@ -309,11 +301,6 @@ data class SettingsUiState(
     val isDarkTheme: Boolean = false,
     val isDynamicColor: Boolean = true,
     val overlayArea: Int = 10,
-    val autoRemoveTopBottomLines: Boolean = true,
-    val autoRemoveLeftRightLines: Boolean = false,
-    val cutStatusBar: Boolean = false,
-    val cutNavigationBar: Boolean = false,
-    val deleteOriginalImage: Boolean = false,
     val multiThreadEnabled: Boolean = false,
     val outputImageFormat: Int = 0, // 0: PNG, 1: JPEG, 2: WEBP
     val outputImageQuality: Int = 85, // 0-100

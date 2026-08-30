@@ -56,7 +56,6 @@ class ImageSettingsManager private constructor(private val context: Context) {
         val OUTPUT_IMAGE_FORMAT =
             intPreferencesKey("output_image_format") // 0: PNG, 1: JPEG, 2: WEBP
         val OUTPUT_IMAGE_QUALITY = intPreferencesKey("output_image_quality") // 0-100
-        val DELETE_ORIGINAL_IMAGE = booleanPreferencesKey("delete_original_image")
         val AUTO_CLEAR_IMAGES = booleanPreferencesKey("auto_clear_images")
         val HIGH_MEMORY_LIMIT = booleanPreferencesKey("high_memory_limit") // 提高内存阈值
         val USE_SAF_PICKER = booleanPreferencesKey("use_saf_picker") // 使用存储访问框架选择器
@@ -115,23 +114,6 @@ class ImageSettingsManager private constructor(private val context: Context) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.OUTPUT_IMAGE_QUALITY] = quality
         }
-    }
-
-    /**
-     * 获取删除原始图片设置
-     */
-    fun getDeleteOriginalImageFlow(): Flow<Boolean> {
-        return context.dataStore.data
-            .catch { exception ->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
-                }
-            }
-            .map { preferences ->
-                preferences[PreferencesKeys.DELETE_ORIGINAL_IMAGE] ?: false
-            }
     }
 
     /**
