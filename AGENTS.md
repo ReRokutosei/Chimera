@@ -17,6 +17,9 @@
 
 # Run Android image correctness tests on a connected device
 ./gradlew :integrationtest:connectedDebugAndroidTest
+
+# Refresh AboutLibraries metadata and the dependency lists in both READMEs
+./gradlew :app:updateReadmeWithLicenses
 ```
 
 - `compileSdk` = 37, `targetSdk` = 36, `minSdk` = 29, `applicationId` = `com.rerokutosei.chimera`
@@ -25,6 +28,7 @@
 - AGP = 9.3.2, Gradle Wrapper = 9.7.1, Kotlin = 2.4.10
 - Release builds fall back to debug signing when no release keystore is available; distributable builds should provide `KEYSTORE_PATH`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, and `KEY_PASSWORD`.
 - JVM tests use JUnit 4 under `app/src/test`; fixed synthetic Bitmap benchmarks use AndroidX Benchmark under `app/src/androidTest` with the non-debug `benchmark` build type.
+- License metadata is updated explicitly with `:app:updateReadmeWithLicenses`; ordinary builds and tests must not rewrite tracked documentation.
 - Kotlin serialization plugin (`kotlin("plugin.serialization")`) already applied; Navigation `2.10.0` supports `@Serializable` route types via `toRoute<>()`
 - HorizontalPager from `androidx.compose.foundation.pager` available (no extra dependency needed)
 

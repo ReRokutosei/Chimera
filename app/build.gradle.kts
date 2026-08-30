@@ -164,11 +164,6 @@ tasks.register<Exec>("updateReadmeWithLicenses") {
     isIgnoreExitValue = true
 }
 
-// 在构建前执行所有任务
-tasks.named("preBuild") {
-    dependsOn("updateReadmeWithLicenses")
-}
-
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
