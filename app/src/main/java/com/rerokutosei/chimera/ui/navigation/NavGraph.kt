@@ -166,7 +166,8 @@ fun AppNavGraph(
             val logManager = LogManager.getInstance(context)
             logManager.debug(
                 "NavGraph",
-                "ImageViewer composable被调用，widthScaleParam: $widthScaleParam, stitchModeParam: $stitchModeParam, imageSpacingParam: $imageSpacingParam"
+                "ImageViewer composable被调用，widthScaleParam: $widthScaleParam, " +
+                    "stitchModeParam: $stitchModeParam, imageSpacingParam: $imageSpacingParam"
             )
 
             val stitchViewModel: StitchViewModel = viewModel()

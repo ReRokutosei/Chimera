@@ -183,7 +183,9 @@ class DirectStitchingStrategy(
 
         logManager.debug(
             TAG,
-            "${if (isVertical) "垂直" else "水平"}拼接：总${if (isVertical) "高度" else "宽度"}=$totalMajorLong, 最大${if (isVertical) "宽度" else "高度"}=$totalMinorLong"
+            "${if (isVertical) "垂直" else "水平"}拼接：" +
+                "总${if (isVertical) "高度" else "宽度"}=$totalMajorLong, " +
+                "最大${if (isVertical) "宽度" else "高度"}=$totalMinorLong"
         )
 
         // 检查内存限制

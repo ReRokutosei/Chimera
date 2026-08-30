@@ -117,7 +117,9 @@ private class LargeImagePreviewer(
 
         logManager.debug(
             TAG,
-            "检查图片是否需要分块加载: bitmapSize=${bitmapSize}, maxDisplaySize=${maxDisplaySize}, forceTiledLoading=$forceTiledLoading, largeDimension=$largeDimension"
+            "检查图片是否需要分块加载: bitmapSize=$bitmapSize, " +
+                "maxDisplaySize=$maxDisplaySize, forceTiledLoading=$forceTiledLoading, " +
+                "largeDimension=$largeDimension"
         )
         return bitmapSize > maxDisplaySize || forceTiledLoading || largeDimension
     }

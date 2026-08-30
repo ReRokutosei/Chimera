@@ -641,7 +641,11 @@ fun MainScreen(
                                     onStartStitching = { viewModel.onStartStitching() },
                                     onStartCutting = { viewModel.onStartCutting(); onNavigateToCut() },
                                     onNavigateToStitch = onNavigateToStitch,
-                                    isStartButtonEnabled = if (uiState.isCutMode) true else resolutionValidationState !is ResolutionValidationState.Invalid
+                                    isStartButtonEnabled = if (uiState.isCutMode) {
+                                        true
+                                    } else {
+                                        resolutionValidationState !is ResolutionValidationState.Invalid
+                                    }
                                 )
                             }
 

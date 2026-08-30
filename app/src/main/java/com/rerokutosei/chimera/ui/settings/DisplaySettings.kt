@@ -60,7 +60,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,7 +71,6 @@ import com.rerokutosei.chimera.R
 import com.rerokutosei.chimera.data.model.ColorScheme
 import com.rerokutosei.chimera.data.model.PredefinedColorSchemes
 import com.rerokutosei.chimera.data.model.ThemeMode
-import com.rerokutosei.chimera.data.repository.ThemeRepository
 import com.rerokutosei.chimera.ui.theme.ColorSchemePreview
 import com.rerokutosei.chimera.ui.theme.CustomColorPickerDialog
 import com.rerokutosei.chimera.utils.color.ColorUtils
@@ -180,10 +178,6 @@ fun ThemeColorSettings(
     uiState: SettingsUiState,
     viewModel: SettingsViewModel
 ) {
-    val context = LocalContext.current
-    val themeSettingsManager = ThemeRepository.getInstance(context)
-    val coroutineScope = rememberCoroutineScope()
-
     // 主题颜色设置
     ListItem(
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
