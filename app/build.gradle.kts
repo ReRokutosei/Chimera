@@ -1,14 +1,26 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val baselineProfileVersionCodeOffset = 1_000_000
+val semanticVersionPattern = Regex("^v?(\\d+)\\.(\\d+)\\.(\\d+)([-+].*)?$")
 
 fun computeVersionCode(versionName: String): Int {
-    val parts = versionName.substringBefore('-').split('.')
-    val major = parts.getOrNull(0)?.toIntOrNull() ?: 1
-    val minor = parts.getOrNull(1)?.toIntOrNull() ?: 0
-    val patch = parts.getOrNull(2)?.toIntOrNull() ?: 0
-    return major * 10000 + minor * 100 + patch
+    val match = requireNotNull(semanticVersionPattern.matchEntire(versionName)) {
+        "Version must use semantic version syntax: $versionName"
+    }
+    val (major, minor, patch) = match.destructured
+    val minorNumber = minor.toInt()
+    val patchNumber = patch.toInt()
+    require(minorNumber in 0..99 && patchNumber in 0..99) {
+        "Minor and patch versions must be between 0 and 99: $versionName"
+    }
+    return Math.addExact(
+        Math.addExact(Math.multiplyExact(major.toInt(), 10_000), minorNumber * 100),
+        patchNumber
+    )
 }
+
+fun normalizeVersionName(versionName: String): String =
+    versionName.removePrefix("v").also(::computeVersionCode)
 
 plugins {
     alias(libs.plugins.android.application)
@@ -23,7 +35,9 @@ android {
     namespace = "com.rerokutosei.chimera"
     compileSdk = 37
 
-    val appVersionName = project.findProperty("appVerName")?.toString() ?: "1.0.0"
+    val appVersionName = normalizeVersionName(
+        project.findProperty("appVerName")?.toString() ?: "1.0.0"
+    )
     val isGeneratingBaselineProfile = gradle.startParameter.taskNames.any {
         it.contains("generateBaselineProfile", ignoreCase = true)
     }
@@ -129,6 +143,24 @@ android {
         unitTests {
             isIncludeAndroidResources = true
         }
+    }
+}
+
+val versioningChecksPassed = listOf(
+    normalizeVersionName("v1.6.0") == "1.6.0",
+    normalizeVersionName("v1.2.1-alpha.1") == "1.2.1-alpha.1",
+    computeVersionCode("1.6.0") == 10_600,
+    computeVersionCode("v2.3.4-beta.1") == 20_304,
+    runCatching { computeVersionCode("release-1.6") }.isFailure,
+    runCatching { computeVersionCode("1.100.0") }.isFailure
+).all { it }
+
+tasks.register("testVersioning") {
+    group = "verification"
+    description = "Tests Android version name normalization and version code generation."
+    inputs.property("checksPassed", versioningChecksPassed)
+    doLast {
+        check(inputs.properties["checksPassed"] == true)
     }
 }
 

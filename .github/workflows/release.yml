@@ -30,7 +30,9 @@ jobs:
 
       - name: Extract version from tag
         run: |
-          echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+          RELEASE_TAG="${GITHUB_REF#refs/tags/}"
+          echo "RELEASE_TAG=$RELEASE_TAG" >> "$GITHUB_ENV"
+          echo "RELEASE_VERSION=${RELEASE_TAG#v}" >> "$GITHUB_ENV"
 
       - name: Build release APK
         run: bash ./gradlew assembleRelease -PappVerName=${{ env.RELEASE_VERSION }}
@@ -48,12 +50,12 @@ jobs:
 
       - name: Prepare release files
         run: |
-          cp ${{ steps.sign_app.outputs.signedFile }} Chimera-${{ env.RELEASE_VERSION }}.apk
+          cp ${{ steps.sign_app.outputs.signedFile }} Chimera-${{ env.RELEASE_TAG }}.apk
 
       - name: Generate release notes
         shell: bash
         run: |
-          CURRENT_TAG="${RELEASE_VERSION}"
+          CURRENT_TAG="${RELEASE_TAG}"
           PREV_TAG="$(git tag --sort=-v:refname | grep -Fxv "$CURRENT_TAG" | head -n 1)"
           if [ -z "$PREV_TAG" ]; then
             RANGE="$CURRENT_TAG"
@@ -71,5 +73,4 @@ jobs:
           generate_release_notes: false
           body_path: release.md
           files: |
-            Chimera-${{ env.RELEASE_VERSION }}.apk
-
+            Chimera-${{ env.RELEASE_TAG }}.apk
