@@ -22,16 +22,17 @@
 - `compileSdk` = 37, `targetSdk` = 36, `minSdk` = 29, `applicationId` = `com.rerokutosei.chimera`
 - Java/Kotlin toolchain = 21 (`sourceCompatibility`/`targetCompatibility` = `VERSION_21`)
 - `versionName` comes from the `appVerName` Gradle property (`-PappVerName=...`); `versionCode` is derived from it (`computeVersionCode`). Dev build type appends `.dev` / `-dev` suffix.
-- AGP = 9.3.0, Gradle Wrapper = 9.6.1, Kotlin = 2.4.10
+- AGP = 9.3.2, Gradle Wrapper = 9.7.1, Kotlin = 2.4.10
 - Release builds fall back to debug signing when no release keystore is available; distributable builds should provide `KEYSTORE_PATH`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, and `KEY_PASSWORD`.
 - JVM tests use JUnit 4 under `app/src/test`; fixed synthetic Bitmap benchmarks use AndroidX Benchmark under `app/src/androidTest` with the non-debug `benchmark` build type.
-- Kotlin serialization plugin (`kotlin("plugin.serialization")`) already applied; Navigation `2.9.8` supports `@Serializable` route types via `toRoute<>()`
+- Kotlin serialization plugin (`kotlin("plugin.serialization")`) already applied; Navigation `2.10.0` supports `@Serializable` route types via `toRoute<>()`
 - HorizontalPager from `androidx.compose.foundation.pager` available (no extra dependency needed)
 
 ## Architecture
 
 - **Single Activity** (`MainActivity`) → Jetpack Compose, no Fragments
 - **No Services, no BroadcastReceivers** (except per-user request)
+- **Adaptive Layout**: On large screens / tablets (width ≥ 840dp), `MainScreen` switches to a dual-pane workstation with an `AppNavigationRail` on the left and a live `WorkstationCanvas` with embedded settings on the right. On compact screens (< 840dp), it renders a single-column layout with a floating capsule navigation bar (`FloatingNavigation`).
 - Gradle modules: `:app`, `:baselineprofile` (Macrobenchmark and baseline profile generator), `:integrationtest` (device-side correctness tests), and three library modules under `t8rin/` (fancy-slider, embedded-picker, image-reorder-carousel)
 - Navigation: type-safe via `@Serializable sealed class Route` in `ui/navigation/Route.kt` — routes: `Main`, `Settings`, `ImageViewer(...)`
 - State: `ViewModel` + `MutableStateFlow` + DataStore Preferences; no Room, no network
@@ -39,7 +40,7 @@
 - App theme: `AppTheme` with `shouldUseDarkTheme()` composable in `ui/theme/Theme.kt`
 - Compose `Flow`/`StateFlow` values are collected with `collectAsStateWithLifecycle()`; `lifecycle-runtime-compose` is an explicit dependency
 
-## Stitch engine (single Kotlin engine)
+## Stitch & Cut Engine
 
 - `ImageStitcher` (`utils/stitch/`) is the entry point — `StitchViewModel` calls its `stitchImages()` / `stitchOverlay()`.
 - Layering: `ImageStitcher` → `KotlinStitchingEngine` → a `StitchingStrategy` selected by a private engine helper (`DirectStitchingStrategy` / `OverlayStitchingStrategy`, both extend `BaseStitchingStrategy`).
@@ -50,25 +51,27 @@
 - `StitchViewModel` is the sole owner of the stitched result Bitmap; viewer UI borrows it and must not recycle it.
 - The abandoned C++/Kotlin dual-engine abstractions are fully removed: there is no `StitchingEngine` interface or `StitcherFactory`.
 - Settings needed by strategies are read through suspend flows in `ImageStitcher` and passed in `StitchingOptions`; strategies and `MemoryLimitCalculator` must not use `runBlocking` for DataStore access.
+- Cut Mode supports 4 presets via `CutPreset`: `GRID_4` (2×2), `GRID_9` (3×3), `X_3` (1×3 X Panorama), `X_4` (1×4 X Panorama).
 
 ## Package Layout
 
 ```
 data/local/       — DataStore-based managers: StitchSettingsManager, ImageSettingsManager,
                     UserPreferencesManager, LogSettingsManager, PreloadManager
-data/model/       — enums/data classes: ColorScheme, PredefinedColorSchemes, ThemeMode,
+data/model/       — enums/data classes: CutPreset, ColorScheme, PredefinedColorSchemes, ThemeMode,
                     ImageInfo, ImageListDirectionMode
 data/repository/  — ThemeRepository, ImageRepository
 domain/error/      — StitchFailure, CutFailure, SaveFailure
 domain/usecase/    — SaveCutImagesUseCase
-ui/main/          — MainScreen, MainViewModel, ParameterSettingsCard, BottomActionButtons,
+ui/main/          — MainScreen, MainViewModel, WorkstationCanvas, AppNavigationRail,
+                    FloatingNavigation, ParameterSettingsCard, BottomActionButtons,
                     TopAppBar, CustomSegmentedButton, ImagePickerButton, EmbeddedPickerDialog,
                     EstimatedResolutionCard, WelcomeDialog, ErrorDialog
 ui/settings/      — SettingsScreen, SettingsViewModel, ImageOutputSettings, DisplaySettings,
                     PerformanceSettings, FilePickerSettings, OtherSettings, About,
                     OpenSourceLicenses, PrivacyPolicy, ComButton
 ui/viewer/        — ImageViewerScreen, ImageViewerViewModel, ImageResultPreviewer,
-                    AdaptiveDisplay, PreviewSource
+                    AdaptiveImageDisplay, PreviewSource
 ui/theme/         — Theme (AppTheme, shouldUseDarkTheme), Type, CustomColorPickerDialog,
                     SpacingColorPickerDialog, ColorSchemePreview
 ui/navigation/    — NavGraph, Route
@@ -92,7 +95,8 @@ utils/common/     — LogManager, MemoryLimitCalculator, ToastUtil, LinkTextUtil
 - `CustomSegmentedButtonRow` in `ui/main/CustomSegmentedButton.kt` is reused for mode/grid selection
 - ParameterSettingsCard is hidden in cut mode; its state auto-preserves when switching back to stitch mode
 - `PreviewSource.FromBitmapWithGrid(bitmap, cols, rows)` for cut grid preview
-- Cut preview keeps only the current page and adjacent pages cached; recycle evicted bitmaps through `BitmapLoader`
+- Cut preview (both `ImageViewerScreen` and `WorkstationCanvas`) uses `HorizontalPager` with 3-page LRU caching (`[page-1, page, page+1]`); recycle evicted bitmaps through `BitmapLoader`
+- Cut save actions are partitioned into **"Save Current Slices"** (`saveCurrentCutImage`) and **"Save All Images"** (`saveAllCutImages`)
 - Cut-save decoding belongs on `Dispatchers.IO`; bitmap splitting belongs on `Dispatchers.Default`
 - Cut saving is driven by `ImageViewerViewModel` through `SaveCutImagesUseCase`; process and recycle one generated piece at a time.
 - `ImageSaver.saveToGallery()` returns `ImageSaveResult`; do not reintroduce callback-based save APIs.
@@ -101,7 +105,6 @@ utils/common/     — LogManager, MemoryLimitCalculator, ToastUtil, LinkTextUtil
 - Performance changes must be supported by the fixed benchmark datasets and documented in `docs/Performance_Baseline.md`.
 - Estimated result memory uses a conservative ARGB_8888 calculation; `ResolutionMemoryRisk` marks results at or above 512 MiB as `Risky`.
 - `Risky` changes the estimated-resolution capsule to the theme error color and adds an accessibility state description, but must not disable stitching; only `Invalid` blocks the start action.
-- Deferred crash recovery, logging, memory-budget, process-death recovery, and adaptive-layout ideas are tracked in `docs/todo.md`.
 - Spacing fill color stored as hex string (e.g. `"#FF000000"`) in DataStore
 - StitchSettingsManager uses generic `getPref<T>()` / `setPref<T>()` helpers for DataStore access
 - Use `LogManager.debug(tag) { ... }` for interpolated messages in loops or other hot paths
@@ -119,16 +122,16 @@ utils/common/     — LogManager, MemoryLimitCalculator, ToastUtil, LinkTextUtil
 
 ## DataStore Keys (StitchSettingsManager)
 
-| Key | Type | Default |
-|-----|------|---------|
-| stitch_mode | String | DIRECT_VERTICAL |
-| width_scale | String | MIN_WIDTH |
-| overlay_area | Int | 10 |
-| overlay_mode | String | DISABLED |
-| image_spacing | Int | 0 |
-| image_spacing_color | String | #FF000000 |
-| cut_grid | Int | 3 |
-| multi_thread_enabled | Boolean | false |
+| Key | Type | Default | Note |
+|-----|------|---------|------|
+| stitch_mode | String | DIRECT_VERTICAL | |
+| width_scale | String | MIN_WIDTH | |
+| overlay_area | Int | 10 | |
+| overlay_mode | String | DISABLED | |
+| image_spacing | Int | 0 | |
+| image_spacing_color | String | #FF000000 | |
+| cut_grid | Int | 9 | Stored as CutPreset id (4: 2x2, 9: 3x3, 103: X 1x3, 104: X 1x4) |
+| multi_thread_enabled | Boolean | false | |
 
 ## DataStore Keys (ImageSettingsManager)
 
