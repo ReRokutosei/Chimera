@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:BitmapLoader.kt$BitmapLoader$@SuppressLint("Recycle") fun loadBitmapFromUri(uri: Uri): Bitmap?</ID>
+    <ID>CyclomaticComplexMethod:DirectStitchingStrategy.kt$DirectStitchingStrategy$private fun stitchImages( bitmaps: List&lt;Bitmap&gt;, spacing: Int, isVertical: Boolean, spacingColor: Int = Color.BLACK, outputFormat: OutputImageFormat, highMemoryLimitEnabled: Boolean ): StitchResult</ID>
+    <ID>CyclomaticComplexMethod:ImageViewerScreen.kt$@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class) @Composable fun ImageViewerScreen( modifier: Modifier = Modifier, viewModel: ImageViewerViewModel = viewModel(), stitchState: StitchState = StitchState.Idle, onBackClick: () -&gt; Unit )</ID>
+    <ID>CyclomaticComplexMethod:MainScreen.kt$@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class) @Composable fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel, onNavigateToSettings: () -&gt; Unit, onNavigateToStitch: () -&gt; Unit, onNavigateToCut: () -&gt; Unit = {}, )</ID>
+    <ID>CyclomaticComplexMethod:NavGraph.kt$@Composable fun AppNavGraph( navController: NavHostController )</ID>
+    <ID>LongMethod:About.kt$@Composable fun AboutSection( modifier: Modifier = Modifier )</ID>
+    <ID>LongMethod:DisplaySettings.kt$@Composable fun ThemeColorSettings( uiState: SettingsUiState, viewModel: SettingsViewModel )</ID>
+    <ID>LongMethod:FilePickerSettings.kt$@Composable fun FilePickerSettingsSection( uiState: SettingsUiState, viewModel: SettingsViewModel, modifier: Modifier = Modifier )</ID>
+    <ID>LongMethod:ImageOutputSettings.kt$@Composable fun ImageOutputSettingsSection( uiState: SettingsUiState, viewModel: SettingsViewModel, modifier: Modifier = Modifier )</ID>
+    <ID>LongMethod:ImageViewerScreen.kt$@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class) @Composable fun ImageViewerScreen( modifier: Modifier = Modifier, viewModel: ImageViewerViewModel = viewModel(), stitchState: StitchState = StitchState.Idle, onBackClick: () -&gt; Unit )</ID>
+    <ID>LongMethod:MainScreen.kt$@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class) @Composable fun MainScreen( modifier: Modifier = Modifier, viewModel: MainViewModel, onNavigateToSettings: () -&gt; Unit, onNavigateToStitch: () -&gt; Unit, onNavigateToCut: () -&gt; Unit = {}, )</ID>
+    <ID>LongMethod:NavGraph.kt$@Composable fun AppNavGraph( navController: NavHostController )</ID>
+    <ID>LongMethod:OverlayStitchingStrategy.kt$OverlayStitchingStrategy$override suspend fun stitch(bitmaps: List&lt;Bitmap&gt;, options: StitchingOptions): StitchResult</ID>
+    <ID>LongMethod:ParameterSettingsCard.kt$@Composable fun ParameterSettingsCard( uiState: MainUiState, isPageEntered: Boolean, isDataLoaded: Boolean, isInteractionEnabled: Boolean = true, sliderThumbShape: Int, onUpdateStitchMode: (StitchMode) -&gt; Unit, onUpdateOverlayMode: (OverlayMode) -&gt; Unit, onUpdateWidthScale: (WidthScale) -&gt; Unit, onUpdateOverlayArea: (Int) -&gt; Unit, onUpdateImageSpacing: (Int) -&gt; Unit, onUpdateImageSpacingColor: (String) -&gt; Unit = {} )</ID>
+    <ID>LongMethod:WelcomeDialog.kt$@SuppressLint("ConfigurationScreenWidthHeight") @Composable fun WelcomeDialog( onAgree: () -&gt; Unit, onDisagree: () -&gt; Unit, modifier: Modifier = Modifier )</ID>
+    <ID>LongMethod:WorkstationCanvas.kt$@Composable fun WorkstationCanvas( isCutMode: Boolean, selectedImages: List&lt;ImageInfo&gt;, cutPreset: CutPreset, stitchedBitmap: Bitmap?, isCutPreviewActive: Boolean, isCutSaving: Boolean, isStitching: Boolean, stitchProgress: Int, onSaveStitched: () -&gt; Unit, onSaveCutAll: () -&gt; Unit, onSaveCutCurrent: (Int) -&gt; Unit, modifier: Modifier = Modifier )</ID>
+    <ID>LongParameterList:ParameterSettingsCard.kt$( uiState: MainUiState, isPageEntered: Boolean, isDataLoaded: Boolean, isInteractionEnabled: Boolean = true, sliderThumbShape: Int, onUpdateStitchMode: (StitchMode) -&gt; Unit, onUpdateOverlayMode: (OverlayMode) -&gt; Unit, onUpdateWidthScale: (WidthScale) -&gt; Unit, onUpdateOverlayArea: (Int) -&gt; Unit, onUpdateImageSpacing: (Int) -&gt; Unit, onUpdateImageSpacingColor: (String) -&gt; Unit = {} )</ID>
+    <ID>LongParameterList:WorkstationCanvas.kt$( isCutMode: Boolean, selectedImages: List&lt;ImageInfo&gt;, cutPreset: CutPreset, stitchedBitmap: Bitmap?, isCutPreviewActive: Boolean, isCutSaving: Boolean, isStitching: Boolean, stitchProgress: Int, onSaveStitched: () -&gt; Unit, onSaveCutAll: () -&gt; Unit, onSaveCutCurrent: (Int) -&gt; Unit, modifier: Modifier = Modifier )</ID>
+    <ID>SwallowedException:ColorUtils.kt$ColorUtils$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:BaseStitchingStrategy.kt$BaseStitchingStrategy$failure: Throwable</ID>
+    <ID>TooGenericExceptionCaught:BitmapLoader.kt$BitmapLoader$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ColorUtils.kt$ColorUtils$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:DirectStitchingStrategy.kt$DirectStitchingStrategy$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:DirectStitchingStrategy.kt$DirectStitchingStrategy$failure: Throwable</ID>
+    <ID>TooGenericExceptionCaught:EstimateResolution.kt$EstimateResolution$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ImageRepository.kt$ImageRepository$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ImageSaver.kt$ImageSaver$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ImageSplitter.kt$ImageSplitter$failure: Throwable</ID>
+    <ID>TooGenericExceptionCaught:ImageStitcher.kt$ImageStitcher$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ImageViewerViewModel.kt$ImageViewerViewModel$failure: Exception</ID>
+    <ID>TooGenericExceptionCaught:KotlinStitchingEngine.kt$KotlinStitchingEngine$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:LogManager.kt$LogManager$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:OverlayStitchingStrategy.kt$OverlayStitchingStrategy$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:SaveCutImagesUseCase.kt$SaveCutImagesUseCase$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:SaveCutImagesUseCase.kt$SaveCutImagesUseCase$failure: Exception</ID>
+    <ID>TooGenericExceptionCaught:StitchViewModel.kt$StitchViewModel$e: Exception</ID>
+    <ID>TooManyFunctions:MainViewModel.kt$MainViewModel : AndroidViewModel</ID>
+  </CurrentIssues>
+</SmellBaseline>

@@ -252,6 +252,7 @@ dependencies {
 
 detekt {
     config.setFrom("$rootDir/config/detekt/detekt.yml")
+    baseline = file("$rootDir/config/detekt/baseline.xml")
     buildUponDefaultConfig = true
 }
 
