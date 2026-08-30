@@ -39,7 +39,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
-import com.rerokutosei.chimera.data.local.PreloadManager
 import com.rerokutosei.chimera.data.local.UserPreferencesManager
 import com.rerokutosei.chimera.data.repository.ThemeRepository
 import com.rerokutosei.chimera.ui.main.WelcomeDialog
@@ -63,8 +62,6 @@ class MainActivity : ComponentActivity() {
         userPreferencesManager = UserPreferencesManager.getInstance(this)
 
         val isFirstLaunch = userPreferencesManager.checkFirstLaunchSync()
-
-        PreloadManager.getInstance(this).preloadAllData()
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {

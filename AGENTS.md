@@ -57,7 +57,7 @@
 
 ```
 data/local/       — DataStore-based managers: StitchSettingsManager, ImageSettingsManager,
-                    UserPreferencesManager, LogSettingsManager, PreloadManager
+                    UserPreferencesManager, LogSettingsManager
 data/model/       — enums/data classes: CutPreset, ColorScheme, PredefinedColorSchemes, ThemeMode,
                     ImageInfo, ImageListDirectionMode
 data/repository/  — ThemeRepository, ImageRepository
@@ -147,7 +147,7 @@ utils/common/     — LogManager, MemoryLimitCalculator, ToastUtil, LinkTextUtil
 | slider_thumb_shape | Int | FancySlider thumb shape |
 | image_list_direction | Int | image list direction mode |
 
-Other managers: `UserPreferencesManager` (`first_launch`), `LogSettingsManager`, `PreloadManager`.
+Other managers: `UserPreferencesManager` (`first_launch`) and `LogSettingsManager`.
 
 ## Dark Mode
 
