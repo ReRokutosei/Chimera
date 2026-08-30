@@ -17,8 +17,6 @@
 
 package com.rerokutosei.chimera.ui.navigation
 
-import android.os.Build
-import androidx.annotation.RequiresExtension
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -54,7 +52,6 @@ import kotlinx.coroutines.flow.first
  * 应用导航图
  * 使用Compose Navigation管理所有屏幕间的导航
  */
-@RequiresExtension(extension = Build.VERSION_CODES.UPSIDE_DOWN_CAKE, version = 15)
 @Composable
 fun AppNavGraph(
     navController: NavHostController
@@ -153,9 +150,7 @@ fun AppNavGraph(
                 }
             }
 
-            SettingsScreen(
-                mainViewModel = mainViewModel
-            )
+            SettingsScreen()
         }
 
         composable<Route.ImageViewer> { backStackEntry ->

@@ -192,8 +192,6 @@ tasks.register<Exec>("updateReadmeWithLicenses") {
     // 设置工作目录为项目根目录
     workingDir(project.rootDir)
 
-    // 设置即使Python脚本执行失败也不影响构建过程
-    isIgnoreExitValue = true
 }
 
 dependencies {

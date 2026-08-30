@@ -48,20 +48,8 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             kotlinx.coroutines.coroutineScope {
                 launch {
-                    themeSettingsManager.getDarkThemeFlow().collect { isDarkTheme ->
-                        _uiState.value = _uiState.value.copy(isDarkTheme = isDarkTheme)
-                    }
-                }
-
-                launch {
                     themeSettingsManager.getDynamicColorFlow().collect { isDynamicColor ->
                         _uiState.value = _uiState.value.copy(isDynamicColor = isDynamicColor)
-                    }
-                }
-
-                launch {
-                    stitchSettingsManager.getOverlayAreaFlow().collect { overlayArea ->
-                        _uiState.value = _uiState.value.copy(overlayArea = overlayArea)
                     }
                 }
 
@@ -298,9 +286,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 }
 
 data class SettingsUiState(
-    val isDarkTheme: Boolean = false,
     val isDynamicColor: Boolean = true,
-    val overlayArea: Int = 10,
     val multiThreadEnabled: Boolean = false,
     val outputImageFormat: Int = 0, // 0: PNG, 1: JPEG, 2: WEBP
     val outputImageQuality: Int = 85, // 0-100

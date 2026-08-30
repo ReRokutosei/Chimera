@@ -87,7 +87,6 @@ import com.rerokutosei.chimera.ui.viewer.SaveResultDialog
 import com.rerokutosei.chimera.ui.viewer.cutSaveIssueMessage
 import com.rerokutosei.chimera.utils.common.ShowToast
 import com.rerokutosei.chimera.utils.common.ToastUtil
-import com.rerokutosei.chimera.utils.image.BitmapLoader
 import com.rerokutosei.chimera.utils.image.ImageSaveResult
 import com.rerokutosei.chimera.utils.image.ImageSaver
 import com.rerokutosei.chimera.utils.stitch.StitchOrientation
@@ -122,7 +121,6 @@ fun MainScreen(
 
     val coroutineScope = rememberCoroutineScope()
     val imageSaver = remember { ImageSaver(context) }
-    val bitmapLoader = remember { BitmapLoader(context) }
     val stitchViewModel: StitchViewModel = viewModel()
     val imageViewerViewModel: ImageViewerViewModel = viewModel()
     val stitchUiState by stitchViewModel.uiState.collectAsStateWithLifecycle()
@@ -498,10 +496,7 @@ fun MainScreen(
                                             .weight(1f),
                                         contentAlignment = Alignment.TopCenter
                                     ) {
-                                        SettingsScreen(
-                                            mainViewModel = viewModel,
-                                            modifier = Modifier.widthIn(max = 680.dp)
-                                        )
+                                        SettingsScreen(modifier = Modifier.widthIn(max = 680.dp))
                                     }
                                 }
                             }

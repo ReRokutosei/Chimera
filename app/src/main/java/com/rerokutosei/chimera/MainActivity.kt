@@ -17,12 +17,10 @@
 
 package com.rerokutosei.chimera
 
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -54,7 +52,6 @@ class MainActivity : ComponentActivity() {
     private val logManager by lazy { LogManager.getInstance(this) }
     private lateinit var userPreferencesManager: UserPreferencesManager
 
-    @RequiresExtension(extension = Build.VERSION_CODES.UPSIDE_DOWN_CAKE, version = 15)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

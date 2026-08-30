@@ -29,12 +29,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.rerokutosei.chimera.ui.main.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    mainViewModel: MainViewModel,
     modifier: Modifier = Modifier
 ) {
     val viewModel: SettingsViewModel = viewModel()

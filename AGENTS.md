@@ -61,7 +61,7 @@
 
 ```
 data/local/       — DataStore-based managers: StitchSettingsManager, ImageSettingsManager,
-                    UserPreferencesManager, LogSettingsManager
+                    UserPreferencesManager
 data/model/       — enums/data classes: CutPreset, ColorScheme, PredefinedColorSchemes, ThemeMode,
                     ImageInfo, ImageListDirectionMode
 data/repository/  — ThemeRepository, ImageRepository
@@ -134,7 +134,8 @@ utils/common/     — LogManager, MemoryLimitCalculator, ToastUtil, LinkTextUtil
 | overlay_mode | String | DISABLED | |
 | image_spacing | Int | 0 | |
 | image_spacing_color | String | #FF000000 | |
-| cut_grid | Int | 9 | Stored as CutPreset id (4: 2x2, 9: 3x3, 103: X 1x3, 104: X 1x4) |
+| cut_preset | String | x_4 | Current CutPreset id (`grid_4`, `grid_9`, `x_3`, `x_4`) |
+| cut_grid | Int | — | Legacy 2/3 grid size, read only when migrating old settings |
 | multi_thread_enabled | Boolean | false | |
 
 ## DataStore Keys (ImageSettingsManager)
@@ -143,7 +144,6 @@ utils/common/     — LogManager, MemoryLimitCalculator, ToastUtil, LinkTextUtil
 |-----|------|------|
 | output_image_format | Int | 0: PNG, 1: JPEG, 2: WEBP |
 | output_image_quality | Int | 0–100 |
-| delete_original_image | Boolean | |
 | auto_clear_images | Boolean | |
 | high_memory_limit | Boolean | raise memory threshold |
 | use_saf_picker | Boolean | use Storage Access Framework picker |
@@ -151,7 +151,7 @@ utils/common/     — LogManager, MemoryLimitCalculator, ToastUtil, LinkTextUtil
 | slider_thumb_shape | Int | FancySlider thumb shape |
 | image_list_direction | Int | image list direction mode |
 
-Other managers: `UserPreferencesManager` (`first_launch`) and `LogSettingsManager`.
+Other manager: `UserPreferencesManager` (`first_launch`).
 
 ## Dark Mode
 
