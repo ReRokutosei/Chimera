@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.1](https://github.com/ReRokutosei/Chimera/compare/v1.6.0...v1.6.1) (2026-08-30)
+
+
+### Bug Fixes
+
+* **cut:** prevent concurrent slice saves ([92491c1](https://github.com/ReRokutosei/Chimera/commit/92491c17bc85a9c5b050fd163b3e4156729efc4a))
+* **images:** discard stale sort results ([c1db11e](https://github.com/ReRokutosei/Chimera/commit/c1db11e90a3db79f12ecd9708a2bc23744c99422))
+* **lint:** resolve configuration-aware strings ([208dc7e](https://github.com/ReRokutosei/Chimera/commit/208dc7e1607d049d2291caf5f14e60099fd628ef))
+* **preload:** remove endless settings collectors ([cf7fe0b](https://github.com/ReRokutosei/Chimera/commit/cf7fe0bdb9a2dd5a83bdd9ce704ef3811d08c292))
+* **profile:** avoid stale welcome dialog node ([e11b355](https://github.com/ReRokutosei/Chimera/commit/e11b355de266745818e85cab231933ecb1e1b3ef))
+* **release:** normalize semantic version tags ([8853bbd](https://github.com/ReRokutosei/Chimera/commit/8853bbdf842e238da880b4af4c1a1937b2a8fb5c))
+* **settings:** migrate legacy cut presets ([621767a](https://github.com/ReRokutosei/Chimera/commit/621767aaf84aa8bc73ec3ef4e428a7fdbcb8196f))
+* **share:** validate image encoding metadata ([adcc8c8](https://github.com/ReRokutosei/Chimera/commit/adcc8c872e534285f166315cdac6f29fd045aa64))
+* **stitch:** cancel superseded processing jobs ([bcfada0](https://github.com/ReRokutosei/Chimera/commit/bcfada0e736ca508c10740bbc3c2f2b30098fead))
+* **stitch:** preserve result bitmap ownership ([0861b09](https://github.com/ReRokutosei/Chimera/commit/0861b09fccb9115ba6e376ab333ee0841c58563c))
+* **viewer:** recycle cancelled bitmap loads ([3a725b4](https://github.com/ReRokutosei/Chimera/commit/3a725b414a3c99e24b38fc3c5d5f2a0b2af8a31f))
+* **workstation:** retain result after auto clear ([3d13b45](https://github.com/ReRokutosei/Chimera/commit/3d13b45a4e2a6dfa52936236d26c29f15253f3fb))
+
 ## [1.6.0](https://github.com/ReRokutosei/Chimera/compare/v1.5.1...v1.6.0) (2026-08-29)
 
 
