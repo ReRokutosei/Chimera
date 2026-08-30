@@ -84,7 +84,7 @@ private fun UiDevice.dismissWelcomeDialogIfShown(): Boolean {
     if (findAnyObject(SETTINGS_DESCRIPTIONS.map(By::desc), timeoutMs = 2_000) != null) {
         return false
     }
-    val countdownButton = findAnyObject(
+    findAnyObject(
         AGREE_TEXTS.map(By::textStartsWith),
         timeoutMs = 2_000
     ) ?: return false
@@ -93,7 +93,7 @@ private fun UiDevice.dismissWelcomeDialogIfShown(): Boolean {
         timeoutMs = 7_000
     )
     checkNotNull(enabledAgreeButton) {
-        "Welcome dialog agree button did not become enabled in time: ${countdownButton.text}"
+        "Welcome dialog agree button did not become enabled in time"
     }
     enabledAgreeButton.click()
     check(findAnyObject(SETTINGS_DESCRIPTIONS.map(By::desc), timeoutMs = 5_000) != null) {
