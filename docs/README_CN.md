@@ -3,16 +3,17 @@
 </div>
 
 <p align="center">
-  <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-CD15ED?logo=kotlin&logoColor=white&style=for-the-badge"/>
-  <img alt="Release" src="https://img.shields.io/github/v/release/ReRokutosei/Chimera?color=FF6598&include_prereleases&logo=github&style=for-the-badge&labelColor=FF6598"/>
+  <img alt="Release" src="https://img.shields.io/github/v/release/ReRokutosei/Chimera?color=FF6598&include_prereleases&logo=github&style=for-the-badge&labelColor=FF6598" />
+  <img alt="Downloads" src="https://img.shields.io/github/downloads/ReRokutosei/Chimera/total?color=FF6598&style=for-the-badge&logo=github&labelColor=FF6598" />
   <br>
-  <img alt="GPLv3" src="https://img.shields.io/badge/GPL%20v3-008033?style=for-the-badge&logo=gnu&logoColor=white"/>
-  <img alt="API" src="https://img.shields.io/badge/ANdroid%2010+-34A853?logo=android&logoColor=white&style=for-the-badge"/>
+  <img alt="GPLv3" src="https://img.shields.io/badge/License-GPL%20v3-238636?style=for-the-badge&logo=gnu&logoColor=white&labelColor=238636&color=238636" />
+  <img alt="Android 10+" src="https://img.shields.io/badge/Android-10%2B-3DDC84?style=for-the-badge&logo=android&logoColor=white&labelColor=3DDC84&color=3DDC84" />
   <br>
-  <img alt="Jetpack Compose" src="https://img.shields.io/static/v1?style=for-the-badge&message=Jetpack+Compose&color=4285F4&logo=Jetpack+Compose&logoColor=FFFFFF&label="/>
-  <img alt="material" src="https://custom-icon-badges.demolab.com/badge/material%20you-6442D6?style=for-the-badge&logoColor=white&logo=material-you"/>
+  <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-CD15ED?logo=kotlin&logoColor=white&style=for-the-badge" />
+  <img alt="Material You" src="https://custom-icon-badges.demolab.com/badge/material%20you-6200EE?style=for-the-badge&logoColor=white&logo=material-you" />
   <br>
-  <a href="https://deepwiki.com/ReRokutosei/Chimera"><img alt="DeepWiki" src="https://img.shields.io/badge/Ask%20DeepWiki-0D7FC0?style=for-the-badge&logoColor=white"/></a>
+  <img alt="Jetpack Compose" src="https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white" />
+  <img alt="DeepWiki" src="https://img.shields.io/badge/ASK%20DEEPWIKI-0D7FC0?style=for-the-badge" />
 </p>
 
 <p align="center"><strong><a href="README.md">English</a> | 简体中文</strong></p>
