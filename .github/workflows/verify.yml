@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  build-and-test:
     if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'chore(release):')
     runs-on: ubuntu-latest
     
@@ -34,5 +34,39 @@ jobs:
         distribution: 'zulu'
         cache: gradle
 
-    - name: Build with Gradle
-      run: bash ./gradlew assembleDebug -x detekt
+    - name: Build and run JVM tests
+      run: bash ./gradlew assembleDebug :app:testBenchmarkUnitTest
+
+  lint:
+    if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'chore(release):')
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Set up JDK
+      uses: actions/setup-java@v6
+      with:
+        java-version: '21'
+        distribution: 'zulu'
+        cache: gradle
+
+    - name: Run Android lint
+      run: bash ./gradlew lintDebug
+
+  detekt:
+    if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'chore(release):')
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Set up JDK
+      uses: actions/setup-java@v6
+      with:
+        java-version: '21'
+        distribution: 'zulu'
+        cache: gradle
+
+    - name: Run detekt
+      run: bash ./gradlew detekt
