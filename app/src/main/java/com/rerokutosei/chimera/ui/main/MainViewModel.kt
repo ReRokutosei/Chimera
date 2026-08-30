@@ -68,6 +68,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _showResolutionErrorToast = MutableStateFlow<String?>(null)
     val showResolutionErrorToast: StateFlow<String?> = _showResolutionErrorToast.asStateFlow()
     private val _showSettingsInCanvas = MutableStateFlow(false)
+    private var imageSelectionVersion = 0L
+    private var sortJob: Job? = null
     val showSettingsInCanvas: StateFlow<Boolean> = _showSettingsInCanvas.asStateFlow()
     private var resolutionValidationJob: Job? = null
     private var resolutionValidationVersion: Long = 0
@@ -127,6 +129,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun selectImages(uris: List<Uri>, isFromEmbeddedPicker: Boolean = false) {
+        imageSelectionVersion++
+        sortJob?.cancel()
         viewModelScope.launch {
             setImagePreviewLoading(true)
             try {
@@ -177,6 +181,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
 
     fun removeImage(imageInfo: ImageInfo) {
+        imageSelectionVersion++
+        sortJob?.cancel()
         val currentImages = _uiState.value.selectedImages.toMutableList()
         currentImages.remove(imageInfo)
         _uiState.value = _uiState.value.copy(selectedImages = currentImages)
@@ -185,6 +191,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun clearImages() {
+        imageSelectionVersion++
+        sortJob?.cancel()
         _uiState.value = _uiState.value.copy(selectedImages = emptyList())
 
         validateResolution()
@@ -264,6 +272,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if (currentImages.isEmpty() || currentImages.size != newUriOrder.size) {
             return
         }
+        imageSelectionVersion++
+        sortJob?.cancel()
         val imageInfoMap = currentImages.associateBy { it.uri }
         val reorderedImages = newUriOrder.mapNotNull { uri -> imageInfoMap[uri] }
         _uiState.value = _uiState.value.copy(
@@ -277,8 +287,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun sortSelectedImages(mode: ImageSortMode) {
         val currentImages = _uiState.value.selectedImages
         if (currentImages.size < 2) return
+        val currentSelectionVersion = imageSelectionVersion
 
-        viewModelScope.launch {
+        sortJob?.cancel()
+        sortJob = viewModelScope.launch {
             val sortedImages = withContext(Dispatchers.IO) {
                 val sortable = currentImages.map { image ->
                     val normalizedName = extractDisplayName(image).lowercase(Locale.ROOT)
@@ -306,6 +318,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                     ImageSortMode.NAME_ASC -> sortable.sortedBy { it.normalizedName }
                     ImageSortMode.NAME_DESC -> sortable.sortedByDescending { it.normalizedName }
                 }.map { it.image }
+            }
+
+            if (
+                currentSelectionVersion != imageSelectionVersion ||
+                _uiState.value.selectedImages != currentImages
+            ) {
+                return@launch
             }
 
             _uiState.value = _uiState.value.copy(
