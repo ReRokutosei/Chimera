@@ -129,6 +129,7 @@ fun MainScreen(
     val cutSaveState by imageViewerViewModel.cutSaveState.collectAsStateWithLifecycle()
 
     var isCutPreviewActive by remember { mutableStateOf(false) }
+    var preserveWorkstationResultOnNextImageClear by remember { mutableStateOf(false) }
     val workstationStitchedBitmap =
         (stitchUiState.stitchState as? StitchState.Success)?.result
 
@@ -182,11 +183,17 @@ fun MainScreen(
         if (uiState.selectedImages.isEmpty()) {
             isCarouselInteracting = false
         }
+
+        if (preserveWorkstationResultOnNextImageClear) {
+            preserveWorkstationResultOnNextImageClear = false
+        } else {
+            isCutPreviewActive = false
+            stitchViewModel.clearStitchState()
+        }
     }
 
-    // 当图片列表变动或核心参数修改时，自动重置工作台大画布的旧预览，回到空态
+    // 核心参数修改时，自动重置工作台大画布的旧预览，回到空态
     LaunchedEffect(
-        uiState.selectedImages,
         uiState.isCutMode,
         uiState.cutPreset,
         uiState.stitchMode,
@@ -198,6 +205,20 @@ fun MainScreen(
     ) {
         isCutPreviewActive = false
         stitchViewModel.clearStitchState()
+    }
+
+
+    // 工作台拼接成功后清空输入，但保留生成结果供预览、保存或分享。
+    LaunchedEffect(stitchUiState.stitchState) {
+        if (
+            isWorkstationMode &&
+            uiState.autoClearImages &&
+            uiState.selectedImages.isNotEmpty() &&
+            stitchUiState.stitchState is StitchState.Success
+        ) {
+            preserveWorkstationResultOnNextImageClear = true
+            viewModel.clearImages()
+        }
     }
 
     // 工作台模式切图保存完成弹窗
