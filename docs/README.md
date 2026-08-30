@@ -89,14 +89,16 @@ The following results compare sequential and bounded parallel scaling on the sam
 | Direct vertical, 50 small images, MAX | 83.53 ms | 51.45 ms | -38.4% |
 | Overlay vertical, 10 medium images, MIN | 54.99 ms | 32.47 ms | -41.0% |
 
-Historical physical-device app-flow measurements were collected on a Xiaomi Mi 10 Ultra running Android 13, with eight iterations per case. The mandatory first-launch agreement countdown was completed before measurement and is not included in startup timing.
+The current Baseline Profile was measured on two physical devices with eight iterations per case. The mandatory first-launch agreement countdown was completed before measurement and is not included in startup timing.
 
-| Scenario | No compilation | Profile measured at the time | Median change |
-| --- | ---: | ---: | ---: |
-| Cold startup, time to initial display | 433.7 ms | 423.6 ms | -2.3% |
-| Settings flow | 6,296.4 ms | 6,177.7 ms | -1.9% |
+| Device | Scenario | No compilation | Baseline Profile | Median change |
+| --- | --- | ---: | ---: | ---: |
+| Xiaomi 25113PN0EC, Android 16 | Cold startup | 203.1 ms | 162.3 ms | -20.0% |
+| Xiaomi 25113PN0EC, Android 16 | Settings flow | 2,079.6 ms | 2,032.3 ms | -2.3% |
+| Samsung SM-T733, Android 14 | Cold startup | 704.2 ms | 678.9 ms | -3.6% |
+| Samsung SM-T733, Android 14 | Settings flow | 3,913.7 ms | 3,782.8 ms | -3.3% |
 
-The profile measured at that time provided a small benefit on this device. The current generated profile has not yet been benchmarked, so these historical numbers must not be treated as its measured performance.
+Cold startup improved on both devices, most clearly on the Xiaomi. Settings-flow ranges overlapped substantially, so the small median differences indicate no obvious regression rather than a reliable speedup.
 
 See [Image Processing Performance Baseline](Performance_Baseline.md) for datasets, stage timings, codec measurements, commands, and limitations.
 

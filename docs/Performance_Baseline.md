@@ -101,7 +101,7 @@ Measured on 2026-07-18 on a Xiaomi Mi 10 Ultra (`M2007J1SC`), Android 13 / API 3
 
 The settings-flow duration is an instrumentation trace around opening Settings, two deterministic scroll gestures, returning to the main screen, and the associated UI-idle waits. It is suitable for comparisons made with the same harness, but it is not a claim about isolated frame-rendering latency.
 
-| Scenario | No compilation | Current Baseline Profile | Median change |
+| Scenario | No compilation | Profile measured at the time | Median change |
 | --- | ---: | ---: | ---: |
 | Cold startup, time to initial display | 433.7 ms | 423.6 ms | -2.3% |
 | Settings flow | 6,296.4 ms | 6,177.7 ms | -1.9% |
@@ -116,7 +116,18 @@ A profile regenerated from the corrected startup and Settings automation increas
 
 On 2026-08-30, `generateReleaseBaselineProfile` completed successfully on a Samsung SM-T733 running Android 14. The retained baseline profile changed from 23,192 to 23,184 rules (143 added, 151 removed, 98.74% unchanged), while the startup profile changed from 18,413 to 18,434 rules (118 added, 97 removed, 98.84% unchanged). No rules reference the removed `PreloadManager`.
 
-This run generated profile rules only. The `StartupBenchmark` cases were skipped by the generation task, so it does not provide new startup or Settings-flow timing data. The July 2026 measurements above remain historical comparison data until the four StartupBenchmark cases are rerun on a fixed physical device.
+The generation task itself skipped `StartupBenchmark`; the generated profile was subsequently measured on two physical devices with eight iterations per case:
+
+| Device | Scenario | No compilation | Baseline Profile | Median change |
+| --- | --- | ---: | ---: | ---: |
+| Xiaomi 25113PN0EC, Android 16 | Cold startup | 203.1 ms | 162.3 ms | -20.0% |
+| Xiaomi 25113PN0EC, Android 16 | Settings flow | 2,079.6 ms | 2,032.3 ms | -2.3% |
+| Samsung SM-T733, Android 14 | Cold startup | 704.2 ms | 678.9 ms | -3.6% |
+| Samsung SM-T733, Android 14 | Settings flow | 3,913.7 ms | 3,782.8 ms | -3.3% |
+
+The Xiaomi cold-start ranges were 145.4–236.4 ms without compilation and 147.1–191.6 ms with the profile. The SM-T733 ranges were 690.6–869.2 ms and 658.6–783.1 ms. Settings-flow ranges overlapped substantially on both devices, so those small median changes demonstrate no obvious regression rather than a reliable speedup. The Xiaomi run reported `cpuLocked=true`; the SM-T733 run reported `cpuLocked=false`. Results must be compared only within the same device.
+
+The repeatable cold-start improvement and absence of a settings-flow regression on either device support retaining the generated profile.
 
 ## Commands
 
