@@ -491,6 +491,7 @@ fun MainScreen(
                                 cutPreset = uiState.cutPreset,
                                 stitchedBitmap = workstationStitchedBitmap,
                                 isCutPreviewActive = isCutPreviewActive,
+                                isCutSaving = cutSaveState is CutSaveState.Saving,
                                 isStitching = stitchUiState.stitchState is StitchState.Processing,
                                 stitchProgress = stitchUiState.progress,
                                 onSaveStitched = {

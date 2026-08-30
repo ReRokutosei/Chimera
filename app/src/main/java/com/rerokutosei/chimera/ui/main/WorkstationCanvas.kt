@@ -85,6 +85,7 @@ fun WorkstationCanvas(
     cutPreset: CutPreset,
     stitchedBitmap: Bitmap?,
     isCutPreviewActive: Boolean,
+    isCutSaving: Boolean,
     isStitching: Boolean,
     stitchProgress: Int,
     onSaveStitched: () -> Unit,
@@ -266,6 +267,7 @@ fun WorkstationCanvas(
                                     // 主色按钮：保存此图切片
                                     Button(
                                         onClick = { onSaveCutCurrent(cutPagerState.currentPage) },
+                                        enabled = !isCutSaving,
                                         shape = CircleShape,
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = MaterialTheme.colorScheme.primary,
@@ -289,6 +291,7 @@ fun WorkstationCanvas(
                                     // 次级按钮：全部切图保存
                                     FilledTonalButton(
                                         onClick = onSaveCutAll,
+                                        enabled = !isCutSaving,
                                         shape = CircleShape,
                                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp)
                                     ) {
@@ -301,6 +304,7 @@ fun WorkstationCanvas(
                                 } else {
                                     Button(
                                         onClick = { onSaveCutCurrent(0) },
+                                        enabled = !isCutSaving,
                                         shape = CircleShape,
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = MaterialTheme.colorScheme.primary,

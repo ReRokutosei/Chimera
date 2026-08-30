@@ -68,7 +68,9 @@ class ImageViewerViewModel(application: Application) : AndroidViewModel(applicat
         _cutGridCols.value = gridCols
         _cutGridRows.value = gridRows
         _currentCutIndex.value = startIndex
-        _cutSaveState.value = CutSaveState.Idle
+        if (_cutSaveState.value !is CutSaveState.Saving) {
+            _cutSaveState.value = CutSaveState.Idle
+        }
     }
 
     fun setCurrentCutIndex(index: Int) {
@@ -96,8 +98,8 @@ class ImageViewerViewModel(application: Application) : AndroidViewModel(applicat
 
         val cols = _cutGridCols.value
         val rows = _cutGridRows.value
+        _cutSaveState.value = CutSaveState.Saving
         viewModelScope.launch {
-            _cutSaveState.value = CutSaveState.Saving
             try {
                 _cutSaveState.value =
                     when (val result = saveCutImagesUseCase(imageUris, cols, rows)) {
