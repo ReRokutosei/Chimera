@@ -72,6 +72,9 @@ import com.rerokutosei.chimera.ui.viewer.ImageResultPreviewer
 import com.rerokutosei.chimera.ui.viewer.PreviewSource
 import com.rerokutosei.chimera.utils.image.BitmapLoader
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -119,11 +122,20 @@ fun WorkstationCanvas(
             bitmapLoader.recycleBitmaps(evictedBitmaps)
 
             if (!cutBitmaps.value.containsKey(idx) && idx in cutImageUris.indices) {
-                val bitmap = withContext(Dispatchers.IO) {
+                val bitmap = withContext(Dispatchers.IO + NonCancellable) {
                     bitmapLoader.loadBitmapFromUri(cutImageUris[idx])
                 }
-                if (bitmap != null) {
-                    cutBitmaps.value = cutBitmaps.value + (idx to bitmap)
+                var transferred = false
+                try {
+                    currentCoroutineContext().ensureActive()
+                    if (bitmap != null) {
+                        cutBitmaps.value = cutBitmaps.value + (idx to bitmap)
+                        transferred = true
+                    }
+                } finally {
+                    if (bitmap != null && !transferred) {
+                        bitmapLoader.recycleBitmaps(listOf(bitmap))
+                    }
                 }
             }
         }
