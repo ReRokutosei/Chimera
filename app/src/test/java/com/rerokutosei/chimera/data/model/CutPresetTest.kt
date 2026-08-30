@@ -55,4 +55,21 @@ class CutPresetTest {
         assertEquals(1, CutPreset.X_4.rows)
         assertEquals(4, CutPreset.X_4.cols)
     }
+
+    @Test
+    fun storedPresetTakesPriorityOverLegacyGrid() {
+        assertEquals(CutPreset.X_3, CutPreset.fromStoredValues("x_3", 2))
+    }
+
+    @Test
+    fun legacyGridIsMigratedWhenPresetIsMissing() {
+        assertEquals(CutPreset.GRID_4, CutPreset.fromStoredValues(null, 2))
+        assertEquals(CutPreset.GRID_9, CutPreset.fromStoredValues(null, 3))
+    }
+
+    @Test
+    fun missingOrUnknownLegacyGridUsesCurrentDefault() {
+        assertEquals(CutPreset.X_4, CutPreset.fromStoredValues(null, null))
+        assertEquals(CutPreset.X_4, CutPreset.fromStoredValues(null, 4))
+    }
 }

@@ -42,5 +42,17 @@ enum class CutPreset(
                 else -> X_4
             }
         }
+
+        fun fromStoredValues(id: String?, legacyGrid: Int?): CutPreset {
+            return if (id != null) {
+                fromId(id)
+            } else {
+                when (legacyGrid) {
+                    2 -> GRID_4
+                    3 -> GRID_9
+                    else -> X_4
+                }
+            }
+        }
     }
 }

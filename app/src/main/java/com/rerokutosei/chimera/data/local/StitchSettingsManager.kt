@@ -27,6 +27,7 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.rerokutosei.chimera.data.model.CutPreset
 import com.rerokutosei.chimera.ui.main.OverlayMode
 import com.rerokutosei.chimera.ui.main.StitchMode
 import com.rerokutosei.chimera.ui.main.WidthScale
@@ -133,12 +134,18 @@ class StitchSettingsManager private constructor(private val context: Context) {
     fun getCutGridFlow(): Flow<Int> = context.dataStore.getPref(PreferencesKeys.CUT_GRID, 3)
     suspend fun setCutGrid(grid: Int) = context.dataStore.setPref(PreferencesKeys.CUT_GRID, grid)
 
-    fun getCutPresetFlow(): Flow<com.rerokutosei.chimera.data.model.CutPreset> {
-        return context.dataStore.getPref(PreferencesKeys.CUT_PRESET, "x_4")
-            .map { com.rerokutosei.chimera.data.model.CutPreset.fromId(it) }
+    fun getCutPresetFlow(): Flow<CutPreset> {
+        return context.dataStore.data
+            .catch { if (it is IOException) emit(emptyPreferences()) else throw it }
+            .map { preferences ->
+                CutPreset.fromStoredValues(
+                    id = preferences[PreferencesKeys.CUT_PRESET],
+                    legacyGrid = preferences[PreferencesKeys.CUT_GRID]
+                )
+            }
     }
 
-    suspend fun setCutPreset(preset: com.rerokutosei.chimera.data.model.CutPreset) {
+    suspend fun setCutPreset(preset: CutPreset) {
         context.dataStore.setPref(PreferencesKeys.CUT_PRESET, preset.id)
     }
 
