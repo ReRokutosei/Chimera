@@ -2,6 +2,8 @@
 
 These ideas are intentionally deferred until there is enough time for design, implementation, and device testing.
 
+Last reviewed: 2026-08-30.
+
 ## Crash recovery
 
 - Add an `Application`-level uncaught-exception handler and a dedicated crash-report screen.
@@ -28,8 +30,3 @@ ImageToolbox provides a useful reference implementation under `core/crash`, but 
 - Persist the selected URI list only if recovery across process death becomes a requirement.
 - Revalidate persisted URI permissions and discard stale entries when restoring a session.
 - Keep the existing in-memory navigation preservation for ordinary recoverable failures.
-
-## Adaptive layouts
-
-- Consider a width-based two-pane layout for tablets, foldables, landscape, and multi-window use.
-- Avoid maintaining a separate orientation-specific UI tree.
