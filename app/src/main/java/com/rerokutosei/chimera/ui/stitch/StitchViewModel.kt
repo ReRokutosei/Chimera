@@ -26,6 +26,7 @@ import com.rerokutosei.chimera.domain.error.StitchFailure
 import com.rerokutosei.chimera.ui.main.StitchMode
 import com.rerokutosei.chimera.ui.main.WidthScale
 import com.rerokutosei.chimera.utils.common.LogManager
+import com.rerokutosei.chimera.utils.common.OwnedResource
 import com.rerokutosei.chimera.utils.stitch.ImageStitcher
 import com.rerokutosei.chimera.utils.stitch.StitchOrientation
 import com.rerokutosei.chimera.utils.stitch.StitchResult
@@ -39,6 +40,15 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
 
     private val imageStitcher = ImageStitcher(application)
     private val logManager = LogManager.getInstance(application)
+    private val resultOwner = OwnedResource<Bitmap> { bitmap ->
+        if (!bitmap.isRecycled) {
+            logManager.debug(
+                "StitchViewModel",
+                "回收拼接结果位图: ${bitmap.width}x${bitmap.height}"
+            )
+            bitmap.recycle()
+        }
+    }
 
     private val _uiState = MutableStateFlow(StitchUiState())
     val uiState: StateFlow<StitchUiState> = _uiState.asStateFlow()
@@ -90,6 +100,7 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
                 // 根据结果类型进行处理
                 when (result) {
                     is StitchResult.BitmapResult -> {
+                        resultOwner.replace(result.bitmap)
                         logManager.info(
                             "StitchViewModel",
                             "拼接成功，结果尺寸: ${result.bitmap.width}x${result.bitmap.height}"
@@ -171,6 +182,7 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
 
                 when (result) {
                     is StitchResult.BitmapResult -> {
+                        resultOwner.replace(result.bitmap)
                         logManager.info(
                             "StitchViewModel",
                             "叠加拼接成功，结果尺寸: ${result.bitmap.width}x${result.bitmap.height}"
@@ -227,14 +239,7 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun recycleCurrentResult() {
-        val currentBitmap = (_uiState.value.stitchState as? StitchState.Success)?.result ?: return
-        if (!currentBitmap.isRecycled) {
-            logManager.debug(
-                "StitchViewModel",
-                "回收拼接结果位图: ${currentBitmap.width}x${currentBitmap.height}"
-            )
-            currentBitmap.recycle()
-        }
+        resultOwner.clear()
     }
 
     private fun logFailure(failure: StitchFailure) {
