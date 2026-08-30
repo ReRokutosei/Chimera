@@ -85,19 +85,18 @@ fun SortButton(
 
                 items.forEachIndexed { index, item ->
                     androidx.compose.material3.ListItem(
-                        headlineContent = {
-                            Text(text = item.title)
-                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null
-                            ) { 
+                            ) {
                                 onSortTypeSelected(item)
                                 showSortTypeSelection = false
                             }
-                    )
+                    ) {
+                        Text(text = item.title)
+                    }
                 }
             }
         }
