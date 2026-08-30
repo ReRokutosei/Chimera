@@ -214,6 +214,7 @@ class StitchViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun clearStitchState() {
+        recycleCurrentResult()
         _uiState.value = _uiState.value.copy(
             stitchState = StitchState.Idle,
             progress = 0

@@ -17,7 +17,6 @@
 
 package com.rerokutosei.chimera.ui.main
 
-import android.graphics.Bitmap
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -57,7 +56,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -131,14 +129,13 @@ fun MainScreen(
     val cutSaveState by imageViewerViewModel.cutSaveState.collectAsStateWithLifecycle()
 
     var isCutPreviewActive by remember { mutableStateOf(false) }
-    var workstationStitchedBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    val workstationStitchedBitmap =
+        (stitchUiState.stitchState as? StitchState.Success)?.result
 
     LaunchedEffect(Unit) {
         delay(100.milliseconds)
         isPageEntered = true
     }
-
-    DisposableEffect(Unit) { onDispose {} }
 
     // 边界情况处理：如果在工作台内嵌设置打开状态下，窗口被拖拽缩窄到 < 840dp，平滑迁移到全屏设置页
     LaunchedEffect(isWorkstationMode) {
@@ -200,17 +197,7 @@ fun MainScreen(
         uiState.imageSpacingColor
     ) {
         isCutPreviewActive = false
-        workstationStitchedBitmap = null
         stitchViewModel.clearStitchState()
-    }
-
-    // 拼接成功后同步大画布位图并及时清理 ViewModel 状态，防止切页返回后重放
-    LaunchedEffect(stitchUiState.stitchState) {
-        val state = stitchUiState.stitchState
-        if (state is StitchState.Success) {
-            workstationStitchedBitmap = state.result
-            stitchViewModel.clearStitchState()
-        }
     }
 
     // 工作台模式切图保存完成弹窗
