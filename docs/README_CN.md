@@ -89,14 +89,14 @@ Chimera 是一款用于图片拼接和宫格切图的 Android 应用，使用 Ko
 | 50 张小图纵向直接拼接，MAX | 83.53 ms | 51.45 ms | -38.4% |
 | 10 张中图纵向叠加拼接，MIN | 54.99 ms | 32.47 ms | -41.0% |
 
-此外还在运行 Android 13 的小米 10 至尊纪念版上完成了实体设备应用流程测试，每项测试执行 8 次。首次启动协议的强制倒计时在测量前完成，不计入冷启动时间。
+历史上还在运行 Android 13 的小米 10 至尊纪念版上完成过实体设备应用流程测试，每项测试执行 8 次。首次启动协议的强制倒计时在测量前完成，不计入冷启动时间。
 
-| 场景 | 无编译 | 当前 Baseline Profile | 中位数变化 |
+| 场景 | 无编译 | 当时测量的 Profile | 中位数变化 |
 | --- | ---: | ---: | ---: |
 | 冷启动至首次显示 | 433.7 ms | 423.6 ms | -2.3% |
 | 设置页流程 | 6,296.4 ms | 6,177.7 ms | -1.9% |
 
-当前 Baseline Profile 在该设备上具有幅度较小但可测量的收益。曾尝试重新生成覆盖范围更大的 Profile，但其规则数量增加、设置页流程没有明显改善且冷启动发生回退，因此未予保留。
+当时测量的 Profile 在该设备上具有幅度较小的收益。当前生成的 Profile 尚未重新进行性能测试，因此不能把这组历史数据视为当前 Profile 的实测表现。
 
 完整数据集、阶段计时、编码测试、执行命令和适用限制见[图片处理性能基线](Performance_Baseline.md)。
 
@@ -133,7 +133,10 @@ Android Photo Picker 返回的 URI 顺序可能与界面中的选择顺序不同
 ```bash
 git clone --depth 1 https://github.com/ReRokutosei/Chimera.git
 cd Chimera
-./gradlew build -x detekt
+./gradlew :app:testBenchmarkUnitTest
+./gradlew :app:detekt
+./gradlew lintDebug
+./gradlew assembleDebug
 ```
 
 未配置发布密钥库时，Release 构建会使用 debug 签名。用于正式分发时，请通过环境变量或用户级 Gradle 属性提供 `KEYSTORE_PATH`、`KEYSTORE_PASSWORD`、`KEY_ALIAS` 和 `KEY_PASSWORD`，然后运行 `./gradlew assembleRelease`。

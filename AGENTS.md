@@ -3,14 +3,21 @@
 ## Build & Verify
 
 ```powershell
-# Full build (skip detekt static analysis)
-./gradlew build -x detekt
+# Full build
+./gradlew build
 
 # Lint-only failures (AGP 9.3.0 treats LocalContextGetResourceValueCall as error)
 # Fix: extract context.getString(...) to composable-scoped val with stringResource(...)
 
 # JVM unit tests (testBuildType is benchmark)
 ./gradlew :app:testBenchmarkUnitTest
+
+# Static quality gates (existing findings are tracked in config/detekt/baseline.xml)
+./gradlew :app:detekt
+./gradlew lintDebug
+
+# Build the debug APK and all debug module artifacts
+./gradlew assembleDebug
 
 # Compile the Android processing benchmarks
 ./gradlew :app:compileBenchmarkAndroidTestKotlin
@@ -24,11 +31,13 @@
 
 - `compileSdk` = 37, `targetSdk` = 36, `minSdk` = 29, `applicationId` = `com.rerokutosei.chimera`
 - Java/Kotlin toolchain = 21 (`sourceCompatibility`/`targetCompatibility` = `VERSION_21`)
-- `versionName` comes from the `appVerName` Gradle property (`-PappVerName=...`); `versionCode` is derived from it (`computeVersionCode`). Dev build type appends `.dev` / `-dev` suffix.
+- `versionName` comes from the `appVerName` Gradle property (`-PappVerName=...`); an optional leading `v` is normalized away and `versionCode` is derived from the semantic version. Dev build type appends `.dev` / `-dev` suffix.
 - AGP = 9.3.2, Gradle Wrapper = 9.7.1, Kotlin = 2.4.10
 - Release builds fall back to debug signing when no release keystore is available; distributable builds should provide `KEYSTORE_PATH`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, and `KEY_PASSWORD`.
 - JVM tests use JUnit 4 under `app/src/test`; fixed synthetic Bitmap benchmarks use AndroidX Benchmark under `app/src/androidTest` with the non-debug `benchmark` build type.
 - License metadata is updated explicitly with `:app:updateReadmeWithLicenses`; ordinary builds and tests must not rewrite tracked documentation.
+- Detekt uses `config/detekt/baseline.xml` for reviewed historical findings and `maxIssues: 0` to reject new findings. Update the baseline only as an explicit, reviewed maintenance change.
+- Baseline Profile generation and StartupBenchmark measurements require a connected device. On WSL2, run them from the Windows checkout whose `local.properties` points to the Windows Android SDK.
 - Kotlin serialization plugin (`kotlin("plugin.serialization")`) already applied; Navigation `2.10.0` supports `@Serializable` route types via `toRoute<>()`
 - HorizontalPager from `androidx.compose.foundation.pager` available (no extra dependency needed)
 
@@ -160,8 +169,9 @@ Other manager: `UserPreferencesManager` (`first_launch`).
 - Or derive `isDark` via `when (uiState.themeMode) { ... }` pattern (see `DisplaySettings.kt:216-219`)
 - `ColorUtils.adjustColorForDarkTheme(color)` lowers brightness; black is exempted
 
-## Lint
+## Lint and Detekt
 
 - AGP 9.3.0 treats `LocalContextGetResourceValueCall` as error
 - Fix pattern: extract string to composable-scoped `val` with `stringResource(R.string.xxx)` before using in non-composable lambdas
-- Build command `./gradlew build -x detekt` does NOT skip lint (detekt ≠ lint)
+- Lint and detekt are independent CI jobs; passing one does not imply that the other ran.
+- Do not regenerate `config/detekt/baseline.xml` in CI. Generate it explicitly with `./gradlew :app:detektBaseline` only after reviewing which historical findings should remain deferred.

@@ -95,7 +95,7 @@ When the existing multithreading setting is enabled, scaling now uses at most fo
 
 The 50-image allocation count is 1,401 with fixed workers, compared with 1,979 for the rejected one-coroutine-per-image prototype and 1,261 for sequential scaling. The measured speedup justified the remaining small coroutine allocation cost.
 
-## Current physical-device app-flow baseline
+## Historical physical-device app-flow measurement
 
 Measured on 2026-07-18 on a Xiaomi Mi 10 Ultra (`M2007J1SC`), Android 13 / API 33, with eight iterations per case. The first-launch agreement is completed and persisted before measurement; its mandatory five-second countdown is intentionally excluded from startup timing.
 
@@ -106,15 +106,22 @@ The settings-flow duration is an instrumentation trace around opening Settings, 
 | Cold startup, time to initial display | 433.7 ms | 423.6 ms | -2.3% |
 | Settings flow | 6,296.4 ms | 6,177.7 ms | -1.9% |
 
-Observed ranges were 422.2–448.4 ms and 418.5–441.1 ms for cold startup, and 5,550.6–6,481.9 ms and 5,860.9–6,526.6 ms for the settings flow. The current profile therefore provides a small measurable benefit on this device, with substantial overlap between individual runs. Profile changes should be retained only if repeated measurements improve this baseline without regressing either scenario.
+Observed ranges were 422.2–448.4 ms and 418.5–441.1 ms for cold startup, and 5,550.6–6,481.9 ms and 5,860.9–6,526.6 ms for the settings flow. The profile measured at that time therefore provided a small benefit on this device, with substantial overlap between individual runs. These numbers do not establish the performance of a subsequently regenerated profile.
 
 ### Rejected profile regeneration
 
 A profile regenerated from the corrected startup and Settings automation increased the baseline rules from 57,385 to 59,350 and the startup rules from 55,696 to 57,246. In the identical four-case follow-up run, cold startup with that profile measured 452.4 ms versus 396.5 ms without compilation, while the settings flow measured 6,192.9 ms versus 6,209.2 ms. The settings difference was negligible and the startup result regressed, so the regenerated profile files were not retained. This rejection also avoids accepting a larger profile without demonstrated benefit.
 
+### Latest profile generation
+
+On 2026-08-30, `generateReleaseBaselineProfile` completed successfully on a Samsung SM-T733 running Android 14. The retained baseline profile changed from 23,192 to 23,184 rules (143 added, 151 removed, 98.74% unchanged), while the startup profile changed from 18,413 to 18,434 rules (118 added, 97 removed, 98.84% unchanged). No rules reference the removed `PreloadManager`.
+
+This run generated profile rules only. The `StartupBenchmark` cases were skipped by the generation task, so it does not provide new startup or Settings-flow timing data. The July 2026 measurements above remain historical comparison data until the four StartupBenchmark cases are rerun on a fixed physical device.
+
 ## Commands
 
 ```powershell
+./gradlew generateReleaseBaselineProfile
 ./gradlew :app:assembleBenchmark :app:assembleBenchmarkAndroidTest -x detekt
 adb shell cmd package compile -m speed -f com.rerokutosei.chimera
 adb shell am instrument -w -r com.rerokutosei.chimera.test/androidx.benchmark.junit4.AndroidBenchmarkRunner

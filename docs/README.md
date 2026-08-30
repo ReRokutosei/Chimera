@@ -89,14 +89,14 @@ The following results compare sequential and bounded parallel scaling on the sam
 | Direct vertical, 50 small images, MAX | 83.53 ms | 51.45 ms | -38.4% |
 | Overlay vertical, 10 medium images, MIN | 54.99 ms | 32.47 ms | -41.0% |
 
-Physical-device app-flow measurements were also collected on a Xiaomi Mi 10 Ultra running Android 13, with eight iterations per case. The mandatory first-launch agreement countdown was completed before measurement and is not included in startup timing.
+Historical physical-device app-flow measurements were collected on a Xiaomi Mi 10 Ultra running Android 13, with eight iterations per case. The mandatory first-launch agreement countdown was completed before measurement and is not included in startup timing.
 
-| Scenario | No compilation | Current Baseline Profile | Median change |
+| Scenario | No compilation | Profile measured at the time | Median change |
 | --- | ---: | ---: | ---: |
 | Cold startup, time to initial display | 433.7 ms | 423.6 ms | -2.3% |
 | Settings flow | 6,296.4 ms | 6,177.7 ms | -1.9% |
 
-The current Baseline Profile provides a small measurable benefit on this device. A larger regenerated profile was rejected because it increased the rule count without improving the Settings flow and regressed cold startup.
+The profile measured at that time provided a small benefit on this device. The current generated profile has not yet been benchmarked, so these historical numbers must not be treated as its measured performance.
 
 See [Image Processing Performance Baseline](Performance_Baseline.md) for datasets, stage timings, codec measurements, commands, and limitations.
 
@@ -133,7 +133,10 @@ Requirements:
 ```bash
 git clone --depth 1 https://github.com/ReRokutosei/Chimera.git
 cd Chimera
-./gradlew build -x detekt
+./gradlew :app:testBenchmarkUnitTest
+./gradlew :app:detekt
+./gradlew lintDebug
+./gradlew assembleDebug
 ```
 
 Release builds use the debug signing key when no release keystore is configured. For distributable builds, provide `KEYSTORE_PATH`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, and `KEY_PASSWORD` through environment variables or user-level Gradle properties, then run `./gradlew assembleRelease`.
