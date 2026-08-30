@@ -32,19 +32,19 @@ Image decoding, stitching, cutting, and saving are performed on the device. The 
 ### Mobile
 
 <div align="center">
-  <img src="./images/phone/en/phone_01.webp" alt="Mobile UI 1" width="32%">
-  <img src="./images/phone/en/phone_02.webp" alt="Mobile UI 2" width="32%">
-  <img src="./images/phone/en/phone_03.webp" alt="Mobile UI 3" width="32%">
+  <img src="../fastlane/metadata/android/en-US/images/phoneScreenshots/phone_01.webp" alt="Mobile UI 1" width="32%">
+  <img src="../fastlane/metadata/android/en-US/images/phoneScreenshots/phone_02.webp" alt="Mobile UI 2" width="32%">
+  <img src="../fastlane/metadata/android/en-US/images/phoneScreenshots/phone_03.webp" alt="Mobile UI 3" width="32%">
 </div>
 
 ### Tablet
 
 <div align="center">
-  <img src="./images/table/en_tab01.webp" alt="Tablet UI 1">
+  <img src="../fastlane/metadata/android/en-US/images/sevenInchScreenshots/en_tab01.webp" alt="Tablet UI 1">
   <br>
-  <img src="./images/table/en_tab02.webp" alt="Tablet UI 2">
+  <img src="../fastlane/metadata/android/en-US/images/sevenInchScreenshots/en_tab02.webp" alt="Tablet UI 2">
   <br>
-  <img src="./images/table/en_tab03.webp" alt="Tablet UI 3">
+  <img src="../fastlane/metadata/android/en-US/images/sevenInchScreenshots/en_tab03.webp" alt="Tablet UI 3">
 </div>
 
 ## Features
@@ -52,9 +52,9 @@ Image decoding, stitching, cutting, and saving are performed on the device. The 
 ### Image access
 
 <div align="center">
-  <img src="./images/phone/en/phone_05.webp" alt="Photo Picker" width="32%">
-  <img src="./images/phone/en/phone_04.webp" alt="SAF" width="32%">
-  <img src="./images/phone/en/phone_06.webp" alt="Embedded Picker" width="32%">
+  <img src="../fastlane/metadata/android/en-US/images/phoneScreenshots/phone_05.webp" alt="Photo Picker" width="32%">
+  <img src="../fastlane/metadata/android/en-US/images/phoneScreenshots/phone_04.webp" alt="SAF" width="32%">
+  <img src="../fastlane/metadata/android/en-US/images/phoneScreenshots/phone_06.webp" alt="Embedded Picker" width="32%">
 </div>
 
 Three selectors are provided:

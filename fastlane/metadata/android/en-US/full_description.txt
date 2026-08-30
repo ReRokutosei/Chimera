@@ -1,0 +1,24 @@
+Chimera is an open-source Android utility designed for local image stitching and grid-based slicing. Built using Kotlin and Jetpack Compose, it supports Android 10 and above.
+
+All image decoding, manipulation, slicing, and encoding operations are performed strictly on the local device. The application does not declare the INTERNET permission and contains no network transmission logic or telemetry services.
+
+Key Capabilities:
+
+1. Image Stitching
+- Direct vertical and horizontal stitching modes.
+- Overlap-based alignment for sequential screenshot stitching.
+- Configurable proportional dimension scaling, pixel spacing, and fill colors.
+
+2. Grid Slicing & Panoramic Segmentation
+- Standard 2×2 and 3×3 grid slicing.
+- 1×3 and 1×4 horizontal panorama segmentation optimized for continuous ribbon presentation on X (Twitter).
+- Ordered sequence indices for exported pieces with support for individual and batch saving.
+
+3. Adaptive Architecture
+- Dual-pane workstation layout with dedicated configuration panels for large-screen and tablet displays (≥ 840dp).
+- Dynamic layout transition during multi-window and freeform display resizing.
+
+4. Storage & Media Access Interfaces
+- Android Photo Picker integration.
+- Storage Access Framework (SAF) document provider integration.
+- Embedded local media browser with scoped permission handling.

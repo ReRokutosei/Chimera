@@ -32,19 +32,19 @@ Chimera 是一款用于图片拼接和宫格切图的 Android 应用，使用 Ko
 ### 手机端
 
 <div align="center">
-  <img src="./images/phone/cn/phone_01.webp" alt="手机端界面 1" width="32%">
-  <img src="./images/phone/cn/phone_02.webp" alt="手机端界面 2" width="32%">
-  <img src="./images/phone/cn/phone_03.webp" alt="手机端界面 3" width="32%">
+  <img src="../fastlane/metadata/android/zh-CN/images/phoneScreenshots/phone_01.webp" alt="手机端界面 1" width="32%">
+  <img src="../fastlane/metadata/android/zh-CN/images/phoneScreenshots/phone_02.webp" alt="手机端界面 2" width="32%">
+  <img src="../fastlane/metadata/android/zh-CN/images/phoneScreenshots/phone_03.webp" alt="手机端界面 3" width="32%">
 </div>
 
 ### 平板端
 
 <div align="center">
-  <img src="./images/table/cn_tab01.webp" alt="平板端界面 1">
+  <img src="../fastlane/metadata/android/zh-CN/images/sevenInchScreenshots/cn_tab01.webp" alt="平板端界面 1">
   <br>
-  <img src="./images/table/cn_tab02.webp" alt="平板端界面 2">
+  <img src="../fastlane/metadata/android/zh-CN/images/sevenInchScreenshots/cn_tab02.webp" alt="平板端界面 2">
   <br>
-  <img src="./images/table/cn_tab03.webp" alt="平板端界面 3">
+  <img src="../fastlane/metadata/android/zh-CN/images/sevenInchScreenshots/cn_tab03.webp" alt="平板端界面 3">
 </div>
 
 ## 功能
@@ -52,9 +52,9 @@ Chimera 是一款用于图片拼接和宫格切图的 Android 应用，使用 Ko
 ### 图片访问方式
 
 <div align="center">
-  <img src="./images/phone/cn/phone_05.webp" alt="Photo Picker" width="32%">
-  <img src="./images/phone/cn/phone_04.webp" alt="SAF" width="32%">
-  <img src="./images/phone/cn/phone_06.webp" alt="Embedded Picker" width="32%">
+  <img src="../fastlane/metadata/android/zh-CN/images/phoneScreenshots/phone_05.webp" alt="Photo Picker" width="32%">
+  <img src="../fastlane/metadata/android/zh-CN/images/phoneScreenshots/phone_04.webp" alt="SAF" width="32%">
+  <img src="../fastlane/metadata/android/zh-CN/images/phoneScreenshots/phone_06.webp" alt="Embedded Picker" width="32%">
 </div>
 
 提供 3 种选择器：

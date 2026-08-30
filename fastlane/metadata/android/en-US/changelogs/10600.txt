@@ -1,0 +1,4 @@
+- Adaptive large-screen & tablet dual-pane workstation UI
+- X (Twitter) 1x3 and 1x4 seamless panorama slicing presets
+- Gesture navigation and single-slice saving for cut preview
+- Updated Jetpack Compose and dependencies
